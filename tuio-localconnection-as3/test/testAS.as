@@ -1,0 +1,1 @@
+﻿import at.ac.tuwien.igw.tuio.TUIOReceiver;var tuior:TUIOReceiver = new TUIOReceiver();tuior.addReceiveListener(TUIOListener);tuior.start();function TUIOListener(msg:String){	//msg in ein texfeld schreiben	//TODO: textfeld erzeugen	txtField.appendText(msg);}
