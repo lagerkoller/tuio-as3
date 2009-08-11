@@ -80,6 +80,27 @@
 			return out;
 		}
 		
+		/**
+		 * Checks if the given ByteArray is an OSCMessage
+		 * 
+		 * @param	bytes The ByteArray to be checked.
+		 * @return true if the ByteArray contains an OSCMessage
+		 */
+		public static function isMessage(bytes:ByteArray) {
+			if (bytes != null) {
+				bytes.position = 0;
+				var header:String = bytes.readUTFBytes(1);
+				bytes.position = 0;
+				if (header == "/") {
+					return true;
+				} else {
+					return false;
+				}
+			} else {
+				return false;
+			}
+		}
+		
 	}
 	
 }
