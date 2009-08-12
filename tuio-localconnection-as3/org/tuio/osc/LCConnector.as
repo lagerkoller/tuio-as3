@@ -43,12 +43,7 @@ package org.tuio.osc {
 		
 		public function addListener(listener:IOSCConnectorListener):void {
 			
-			for each(var l:Object in this.listeners) {
-				if (l == listener) {
-					debug("Listener already added.");
-					return;
-				}
-			}
+			if (this.listeners.indexOf(listener) > -1) return;
 			
 			this.listeners.push(listener);
 			
