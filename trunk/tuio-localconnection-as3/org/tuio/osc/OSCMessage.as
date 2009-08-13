@@ -1,6 +1,7 @@
 ﻿package org.tuio.osc {
 	
 	import flash.utils.ByteArray;
+	import flash.errors.EOFError;
 	
 	/**
 	 * An OSCMessage
@@ -30,14 +31,34 @@
 			this.argumentArray = new Array();
 			
 			//read the remaining bytes according to the parsing pattern
-			for(var c:int = 0; c < this.pattern.length; c++){
-				switch(this.pattern.charAt(c)){
-					case "s": argumentArray.push(this.readString()); break;
-					case "f": argumentArray.push(this.bytes.readFloat()); break;
-					case "i": argumentArray.push(this.bytes.readInt()); break;
-					case "b": argumentArray.push(this.readBlob()); break;
-					default: break;
+			var innerArray:Array;
+			var openArray:Array = this.argumentArray;
+			try{
+				for(var c:int = 0; c < this.pattern.length; c++){
+					switch(this.pattern.charAt(c)){
+						case "s": openArray.push(this.readString()); break;
+						case "f": openArray.push(this.bytes.readFloat()); break;
+						case "i": openArray.push(this.bytes.readInt()); break;
+						case "b": openArray.push(this.readBlob()); break;
+						case "h": openArray.push(this.read64BInt()); break;
+						case "t": openArray.push(this.readTimetag()); break;
+						case "d": openArray.push(this.bytes.readDouble()); break;
+						case "S": openArray.push(this.readString()); break;
+						case "c": openArray.push(this.bytes.readMultiByte(4, "US-ASCII")); break;
+						case "r": openArray.push(this.readUnsignedInt()); break;
+						case "T": openArray.push(true); break;
+						case "F": openArray.push(false); break;
+						case "N": openArray.push(null); break;
+						case "I": openArray.push(Infinity); break;
+						case "[": innerArray = new Array(); openArray = innerArray; break;
+						case "]": this.argumentArray.push(innerArray.concat()); openArray = this.argumentArray; break;
+						default: break;
+					}
 				}
+			} catch (e:EOFError) {
+				this.argumentArray = new Array();
+				this.argumentArray.push("Corrupted OSCMessage");
+				openArray = null;
 			}
 		}
 		
