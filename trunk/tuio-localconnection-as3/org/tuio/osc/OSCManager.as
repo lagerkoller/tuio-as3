@@ -9,6 +9,9 @@ package org.tuio.osc {
 		
 		private var msgListener:Array;
 		private var oscMethods:Array;
+		private var oscMethodTree:OSCMethodTree;
+		
+		public var usePatternMatching:Boolean = false;
 		
 		public function OSCManager() {
 			
@@ -39,37 +42,48 @@ package org.tuio.osc {
 		
 		public function acceptOSCPacket(oscPacket:OSCPacket):void {
 			this.currentPacket = oscPacket;
-			this.multicastOSCPacket(this.currentPacket);
+			this.distributeOSCPacket(this.currentPacket);
 		}
 		
-		private function multicastOSCPacket(packet:OSCPacket) {
+		private function distributeOSCPacket(packet:OSCPacket) {
 			if (packet is OSCMessage) {
-				this.multicastOSCMessage(packet);
+				this.distributeOSCMessage(packet);
 			} else if (packet is OSCBundle) {
 				var cont:Array = (packet as OSCBundle).subPackets.concat();
 				
 				for each(var p:OSCPacket in cont) {
-					this.multicastOSCPacket(p);
+					this.distributeOSCPacket(p);
 				}
 			}
 		}
 		
-		private function multicastOSCMessage(msg:OSCMessage) {
+		private function distributeOSCMessage(msg:OSCMessage) {
 
 			for each(var l:IOSCListener in this.msgListener) {
 				l.acceptOSCMessage(msg);
 			}
 			
 			if(this.oscMethods.length > 0){
-				var oscMethod:IOSCListener = this.oscMethods[msg.addressPattern];
-			
-				if (oscMethod != null) oscMethod.acceptOSCMessage(msg);
+				
+				var oscMethod:IOSCListener;
+				var oscMethods:Array;
+				
+				if (this.usePatternMatching) {
+					oscMethods = this.oscMethodTree.getMethods(msg.addressPattern);
+					for each(var l:IOSCListener in oscMethods) {
+						l.acceptOSCMessage(msg);
+					}
+				} else {
+					oscMethod = this.oscMethods[msg.addressPattern];
+					if (oscMethod != null) oscMethod.acceptOSCMessage(msg);
+				}
 			}
 			
 		}
 		
 		public function addMethod(address:String, listener:IOSCListener):void {
 			this.oscMethods[address] = listener;
+			this.OSCMethodTree.addMethod(address, listener);
 		}
 		
 		public function addMsgListener(listener:IOSCListener):void {
@@ -78,6 +92,7 @@ package org.tuio.osc {
 			
 			this.msgListener.push(listener);
 		}
+		
 	}
 	
 }
