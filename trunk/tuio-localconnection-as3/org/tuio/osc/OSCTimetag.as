@@ -16,6 +16,20 @@
 			this.picoseconds = picoseconds;
 		}
 		
+		public function compareTo(otg:OSCTimetag):int {
+			
+			if (this.seconds > otg.seconds) return 1;
+			else if (this.seconds < otg.seconds) return -1;
+			else {
+				if (this.picoseconds > otg.picoseconds) return 1;
+				else if (this.picoseconds < otg.picoseconds) return -1;
+				else return 0;
+			}
+			
+			return 0;
+			
+		}
+		
 	}
 	
 }

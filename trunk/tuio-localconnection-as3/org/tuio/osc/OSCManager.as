@@ -13,10 +13,14 @@ package org.tuio.osc {
 		
 		public var usePatternMatching:Boolean = false;
 		
-		public function OSCManager() {
+		public function OSCManager(connectorIn:IOSCConnector = null, connectorOut:IOSCConnector = null) {
 			
 			this.msgListener = new Array();
 			this.oscMethods = new Array();
+			
+			this.connIn = connectorIn;
+			if(this.connIn != null) this.connIn.addListener(this);
+			this.connOut = connectorOut;
 			
 		}
 		
