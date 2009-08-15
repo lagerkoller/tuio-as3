@@ -1,23 +1,23 @@
 package org.tuio.osc {
 	
-	public class OSCMethodTree {
+	public class OSCAddressSpace {
 		
-		private var root:OSCMethodNode;
+		private var root:OSCContainer;
 		
-		public function OSCMethodTree() {
-			this.root = new OSCMethodNode("");
+		public function OSCAddressSpace() {
+			this.root = new OSCContainer("");
 		}
 		
 		public function addMethod(address:String, method:IOSCListener):void {
 			var parts:Array = address.split("/");
 			var part:String;
-			var currentNode:OSCMethodNode = root;
-			var newNode:OSCMethodNode;
+			var currentNode:OSCContainer = root;
+			var newNode:OSCContainer;
 			while (parts.length > 0) {
 				part = parts.pop();
 				newNode = currentNode.getChild(part);
 				if (newNode == null) {
-					newNode = new OSCMethodNode(part);
+					newNode = new OSCContainer(part);
 					currentNode.addChild(newNode);
 				}
 				currentNode = newNode;
@@ -28,8 +28,8 @@ package org.tuio.osc {
 		public function removeMethod(address:String) {
 			var parts:Array = address.split("/");
 			var part:String;
-			var currentNode:OSCMethodNode = root;
-			var newNode:OSCMethodNode;
+			var currentNode:OSCContainer = root;
+			var newNode:OSCContainer;
 			while (parts.length > 0) {
 				part = parts.pop();
 				newNode = currentNode.getChild(part);

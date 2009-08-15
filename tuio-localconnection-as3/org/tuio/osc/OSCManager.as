@@ -9,7 +9,7 @@ package org.tuio.osc {
 		
 		private var msgListener:Array;
 		private var oscMethods:Array;
-		private var oscMethodTree:OSCMethodTree;
+		private var oscAddressSpace:OSCAddressSpace;
 		
 		public var usePatternMatching:Boolean = false;
 		
@@ -69,7 +69,7 @@ package org.tuio.osc {
 				var oscMethods:Array;
 				
 				if (this.usePatternMatching) {
-					oscMethods = this.oscMethodTree.getMethods(msg.addressPattern);
+					oscMethods = this.oscAddressSpace.getMethods(msg.addressPattern);
 					for each(var l:IOSCListener in oscMethods) {
 						l.acceptOSCMessage(msg);
 					}
@@ -83,7 +83,7 @@ package org.tuio.osc {
 		
 		public function addMethod(address:String, listener:IOSCListener):void {
 			this.oscMethods[address] = listener;
-			this.OSCMethodTree.addMethod(address, listener);
+			this.oscAddressSpace.addMethod(address, listener);
 		}
 		
 		public function addMsgListener(listener:IOSCListener):void {
