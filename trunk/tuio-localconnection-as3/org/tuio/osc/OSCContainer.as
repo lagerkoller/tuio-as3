@@ -1,23 +1,23 @@
 package org.tuio.osc {
 	
-	public class OSCMethodNode {
+	public class OSCContainer {
 		
 		private var children:Array;
 		private var name:String;
 		public var method:IOSCListener;
-		public var parent:OSCMethodNode;
+		public var parent:OSCContainer;
 		
-		public function OSCMethodNode(name:String, method:IOSCListener = null, parent:OSCMethodNode = null){
+		public function OSCContainer(name:String, method:IOSCListener = null, parent:OSCContainer = null){
 			this.name = name;
 			this.method = method;
 			this.parent = parent;
 		}
 		
-		public function addChild(child:OSCMethodNode):void {
+		public function addChild(child:OSCContainer):void {
 			this.children[child.name] = child;
 		}
 		
-		public function getChild(name:String):OSCMethodNode {
+		public function getChild(name:String):OSCContainer {
 			return this.children[name];
 		}
 		
@@ -29,7 +29,7 @@ package org.tuio.osc {
 			var rest:String = pattern.substring(firstSeperator + 1, pattern.length); 
 			var done:Boolean = (pattern.indexOf("/")==-1);
 			
-			for each(var child:OSCMethodNode in this.children) {
+			for each(var child:OSCContainer in this.children) {
 				
 				if (child.matchName(part)) {
 					if (done) {
@@ -44,7 +44,7 @@ package org.tuio.osc {
 			return out;
 		}
 		
-		public function removeChild(child:OSCMethodNode) {
+		public function removeChild(child:OSCContainer) {
 			if (child.hasChildren) child.method = null;
 			else this.children[child.name] = null;
 		}
@@ -54,6 +54,23 @@ package org.tuio.osc {
 			if (pattern == this.name) return true;
 			
 			if (pattern == "*") return true;
+			
+			//convert address patter to regular expression
+			var regExStr:String = "";
+			for (var c:uint = 0; c < pattern.length; c++) {
+				switch(pattern.charAt(c)) {
+					case "{": regEx += "(" ; break;
+					case "}": regEx += ")" ; break;
+					case ",": regEx += "|" ; break;
+					case "*": regEx += ".*" ; break;
+					case "?": regEx += ".+" ; break;
+					default: regEx += pattern.charAt(c); break;
+				}
+			}
+			
+			var regEx:RegExp = new RegExp(regExStr, "g");
+			
+			if (regEx.test(this.name) && regEx.lastIndex == this.name.length) return true; 
 			
 			return false;
 			
