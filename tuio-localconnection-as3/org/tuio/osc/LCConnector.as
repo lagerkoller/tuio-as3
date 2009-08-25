@@ -13,7 +13,7 @@ package org.tuio.osc {
 		
 		private var listeners:Array;
 		
-		public function LCConnector(connectionNameIn:String = "_OscDataStream", connectionNameOut:String = "_OscDataStreamOut", receivingMethodName:String = "receiveOscData") {
+		public function LCConnector(connectionNameIn:String = "_OscDataStream", connectionNameOut:String = "_OscDataStreamOut") {
 			
 			this.connectionNameIn = connectionNameIn;
 			this.connectionNameOut = connectionNameOut;

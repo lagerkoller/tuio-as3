@@ -23,7 +23,7 @@ package org.tuio.lc {
 		 * @param	addNumber If true a number is added to the name to avoid nameconflicts
 		 * @param	lcClient An Object that contains a function that will be called via the LocalConnection
 		 */
-		public function LCReceiver(connectionName:String, lcClient:Object ,addNumber:Boolean = true) {
+		public function LCReceiver(connectionName:String, lcClient:Object, addNumber:Boolean = true) {
 
 			this.connectionName = connectionName;
 			this.addNumber = addNumber;

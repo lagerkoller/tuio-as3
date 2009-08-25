@@ -90,11 +90,22 @@ package org.tuio.osc {
 			this.oscAddressSpace.addMethod(address, listener);
 		}
 		
+		public function removeMethod(address:String):void {
+			this.oscMethods[address] = null;
+			this.oscAddressSpace.removeMethod(address);
+		}
+		
 		public function addMsgListener(listener:IOSCListener):void {
-			
 			if (this.msgListener.indexOf(listener) > -1) return;
-			
 			this.msgListener.push(listener);
+		}
+		
+		public function removeMsgListener(listener:IOSCListener):void {
+			var temp:Array = new Array();
+			for each(var l:IOSCListener in this.msgListener) {
+				if (l != listener) temp.push(l);
+			}
+			this.msgListener = temp.concat();
 		}
 		
 	}
