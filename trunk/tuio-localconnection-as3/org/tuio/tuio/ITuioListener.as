@@ -10,6 +10,10 @@ package org.tuio.tuio {
 		public function updateTuioCursor(tuioCursor:TuioCursor):void;
 		public function removeTuioCursor(tuioCursor:TuioCursor):void;
 		
+		public function addTuioBlob(tuioCursor:TuioBlob):void;
+		public function updateTuioBlob(tuioCursor:TuioBlob):void;
+		public function removeTuioBlob(tuioCursor:TuioBlob):void;
+		
     }
 	
 }
