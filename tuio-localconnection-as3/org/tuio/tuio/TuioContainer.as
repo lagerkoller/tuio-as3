@@ -10,8 +10,10 @@ package org.tuio.tuio {
 		private var _Y:Number;
 		private var _Z:Number;
 		private var _m:Number;
+		private var _type:String;
 		
-		public function TuioContainer(sID:Number, x:Number, y:Number, z:Number, X:Number, Y:Number, Z:Number, m:Number) {
+		public function TuioContainer(type:String, sID:Number, x:Number, y:Number, z:Number, X:Number, Y:Number, Z:Number, m:Number) {
+			this._type = type;
 			this._sessionID = sID;
 			this._x = x;
 			this._y = y;
@@ -20,7 +22,6 @@ package org.tuio.tuio {
 			this._Y = Y;
 			this._Z = Z;
 			this._m = m;
-			
 		}
 		
 		public function update(x:Number, y:Number, z:Number, X:Number, Y:Number, Z:Number, m:Number) {
@@ -31,6 +32,11 @@ package org.tuio.tuio {
 			this._Y = Y;
 			this._Z = Z;
 			this._m = m;
+		}
+		
+		
+		public function get type():String {
+			return this._type;
 		}
 		
 		public function get sessionID():uint {
