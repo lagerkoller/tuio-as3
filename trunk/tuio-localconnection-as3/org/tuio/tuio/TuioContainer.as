@@ -12,6 +12,8 @@ package org.tuio.tuio {
 		private var _m:Number;
 		private var _type:String;
 		
+		public var isAlive:Boolean;
+		
 		public function TuioContainer(type:String, sID:Number, x:Number, y:Number, z:Number, X:Number, Y:Number, Z:Number, m:Number) {
 			this._type = type;
 			this._sessionID = sID;
@@ -22,6 +24,7 @@ package org.tuio.tuio {
 			this._Y = Y;
 			this._Z = Z;
 			this._m = m;
+			this.alive = true;
 		}
 		
 		public function update(x:Number, y:Number, z:Number, X:Number, Y:Number, Z:Number, m:Number) {
@@ -33,7 +36,6 @@ package org.tuio.tuio {
 			this._Z = Z;
 			this._m = m;
 		}
-		
 		
 		public function get type():String {
 			return this._type;
