@@ -13,7 +13,9 @@ package org.tuio.tuio {
 		private var fseq:int;
 		private var src:String;
 		
-		private var tuioContainer:Array;
+		private var tuioCursors:Array;
+		private var tuioObjects:Array;
+		private var tuioBlobs:Array;
 		
 		public function TuioManager(connectionMode:uint) {
 			
@@ -139,16 +141,132 @@ package org.tuio.tuio {
 				var type:String = msg.addressPattern.substring(6, msg.addressPattern.length);
 				
 				var tuioContainer:TuioContainer;
+				var tuioContainerList:Array;
 				
 				if (isCur) {
-					tuioContainer = new TuioCursor(type, s, x, y, z, X, Y, Z, m);
+					tuioContainerList = this.tuioCursors;
 				} else if (isObj) {
-					tuioContainer = new TuioObject(type, s, i, x, y, z, a, b, c, X, Y, Z, A, B, C, m, r);
+					tuioContainerList = this.tuioObjects;
 				} else if (isBlb) {
-					tuioContainer = new TuioBlob(type, s, x, y, z, a, b, c, w, h, d, f, v, X, Y, Z, A, B, C, m, r);
+					tuioContainerList = this.tuioBlobs;
 				} else return;
 				
 				//resolve if add or update
+				for each(var tc:TuioContainer in tuioContainerList) {
+					if (tc.sessionID == tuioContainer.sessionID) {
+						tuioContainer = tc;
+						break;
+					}
+				}
+				
+				if(tuioContainer == null){
+					if (isCur) {
+						tuioContainer = new TuioCursor(type, s, x, y, z, X, Y, Z, m);
+						this.tuioCursors.push(tuioContainer);
+						dispatchAddCursor(tuioContainer as TuioCursor);
+					} else if (isObj) {
+						tuioContainer = new TuioObject(type, s, i, x, y, z, a, b, c, X, Y, Z, A, B, C, m, r);
+						this.tuioObjects.push(tuioContainer);
+						dispatchAddObject(tuioContainer as TuioObject);
+					} else if (isBlb) {
+						tuioContainer = new TuioBlob(type, s, x, y, z, a, b, c, w, h, d, f, v, X, Y, Z, A, B, C, m, r);
+						this.tuioBlobs.push(tuioContainer);
+						dispatchAddBlob(tuioContainer as TuioBlob);
+					} else return;
+					
+				} else {
+					if (isCur) {
+						tuioContainer.update(x, y, z, X, Y, Z, m);
+						dispatchUpdateCursor(tuioContainer as TuioCursor);
+					} else if (isObj) {
+						(tuioContainer as TuioObject).update(i, x, y, z, a, b, c, X, Y, Z, A, B, C, m, r);
+						dispatchUpdateObject(tuioContainer as TuioObject);
+					} else if (isBlb) {
+						(tuioContainer as TuioBlob).update(x, y, z, a, b, c, w, h, d, f, v, X, Y, Z, A, B, C, m, r);
+						dispatchUpdateBlob(tuioContainer as TuioBlob);
+					} else return;
+				}
+				
+			} else if (msg.arguments[0] == "alive") {
+				
+				var tuioContainerList:Array;
+				
+				if (msg.addressPattern.indexOf("cur") > -1) {
+					
+					for each(var tc:TuioCursor in this.tuioCursors) {
+						tc.isAlive = false;
+					}
+					
+					for (var c:uint = 1; c < msg.arguments.length; c++){
+						for each(var tc:TuioCursor in this.tuioCursors) {
+							if (tc.sessionID == msg.arguments[c]) {
+								tc.isAlive = true;
+								break;
+							}
+						}
+					}
+					
+					tuioContainerList = this.tuioCursors.concat();
+					this.tuioCursors = new Array();
+					
+					for each(var tc:TuioCursor in tuioContainerList) {
+						if (tc.isAlive) this.tuioCursors.push(tc);
+						else {
+							dispatchRemoveCursor(tc);
+						}
+					}
+					
+				} else if (msg.addressPattern.indexOf("obj") > -1) {
+					
+					for each(var to:TuioObject in this.tuioObjects) {
+						to.isAlive = false;
+					}
+					
+					for (var c:uint = 1; c < msg.arguments.length; c++){
+						for each(var to:TuioObject in this.tuioObjects) {
+							if (to.sessionID == msg.arguments[c]) {
+								to.isAlive = true;
+								break;
+							}
+						}
+					}
+					
+					tuioContainerList = this.tuioObjects.concat();
+					this.tuioObjects = new Array();
+					
+					for each(var to:TuioObject in tuioContainerList) {
+						if (to.isAlive) this.tuioObjects.push(to);
+						else {
+							dispatchRemoveObject(to);
+						}
+					}
+					
+				} else if (msg.addressPattern.indexOf("blb") > -1) {
+					
+					for each(var tb:TuioBlob in this.tuioBlobs) {
+						tb.isAlive = false;
+					}
+					
+					for (var c:uint = 1; c < msg.arguments.length; c++){
+						for each(var tb:TuioBlob in this.tuioBlobs) {
+							if (tb.sessionID == msg.arguments[c]) {
+								tb.isAlive = true;
+								break;
+							}
+						}
+					}
+					
+					tuioContainerList = this.tuioBlobs.concat();
+					this.tuioBlobs = new Array();
+					
+					for each(var tb:TuioBlob in tuioContainerList) {
+						if (tb.isAlive) this.tuioBlobs.push(tb);
+						else {
+							dispatchRemoveBlob(tb);
+						}
+					}
+					
+				} else return;
 				
 			}
 		}
@@ -172,6 +290,60 @@ package org.tuio.tuio {
 		
 		public function get currentSource():String {
 			return this.src;
+		}
+		
+		private function dispatchAddCursor(tuioCursor:TuioCursor) {
+			for each(var l:ITuioListener in this.listeners) {
+				l.addTuioCursor(tuioCursor);
+			}
+		}
+		
+		private function dispatchUpdateCursor(tuioCursor:TuioCursor) {
+			for each(var l:ITuioListener in this.listeners) {
+				l.addTuioCursor(tuioCursor);
+			}
+		}
+		
+		private function dispatchRemoveCursor(tuioCursor:TuioCursor) {
+			for each(var l:ITuioListener in this.listeners) {
+				l.addTuioCursor(tuioCursor);
+			}
+		}
+		
+		private function dispatchAddObject(tuioObject:TuioObject) {
+			for each(var l:ITuioListener in this.listeners) {
+				l.addTuioObject(tuioObject);
+			}
+		}
+		
+		private function dispatchUpdateObject(tuioObject:TuioObject) {
+			for each(var l:ITuioListener in this.listeners) {
+				l.updateTuioObject(tuioObject);
+			}
+		}
+		
+		private function dispatchRemoveObject(tuioObject:TuioObject) {
+			for each(var l:ITuioListener in this.listeners) {
+				l.removeTuioObject(tuioObject);
+			}
+		}
+		
+		private function dispatchAddBlob(tuioBlob:TuioBlob) {
+			for each(var l:ITuioListener in this.listeners) {
+				l.addTuioBlob(tuioBlob);
+			}
+		}
+		
+		private function dispatchUpateBlob(tuioBlob:TuioBlob) {
+			for each(var l:ITuioListener in this.listeners) {
+				l.updateTuioBlob(tuioBlob);
+			}
+		}
+		
+		private function dispatchRemoveBlob(tuioBlob:TuioBlob) {
+			for each(var l:ITuioListener in this.listeners) {
+				l.removeTuioBlob(tuioBlob);
+			}
 		}
 
 	}
