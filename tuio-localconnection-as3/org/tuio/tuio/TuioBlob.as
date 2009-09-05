@@ -1,6 +1,6 @@
 package org.tuio.tuio {
 
-	public class TuioBlob {
+	public class TuioBlob extends TuioContainer {
 		
 		private var _a:Number;
 		private var _b:Number;
@@ -33,7 +33,13 @@ package org.tuio.tuio {
 		}
 		
 		public function update(x:Number, y:Number, z:Number, a:Number, b:Number, c:Number, w:Number, h:Number, d:Number, f:Number, v:Number, X:Number, Y:Number, Z:Number, A:Number, B:Number, C:Number, m:Number, r:Number):void {
-			super.update(x, y, z, X, Y, Z, m);
+			this._x = x;
+			this._y = y;
+			this._z = z;
+			this._X = X;
+			this._Y = Y;
+			this._Z = Z;
+			this._m = m;
 			
 			this._a = a;
 			this._b = b;

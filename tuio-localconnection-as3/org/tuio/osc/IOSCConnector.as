@@ -1,12 +1,12 @@
 package org.tuio.osc {
 	
-    interface IOSCConnector {
+    public interface IOSCConnector {
 		
-		public function addListener(listener:IOSCConnectorListener):void;
+		function addListener(listener:IOSCConnectorListener):void;
 		
-		public function removeListener(listener:IOSCConnectorListener):void;
+		function removeListener(listener:IOSCConnectorListener):void;
 		
-		public function sendOSCPacket(oscPacket:OSCPacket):void;
+		function sendOSCPacket(oscPacket:OSCPacket):void;
 		
     }
 	

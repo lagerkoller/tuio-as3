@@ -1,8 +1,8 @@
 package org.tuio.osc {
 	
-    interface IOSCConnectorListener {
+    public interface IOSCConnectorListener {
 		
-		public function acceptOSCPacket(oscPacket:OSCPacket):void;
+		function acceptOSCPacket(oscPacket:OSCPacket):void;
 		
     }
 	

@@ -59,12 +59,12 @@ package org.tuio.osc {
 			var regExStr:String = "";
 			for (var c:uint = 0; c < pattern.length; c++) {
 				switch(pattern.charAt(c)) {
-					case "{": regEx += "(" ; break;
-					case "}": regEx += ")" ; break;
-					case ",": regEx += "|" ; break;
-					case "*": regEx += ".*" ; break;
-					case "?": regEx += ".+" ; break;
-					default: regEx += pattern.charAt(c); break;
+					case "{": regExStr += "(" ; break;
+					case "}": regExStr += ")" ; break;
+					case ",": regExStr += "|" ; break;
+					case "*": regExStr += ".*" ; break;
+					case "?": regExStr += ".+" ; break;
+					default: regExStr += pattern.charAt(c); break;
 				}
 			}
 			

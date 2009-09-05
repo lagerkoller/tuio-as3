@@ -45,7 +45,7 @@
 						case "d": openArray.push(this.bytes.readDouble()); break;
 						case "S": openArray.push(this.readString()); break;
 						case "c": openArray.push(this.bytes.readMultiByte(4, "US-ASCII")); break;
-						case "r": openArray.push(this.readUnsignedInt()); break;
+						case "r": openArray.push(this.bytes.readUnsignedInt()); break;
 						case "T": openArray.push(true); break;
 						case "F": openArray.push(false); break;
 						case "N": openArray.push(null); break;
