@@ -19,7 +19,7 @@ package org.tuio.osc {
 			this.connectionNameOut = connectionNameOut;
 			
 			this.connectionIn = new LCReceiver(this.connectionNameIn, this);
-			this.connectionOut = new LCSender(this.connectionNameOut);
+			this.connectionOut = new LCSender(this.connectionNameOut, "receiveOscData");
 			
 			this.connectionIn.start();
 		}

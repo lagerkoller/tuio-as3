@@ -1,18 +1,18 @@
 package org.tuio.tuio {
 	
-    interface ITuioListener {
+    public interface ITuioListener {
 		
-		public function addTuioObject(tuioObject:TuioObject):void;
-		public function updateTuioObject(tuioObject:TuioObject):void;
-		public function removeTuioObject(tuioObject:TuioObject):void;
+		function addTuioObject(tuioObject:TuioObject):void;
+		function updateTuioObject(tuioObject:TuioObject):void;
+		function removeTuioObject(tuioObject:TuioObject):void;
 
-		public function addTuioCursor(tuioCursor:TuioCursor):void;
-		public function updateTuioCursor(tuioCursor:TuioCursor):void;
-		public function removeTuioCursor(tuioCursor:TuioCursor):void;
+		function addTuioCursor(tuioCursor:TuioCursor):void;
+		function updateTuioCursor(tuioCursor:TuioCursor):void;
+		function removeTuioCursor(tuioCursor:TuioCursor):void;
 		
-		public function addTuioBlob(tuioCursor:TuioBlob):void;
-		public function updateTuioBlob(tuioCursor:TuioBlob):void;
-		public function removeTuioBlob(tuioCursor:TuioBlob):void;
+		function addTuioBlob(tuioCursor:TuioBlob):void;
+		function updateTuioBlob(tuioCursor:TuioBlob):void;
+		function removeTuioBlob(tuioCursor:TuioBlob):void;
 		
     }
 	

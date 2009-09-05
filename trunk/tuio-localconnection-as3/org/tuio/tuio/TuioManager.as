@@ -19,6 +19,12 @@ package org.tuio.tuio {
 		
 		public function TuioManager(connectionMode:uint) {
 			
+			this.listeners = new Array();
+			
+			this.tuioCursors = new Array();
+			this.tuioObjects = new Array();
+			this.tuioBlobs = new Array();
+			
 			var connector:IOSCConnector;
 			
 			if (connectionMode == CONNECTION_MODE_TCP) {
@@ -26,21 +32,19 @@ package org.tuio.tuio {
 			} else if (connectionMode == CONNECTION_MODE_LC) {
 				connector = new LCConnector("_TuioOscDataStream");
 			} else {
-				//maybe throw exception
+				throw new ArgumentError("The specified connection mode isn't valid.");
 			}
 			
 			if (connector != null) {
 				this.oscManager = new OSCManager();
-				//set TuioManager or extra handler classes as listener
+				this.oscManager.addMsgListener(this);
 			}
-			
-			this.listeners = new Array();
-			
-			this.tuioContainer = new Array();
 			
 		}
 		
 		public function acceptOSCMessage(msg:OSCMessage):void {
+			
+			var tuioContainerList:Array;
 			
 			if (msg.arguments[0] == "fseq") this.fseq = int(parseInt(msg.arguments[1]));
 			else if (msg.arguments[0] == "source") this.src = msg.arguments[1];
@@ -141,7 +145,6 @@ package org.tuio.tuio {
 				var type:String = msg.addressPattern.substring(6, msg.addressPattern.length);
 				
 				var tuioContainer:TuioContainer;
-				var tuioContainerList:Array;
 				
 				if (isCur) {
 					tuioContainerList = this.tuioCursors;
@@ -176,10 +179,10 @@ package org.tuio.tuio {
 					
 				} else {
 					if (isCur) {
-						tuioContainer.update(x, y, z, X, Y, Z, m);
+						(tuioContainer as TuioCursor).update(x, y, z, X, Y, Z, m);
 						dispatchUpdateCursor(tuioContainer as TuioCursor);
 					} else if (isObj) {
-						(tuioContainer as TuioObject).update(i, x, y, z, a, b, c, X, Y, Z, A, B, C, m, r);
+						(tuioContainer as TuioObject).update(x, y, z, a, b, c, X, Y, Z, A, B, C, m, r);
 						dispatchUpdateObject(tuioContainer as TuioObject);
 					} else if (isBlb) {
 						(tuioContainer as TuioBlob).update(x, y, z, a, b, c, w, h, d, f, v, X, Y, Z, A, B, C, m, r);
@@ -189,18 +192,16 @@ package org.tuio.tuio {
 				
 			} else if (msg.arguments[0] == "alive") {
 				
-				var tuioContainerList:Array;
-				
 				if (msg.addressPattern.indexOf("cur") > -1) {
 					
-					for each(var tc:TuioCursor in this.tuioCursors) {
-						tc.isAlive = false;
+					for each(var tcur:TuioCursor in this.tuioCursors) {
+						tcur.isAlive = false;
 					}
 					
-					for (var c:uint = 1; c < msg.arguments.length; c++){
-						for each(var tc:TuioCursor in this.tuioCursors) {
-							if (tc.sessionID == msg.arguments[c]) {
-								tc.isAlive = true;
+					for (var k:uint = 1; k < msg.arguments.length; k++){
+						for each(tcur in this.tuioCursors) {
+							if (tcur.sessionID == msg.arguments[k]) {
+								tcur.isAlive = true;
 								break;
 							}
 						}
@@ -209,10 +210,10 @@ package org.tuio.tuio {
 					tuioContainerList = this.tuioCursors.concat();
 					this.tuioCursors = new Array();
 					
-					for each(var tc:TuioCursor in tuioContainerList) {
-						if (tc.isAlive) this.tuioCursors.push(tc);
+					for each(tcur in tuioContainerList) {
+						if (tcur.isAlive) this.tuioCursors.push(tcur);
 						else {
-							dispatchRemoveCursor(tc);
+							dispatchRemoveCursor(tcur);
 						}
 					}
 					
@@ -222,9 +223,9 @@ package org.tuio.tuio {
 						to.isAlive = false;
 					}
 					
-					for (var c:uint = 1; c < msg.arguments.length; c++){
-						for each(var to:TuioObject in this.tuioObjects) {
-							if (to.sessionID == msg.arguments[c]) {
+					for (var t:uint = 1; t < msg.arguments.length; t++){
+						for each(to in this.tuioObjects) {
+							if (to.sessionID == msg.arguments[t]) {
 								to.isAlive = true;
 								break;
 							}
@@ -234,7 +235,7 @@ package org.tuio.tuio {
 					tuioContainerList = this.tuioObjects.concat();
 					this.tuioObjects = new Array();
 					
-					for each(var to:TuioObject in tuioContainerList) {
+					for each(to in tuioContainerList) {
 						if (to.isAlive) this.tuioObjects.push(to);
 						else {
 							dispatchRemoveObject(to);
@@ -247,9 +248,9 @@ package org.tuio.tuio {
 						tb.isAlive = false;
 					}
 					
-					for (var c:uint = 1; c < msg.arguments.length; c++){
-						for each(var tb:TuioBlob in this.tuioBlobs) {
-							if (tb.sessionID == msg.arguments[c]) {
+					for (var u:uint = 1; u < msg.arguments.length; u++){
+						for each(tb in this.tuioBlobs) {
+							if (tb.sessionID == msg.arguments[u]) {
 								tb.isAlive = true;
 								break;
 							}
@@ -259,7 +260,7 @@ package org.tuio.tuio {
 					tuioContainerList = this.tuioBlobs.concat();
 					this.tuioBlobs = new Array();
 					
-					for each(var tb:TuioBlob in tuioContainerList) {
+					for each(tb in tuioContainerList) {
 						if (tb.isAlive) this.tuioBlobs.push(tb);
 						else {
 							dispatchRemoveBlob(tb);
@@ -300,13 +301,13 @@ package org.tuio.tuio {
 		
 		private function dispatchUpdateCursor(tuioCursor:TuioCursor) {
 			for each(var l:ITuioListener in this.listeners) {
-				l.addTuioCursor(tuioCursor);
+				l.updateTuioCursor(tuioCursor);
 			}
 		}
 		
 		private function dispatchRemoveCursor(tuioCursor:TuioCursor) {
 			for each(var l:ITuioListener in this.listeners) {
-				l.addTuioCursor(tuioCursor);
+				l.removeTuioCursor(tuioCursor);
 			}
 		}
 		
@@ -334,7 +335,7 @@ package org.tuio.tuio {
 			}
 		}
 		
-		private function dispatchUpateBlob(tuioBlob:TuioBlob) {
+		private function dispatchUpdateBlob(tuioBlob:TuioBlob) {
 			for each(var l:ITuioListener in this.listeners) {
 				l.updateTuioBlob(tuioBlob);
 			}

@@ -11,9 +11,11 @@ package org.tuio.osc {
 		private var oscMethods:Array;
 		private var oscAddressSpace:OSCAddressSpace;
 		
+		private var running:Boolean;
+		
 		public var usePatternMatching:Boolean = false;
 		
-		public function OSCManager(connectorIn:IOSCConnector = null, connectorOut:IOSCConnector = null) {
+		public function OSCManager(connectorIn:IOSCConnector = null, connectorOut:IOSCConnector = null, autoStart:Boolean = true) {
 			
 			this.msgListener = new Array();
 			this.oscMethods = new Array();
@@ -22,6 +24,16 @@ package org.tuio.osc {
 			if(this.connIn != null) this.connIn.addListener(this);
 			this.connOut = connectorOut;
 			
+			this.running = autoStart;
+			
+		}
+		
+		public function start() {
+			this.running = true;
+		}
+
+		public function stop() {
+			this.running = false;
 		}
 		
 		public function setConnectorIn(conn:IOSCConnector):void {
@@ -37,7 +49,7 @@ package org.tuio.osc {
 		}
 		
 		public function sendOSCPacket(oscPacket:OSCPacket):void {
-			this.connOut.sendPacket(oscPacket);
+			this.connOut.sendOSCPacket(oscPacket);
 		}
 		
 		public function getCurrentPacket():OSCPacket {
@@ -45,23 +57,24 @@ package org.tuio.osc {
 		}
 		
 		public function acceptOSCPacket(oscPacket:OSCPacket):void {
-			this.currentPacket = oscPacket;
-			this.distributeOSCPacket(this.currentPacket);
+			if(running){
+				this.currentPacket = oscPacket;
+				this.distributeOSCPacket(this.currentPacket);
+			}
 		}
 		
-		private function distributeOSCPacket(packet:OSCPacket) {
+		private function distributeOSCPacket(packet:OSCPacket):void {
 			if (packet is OSCMessage) {
-				this.distributeOSCMessage(packet);
+				this.distributeOSCMessage(packet as OSCMessage);
 			} else if (packet is OSCBundle) {
 				var cont:Array = (packet as OSCBundle).subPackets.concat();
-				
 				for each(var p:OSCPacket in cont) {
 					this.distributeOSCPacket(p);
 				}
 			}
 		}
 		
-		private function distributeOSCMessage(msg:OSCMessage) {
+		private function distributeOSCMessage(msg:OSCMessage):void {
 
 			for each(var l:IOSCListener in this.msgListener) {
 				l.acceptOSCMessage(msg);
@@ -74,7 +87,7 @@ package org.tuio.osc {
 				
 				if (this.usePatternMatching) {
 					oscMethods = this.oscAddressSpace.getMethods(msg.addressPattern);
-					for each(var l:IOSCListener in oscMethods) {
+					for each(l in oscMethods) {
 						l.acceptOSCMessage(msg);
 					}
 				} else {

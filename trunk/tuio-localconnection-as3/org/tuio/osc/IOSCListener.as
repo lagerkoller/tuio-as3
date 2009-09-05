@@ -1,8 +1,8 @@
 package org.tuio.osc {
 	
-    interface IOSCListener {
+    public interface IOSCListener {
 		
-		public function acceptOSCMessage(oscmsg:OSCMessage):void;
+		function acceptOSCMessage(oscmsg:OSCMessage):void;
 		
     }
 	

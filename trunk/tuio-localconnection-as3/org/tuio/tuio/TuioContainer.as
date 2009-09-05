@@ -2,15 +2,15 @@ package org.tuio.tuio {
 
 	public class TuioContainer {
 		
-		private var _sessionID:uint;
-		private var _x:Number;
-		private var _y:Number;
-		private var _z:Number;
-		private var _X:Number;
-		private var _Y:Number;
-		private var _Z:Number;
-		private var _m:Number;
-		private var _type:String;
+		protected var _sessionID:uint;
+		protected var _x:Number;
+		protected var _y:Number;
+		protected var _z:Number;
+		protected var _X:Number;
+		protected var _Y:Number;
+		protected var _Z:Number;
+		protected var _m:Number;
+		protected var _type:String;
 		
 		public var isAlive:Boolean;
 		
@@ -24,17 +24,7 @@ package org.tuio.tuio {
 			this._Y = Y;
 			this._Z = Z;
 			this._m = m;
-			this.alive = true;
-		}
-		
-		public function update(x:Number, y:Number, z:Number, X:Number, Y:Number, Z:Number, m:Number) {
-			this._x = x;
-			this._y = y;
-			this._z = z;
-			this._X = X;
-			this._Y = Y;
-			this._Z = Z;
-			this._m = m;
+			this.isAlive = true;
 		}
 		
 		public function get type():String {
