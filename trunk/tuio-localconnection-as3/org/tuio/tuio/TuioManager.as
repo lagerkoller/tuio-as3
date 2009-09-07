@@ -36,7 +36,7 @@ package org.tuio.tuio {
 			}
 			
 			if (connector != null) {
-				this.oscManager = new OSCManager();
+				this.oscManager = new OSCManager(connector);
 				this.oscManager.addMsgListener(this);
 			}
 			
@@ -156,7 +156,7 @@ package org.tuio.tuio {
 				
 				//resolve if add or update
 				for each(var tc:TuioContainer in tuioContainerList) {
-					if (tc.sessionID == tuioContainer.sessionID) {
+					if (tc.sessionID == s) {
 						tuioContainer = tc;
 						break;
 					}

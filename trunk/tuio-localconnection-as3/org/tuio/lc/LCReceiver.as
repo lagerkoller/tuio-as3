@@ -29,6 +29,10 @@ package org.tuio.lc {
 			this.addNumber = addNumber;
 			this.lcClient = lcClient;
 			
+			this.localConnection = new LocalConnection();
+			this.localConnection.allowDomain('*');
+			this.localConnection.client = this.lcClient;
+			
 		}
 		
 		/**
@@ -39,31 +43,17 @@ package org.tuio.lc {
 		public function start():Boolean {
 			this.stop();
 			
-			this.localConnection = new LocalConnection();
-			this.localConnection.allowDomain('*');
-			this.localConnection.client = this.lcClient;
-			
-			var testLC:LocalConnection = new LocalConnection();
-			testLC.allowDomain('*');
-			
 			var retry:int = 0;
 			var name:String;
 			
 			while(retry < 8){
 				try {
-					
 					name = this.connectionName + ((addNumber)?retry.toString():"");
 					
 					this.localConnection.connect(name);
-			
-					try {
-						testLC.connect(name);
-						retry++;
-						debug("retry");
-					} catch (e:Error){
-						debug("connected as: "+name);
-						return true;
-					}
+					
+					debug("connected as: "+name);
+					return true;
 					
 				} catch (e:Error) {
 					retry++;
