@@ -15,6 +15,8 @@ package org.tuio.osc {
 		
 		public function LCConnector(connectionNameIn:String = "_OscDataStream", connectionNameOut:String = "_OscDataStreamOut") {
 			
+			this.listeners = new Array();
+			
 			this.connectionNameIn = connectionNameIn;
 			this.connectionNameOut = connectionNameOut;
 			
