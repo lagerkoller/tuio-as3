@@ -3,6 +3,7 @@ package org.tuio.lc {
 	import flash.utils.ByteArray;
 	import flash.net.LocalConnection;
 	import flash.events.StatusEvent;
+	import flash.events.AsyncErrorEvent;
 	
 	/**
 	 * A Class for establishing a receiving LocalConnection
@@ -30,9 +31,16 @@ package org.tuio.lc {
 			this.lcClient = lcClient;
 			
 			this.localConnection = new LocalConnection();
+			this.localConnection.allowDomain('localhost');
 			this.localConnection.allowDomain('*');
 			this.localConnection.client = this.lcClient;
 			
+			var lclistener:Object = new Object();
+			lclistener.onAsyncError = function(e:AsyncErrorEvent) {
+				debug("error"+e.toString());
+			}
+			
+			this.localConnection.addEventListener(AsyncErrorEvent.ASYNC_ERROR, lclistener.onAsyncError);
 		}
 		
 		/**
@@ -82,6 +90,7 @@ package org.tuio.lc {
 		}
 		
 		private function debug(msg:String):void {
+			trace(msg);
 			if (this.debugListener != null) {
 				this.debugListener.call(NaN, msg);
 			}
