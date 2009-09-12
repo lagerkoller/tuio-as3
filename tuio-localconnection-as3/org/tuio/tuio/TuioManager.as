@@ -30,7 +30,7 @@ package org.tuio.tuio {
 			if (connectionMode == CONNECTION_MODE_TCP) {
 				
 			} else if (connectionMode == CONNECTION_MODE_LC) {
-				connector = new LCConnector("_TuioOscDataStream");
+				connector = new LCConnector();
 			} else {
 				throw new ArgumentError("The specified connection mode isn't valid.");
 			}
