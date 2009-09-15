@@ -51,12 +51,12 @@ package org.tuio.lc {
 		public function start():Boolean {
 			this.stop();
 			
-			var retry:int = 0;
+			var retry:int = -1;
 			var name:String;
 			
-			while(retry < 8){
+			while(retry < 7){
 				try {
-					name = this.connectionName + ((addNumber)?retry.toString():"");
+					name = this.connectionName + ((addNumber && retry >= 0)?retry.toString():"");
 					
 					this.localConnection.connect(name);
 					
