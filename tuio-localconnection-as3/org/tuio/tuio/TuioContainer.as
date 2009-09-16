@@ -1,5 +1,10 @@
 package org.tuio.tuio {
 
+	/**
+	 * This is a generic class that contains values present in every profile specified in TUIO 1.1
+	 * 
+	 * @author Immanuel Bauer
+	 */
 	public class TuioContainer {
 		
 		protected var _sessionID:uint;

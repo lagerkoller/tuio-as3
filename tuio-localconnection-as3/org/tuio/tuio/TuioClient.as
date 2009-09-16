@@ -2,7 +2,13 @@ package org.tuio.tuio {
 	
 	import org.tuio.osc.*;
 	
-	public class TuioManager implements IOSCListener{
+	/**
+	 * A Class for receiving multitouch tracking data via the TUIO protocol.
+	 * 
+	 * @author Immanuel Bauer
+	 * 
+	 */
+	public class TuioClient implements IOSCListener{
 		
 		public static const CONNECTION_MODE_TCP:uint = 0;
 		public static const CONNECTION_MODE_LC:uint = 1;
@@ -17,7 +23,10 @@ package org.tuio.tuio {
 		private var tuioObjects:Array;
 		private var tuioBlobs:Array;
 		
-		public function TuioManager(connectionMode:uint) {
+		/**
+		 * @param	connectionMode The connection mode used to receive the TUIO tracking data. Either TuioClient.CONNECTION_MODE_TCP or CONNECTION_MODE_LC. Default is TuioClient CONNECTION_MODE_LC.
+		 */
+		public function TuioClient(connectionMode:uint = TuioClient.CONNECTION_MODE_LC) {
 			
 			this.listeners = new Array();
 			
@@ -42,6 +51,11 @@ package org.tuio.tuio {
 			
 		}
 		
+		/**
+		 * Callback function for receiving TUIO tracking data in OSCMessages.
+		 * 
+		 * @param	msg The OSCMessage containing a single TUIOEvent.
+		 */
 		public function acceptOSCMessage(msg:OSCMessage):void {
 			
 			var tuioContainerList:Array;
@@ -272,11 +286,21 @@ package org.tuio.tuio {
 			}
 		}
 		
+		/**
+		 * Adds a listener to the callback stack . The callback functions of the listener will be called on incoming TUIOEvents.
+		 * 
+		 * @param	listener Object of a class that implements the callback functions defined in the ITuioListener interface.
+		 */
 		public function addListener(listener:ITuioListener) {
 			if (this.listeners.indexOf(listener) > -1) return;
 			this.listeners.push(listener);
 		}
 		
+		/**
+		 * Removes the given listener from the callback stack.
+		 * 
+		 * @param	listener
+		 */
 		public function removeListener(listener:ITuioListener):void {
 			var temp:Array = new Array();
 			for each(var l:ITuioListener in this.listeners) {
@@ -285,13 +309,23 @@ package org.tuio.tuio {
 			this.listeners = temp.concat();
 		}
 		
+		/**
+		 * @return The last received fseq value by the tracker.
+		 */
 		public function get currentFseq():int {
 			return this.fseq;
 		}
 		
+		/**
+		 * @return The last received source specification by the tracker.
+		 */
 		public function get currentSource():String {
 			return this.src;
 		}
+		
+		/**
+		 * Helper functions for dispatching TUIOEvents to the ITuioListeners.
+		 */
 		
 		private function dispatchAddCursor(tuioCursor:TuioCursor) {
 			for each(var l:ITuioListener in this.listeners) {
