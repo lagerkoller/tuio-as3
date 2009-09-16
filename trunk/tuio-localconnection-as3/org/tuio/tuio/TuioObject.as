@@ -1,5 +1,10 @@
 package org.tuio.tuio {
 	
+	/**
+	 * This class represents a TuioObject as specified in TUIO 1.1
+	 * 
+	 * @author Immanuel Bauer
+	 */
 	public class TuioObject extends TuioContainer {
 		
 		private var _id:uint;
@@ -24,6 +29,7 @@ package org.tuio.tuio {
 			this._r = r;
 		}
 		
+		/* Updates the values of the TuioObject */
 		public function update(x:Number, y:Number, z:Number, a:Number, b:Number, c:Number, X:Number, Y:Number, Z:Number, A:Number, B:Number, C:Number, m:Number, r:Number):void {
 			this._x = x;
 			this._y = y;
@@ -72,6 +78,32 @@ package org.tuio.tuio {
 		
 		public function get r():uint {
 			return this.r;
+		}
+		
+		/* This function converts the TuioObjects values into a String for output purposes */
+		public function toString():String {
+			var out:String = "";
+			out += "TuioObject(";
+			out += "type: " + this._type;
+			out += " ,sessionID: " + this._sessionID;
+			out += " ,classID: " + this._id;
+			out += " ,x: " + this._x;
+			out += " ,y: " + this._y;
+			out += " ,z: " + this._z;
+			out += " ,a: " + this._a;
+			out += " ,b: " + this._b;
+			out += " ,c: " + this._c;
+			out += " ,X: " + this._X;
+			out += " ,Y: " + this._Y;
+			out += " ,Z: " + this._Z;
+			out += " ,A: " + this._A;
+			out += " ,B: " + this._B;
+			out += " ,C: " + this._C;
+			out += " ,m: " + this._m;
+			out += " ,r: " + this._r;
+			out += ")";
+			
+			return out;
 		}
 	}
 	

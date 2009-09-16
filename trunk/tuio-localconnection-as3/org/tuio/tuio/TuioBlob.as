@@ -1,5 +1,10 @@
 package org.tuio.tuio {
-
+	
+	/**
+	 * This class represents a TuioBlob as specified in TUIO 1.1
+	 * 
+	 * @author Immanuel Bauer
+	 */
 	public class TuioBlob extends TuioContainer {
 		
 		private var _a:Number;
@@ -32,6 +37,7 @@ package org.tuio.tuio {
 			this._r = r;
 		}
 		
+		/* Updates the values of the TuioBlob */
 		public function update(x:Number, y:Number, z:Number, a:Number, b:Number, c:Number, w:Number, h:Number, d:Number, f:Number, v:Number, X:Number, Y:Number, Z:Number, A:Number, B:Number, C:Number, m:Number, r:Number):void {
 			this._x = x;
 			this._y = y;
@@ -101,6 +107,35 @@ package org.tuio.tuio {
 		
 		public function get r():uint {
 			return this.r;
+		}
+		
+		/* This function converts the TuioBlobs values into a String for output purposes */
+		public function toString():String {
+			var out:String = "";
+			out += "TuioBlob(";
+			out += "type: " + this._type;
+			out += " ,sessionID: " + this._sessionID;
+			out += " ,x: " + this._x;
+			out += " ,y: " + this._y;
+			out += " ,z: " + this._z;
+			out += " ,a: " + this._a;
+			out += " ,b: " + this._b;
+			out += " ,c: " + this._c;
+			out += " ,w: " + this._w;
+			out += " ,h: " + this._h;
+			out += " ,d: " + this._d;
+			out += " ,v: " + this._v;
+			out += " ,X: " + this._X;
+			out += " ,Y: " + this._Y;
+			out += " ,Z: " + this._Z;
+			out += " ,A: " + this._A;
+			out += " ,B: " + this._B;
+			out += " ,C: " + this._C;
+			out += " ,m: " + this._m;
+			out += " ,r: " + this._r;
+			out += ")";
+			
+			return out;
 		}
 		
 	}
