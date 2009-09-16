@@ -27,14 +27,14 @@ package org.tuio.tuio {
 			var out:String = "";
 			out += "TuioCursor(";
 			out += "type: " + this._type;
-			out += " ,sessionID: " + this._sessionID;
-			out += " ,x: " + this._x;
-			out += " ,y: " + this._y;
-			out += " ,z: " + this._z;
-			out += " ,X: " + this._X;
-			out += " ,Y: " + this._Y;
-			out += " ,Z: " + this._Z;
-			out += " ,m: " + this._m;
+			out += ", sessionID: " + this._sessionID;
+			out += ", x: " + this._x;
+			out += ", y: " + this._y;
+			out += ", z: " + this._z;
+			out += ", X: " + this._X;
+			out += ", Y: " + this._Y;
+			out += ", Z: " + this._Z;
+			out += ", m: " + this._m;
 			out += ")";
 			
 			return out;
