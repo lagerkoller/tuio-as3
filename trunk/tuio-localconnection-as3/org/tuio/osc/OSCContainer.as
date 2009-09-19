@@ -44,7 +44,7 @@ package org.tuio.osc {
 			return out;
 		}
 		
-		public function removeChild(child:OSCContainer) {
+		public function removeChild(child:OSCContainer):void {
 			if (child.hasChildren) child.method = null;
 			else this.children[child.name] = null;
 		}
@@ -76,7 +76,7 @@ package org.tuio.osc {
 			
 		}
 		
-		public function get hasChildren() {
+		public function get hasChildren():Boolean {
 			
 			return (children.length > 0);
 			

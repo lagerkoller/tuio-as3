@@ -37,7 +37,7 @@ package org.tuio.tuio {
 			var connector:IOSCConnector;
 			
 			if (connectionMode == CONNECTION_MODE_TCP) {
-				
+				connector = new TCPConnector();
 			} else if (connectionMode == CONNECTION_MODE_LC) {
 				connector = new LCConnector();
 			} else {
@@ -291,7 +291,7 @@ package org.tuio.tuio {
 		 * 
 		 * @param	listener Object of a class that implements the callback functions defined in the ITuioListener interface.
 		 */
-		public function addListener(listener:ITuioListener) {
+		public function addListener(listener:ITuioListener):void {
 			if (this.listeners.indexOf(listener) > -1) return;
 			this.listeners.push(listener);
 		}
@@ -327,55 +327,55 @@ package org.tuio.tuio {
 		 * Helper functions for dispatching TUIOEvents to the ITuioListeners.
 		 */
 		
-		private function dispatchAddCursor(tuioCursor:TuioCursor) {
+		private function dispatchAddCursor(tuioCursor:TuioCursor):void {
 			for each(var l:ITuioListener in this.listeners) {
 				l.addTuioCursor(tuioCursor);
 			}
 		}
 		
-		private function dispatchUpdateCursor(tuioCursor:TuioCursor) {
+		private function dispatchUpdateCursor(tuioCursor:TuioCursor):void {
 			for each(var l:ITuioListener in this.listeners) {
 				l.updateTuioCursor(tuioCursor);
 			}
 		}
 		
-		private function dispatchRemoveCursor(tuioCursor:TuioCursor) {
+		private function dispatchRemoveCursor(tuioCursor:TuioCursor):void {
 			for each(var l:ITuioListener in this.listeners) {
 				l.removeTuioCursor(tuioCursor);
 			}
 		}
 		
-		private function dispatchAddObject(tuioObject:TuioObject) {
+		private function dispatchAddObject(tuioObject:TuioObject):void {
 			for each(var l:ITuioListener in this.listeners) {
 				l.addTuioObject(tuioObject);
 			}
 		}
 		
-		private function dispatchUpdateObject(tuioObject:TuioObject) {
+		private function dispatchUpdateObject(tuioObject:TuioObject):void {
 			for each(var l:ITuioListener in this.listeners) {
 				l.updateTuioObject(tuioObject);
 			}
 		}
 		
-		private function dispatchRemoveObject(tuioObject:TuioObject) {
+		private function dispatchRemoveObject(tuioObject:TuioObject):void {
 			for each(var l:ITuioListener in this.listeners) {
 				l.removeTuioObject(tuioObject);
 			}
 		}
 		
-		private function dispatchAddBlob(tuioBlob:TuioBlob) {
+		private function dispatchAddBlob(tuioBlob:TuioBlob):void {
 			for each(var l:ITuioListener in this.listeners) {
 				l.addTuioBlob(tuioBlob);
 			}
 		}
 		
-		private function dispatchUpdateBlob(tuioBlob:TuioBlob) {
+		private function dispatchUpdateBlob(tuioBlob:TuioBlob):void {
 			for each(var l:ITuioListener in this.listeners) {
 				l.updateTuioBlob(tuioBlob);
 			}
 		}
 		
-		private function dispatchRemoveBlob(tuioBlob:TuioBlob) {
+		private function dispatchRemoveBlob(tuioBlob:TuioBlob):void {
 			for each(var l:ITuioListener in this.listeners) {
 				l.removeTuioBlob(tuioBlob);
 			}

@@ -28,11 +28,11 @@ package org.tuio.osc {
 			
 		}
 		
-		public function start() {
+		public function start():void {
 			this.running = true;
 		}
 
-		public function stop() {
+		public function stop():void {
 			this.running = false;
 		}
 		

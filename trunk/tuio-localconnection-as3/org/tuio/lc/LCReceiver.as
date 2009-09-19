@@ -36,7 +36,7 @@ package org.tuio.lc {
 			this.localConnection.client = this.lcClient;
 			
 			var lclistener:Object = new Object();
-			lclistener.onAsyncError = function(e:AsyncErrorEvent) {
+			lclistener.onAsyncError = function(e:AsyncErrorEvent):void {
 				debug("error"+e.toString());
 			}
 			
