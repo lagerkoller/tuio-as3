@@ -29,7 +29,7 @@ package org.tuio.lc {
 		 * @return	true if sent successfully
 		 */
 		public function send(... args):Boolean {
-			var lc = new LocalConnection();
+			var lc:LocalConnection = new LocalConnection();
 			args.unshift(this.methodName);
 			args.unshift(this.connectionName);
 			try{

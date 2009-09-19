@@ -1,7 +1,7 @@
 ﻿package org.tuio.osc {
 	
-	import flash.utils.ByteArray;
 	import flash.errors.EOFError;
+	import flash.utils.ByteArray;
 	
 	/**
 	 * An OSCMessage
@@ -107,7 +107,7 @@
 		 * @param	bytes The ByteArray to be checked.
 		 * @return true if the ByteArray contains an OSCMessage
 		 */
-		public static function isMessage(bytes:ByteArray) {
+		public static function isMessage(bytes:ByteArray):Boolean {
 			if (bytes != null) {
 				bytes.position = 0;
 				var header:String = bytes.readUTFBytes(1);

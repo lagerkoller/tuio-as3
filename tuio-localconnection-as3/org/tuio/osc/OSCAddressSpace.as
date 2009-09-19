@@ -25,7 +25,7 @@ package org.tuio.osc {
 			currentNode.method = method;
 		}
 		
-		public function removeMethod(address:String) {
+		public function removeMethod(address:String):void {
 			var parts:Array = address.split("/");
 			var part:String;
 			var currentNode:OSCContainer = root;
