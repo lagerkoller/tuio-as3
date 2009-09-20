@@ -1,4 +1,4 @@
-package org.tuio.tuio {
+﻿package org.tuio.tuio {
 	
 	import org.tuio.osc.*;
 	
@@ -21,7 +21,7 @@ package org.tuio.tuio {
 		
 		private var _tuioCursors:Array;
 		private var _tuioObjects:Array;
-		private var __tuioBlobs:Array;
+		private var _tuioBlobs:Array;
 		
 		/**
 		 * @param	connectionMode The connection mode used to receive the TUIO tracking data. Either TuioClient.CONNECTION_MODE_TCP or CONNECTION_MODE_LC. Default is TuioClient CONNECTION_MODE_LC.
@@ -32,7 +32,7 @@ package org.tuio.tuio {
 			
 			this._tuioCursors = new Array();
 			this._tuioObjects = new Array();
-			this.__tuioBlobs = new Array();
+			this._tuioBlobs = new Array();
 			
 			var connector:IOSCConnector;
 			
