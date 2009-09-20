@@ -19,9 +19,9 @@ package org.tuio.tuio {
 		private var fseq:int;
 		private var src:String;
 		
-		private var tuioCursors:Array;
-		private var tuioObjects:Array;
-		private var tuioBlobs:Array;
+		private var _tuioCursors:Array;
+		private var _tuioObjects:Array;
+		private var __tuioBlobs:Array;
 		
 		/**
 		 * @param	connectionMode The connection mode used to receive the TUIO tracking data. Either TuioClient.CONNECTION_MODE_TCP or CONNECTION_MODE_LC. Default is TuioClient CONNECTION_MODE_LC.
@@ -30,9 +30,9 @@ package org.tuio.tuio {
 			
 			this.listeners = new Array();
 			
-			this.tuioCursors = new Array();
-			this.tuioObjects = new Array();
-			this.tuioBlobs = new Array();
+			this._tuioCursors = new Array();
+			this._tuioObjects = new Array();
+			this.__tuioBlobs = new Array();
 			
 			var connector:IOSCConnector;
 			
@@ -161,11 +161,11 @@ package org.tuio.tuio {
 				var tuioContainer:TuioContainer;
 				
 				if (isCur) {
-					tuioContainerList = this.tuioCursors;
+					tuioContainerList = this._tuioCursors;
 				} else if (isObj) {
-					tuioContainerList = this.tuioObjects;
+					tuioContainerList = this._tuioObjects;
 				} else if (isBlb) {
-					tuioContainerList = this.tuioBlobs;
+					tuioContainerList = this._tuioBlobs;
 				} else return;
 				
 				//resolve if add or update
@@ -179,15 +179,15 @@ package org.tuio.tuio {
 				if(tuioContainer == null){
 					if (isCur) {
 						tuioContainer = new TuioCursor(type, s, x, y, z, X, Y, Z, m);
-						this.tuioCursors.push(tuioContainer);
+						this._tuioCursors.push(tuioContainer);
 						dispatchAddCursor(tuioContainer as TuioCursor);
 					} else if (isObj) {
 						tuioContainer = new TuioObject(type, s, i, x, y, z, a, b, c, X, Y, Z, A, B, C, m, r);
-						this.tuioObjects.push(tuioContainer);
+						this._tuioObjects.push(tuioContainer);
 						dispatchAddObject(tuioContainer as TuioObject);
 					} else if (isBlb) {
 						tuioContainer = new TuioBlob(type, s, x, y, z, a, b, c, w, h, d, f, v, X, Y, Z, A, B, C, m, r);
-						this.tuioBlobs.push(tuioContainer);
+						this._tuioBlobs.push(tuioContainer);
 						dispatchAddBlob(tuioContainer as TuioBlob);
 					} else return;
 					
@@ -208,12 +208,12 @@ package org.tuio.tuio {
 				
 				if (msg.addressPattern.indexOf("cur") > -1) {
 					
-					for each(var tcur:TuioCursor in this.tuioCursors) {
+					for each(var tcur:TuioCursor in this._tuioCursors) {
 						tcur.isAlive = false;
 					}
 					
 					for (var k:uint = 1; k < msg.arguments.length; k++){
-						for each(tcur in this.tuioCursors) {
+						for each(tcur in this._tuioCursors) {
 							if (tcur.sessionID == msg.arguments[k]) {
 								tcur.isAlive = true;
 								break;
@@ -221,11 +221,11 @@ package org.tuio.tuio {
 						}
 					}
 					
-					tuioContainerList = this.tuioCursors.concat();
-					this.tuioCursors = new Array();
+					tuioContainerList = this._tuioCursors.concat();
+					this._tuioCursors = new Array();
 					
 					for each(tcur in tuioContainerList) {
-						if (tcur.isAlive) this.tuioCursors.push(tcur);
+						if (tcur.isAlive) this._tuioCursors.push(tcur);
 						else {
 							dispatchRemoveCursor(tcur);
 						}
@@ -233,12 +233,12 @@ package org.tuio.tuio {
 					
 				} else if (msg.addressPattern.indexOf("obj") > -1) {
 					
-					for each(var to:TuioObject in this.tuioObjects) {
+					for each(var to:TuioObject in this._tuioObjects) {
 						to.isAlive = false;
 					}
 					
 					for (var t:uint = 1; t < msg.arguments.length; t++){
-						for each(to in this.tuioObjects) {
+						for each(to in this._tuioObjects) {
 							if (to.sessionID == msg.arguments[t]) {
 								to.isAlive = true;
 								break;
@@ -246,11 +246,11 @@ package org.tuio.tuio {
 						}
 					}
 					
-					tuioContainerList = this.tuioObjects.concat();
-					this.tuioObjects = new Array();
+					tuioContainerList = this._tuioObjects.concat();
+					this._tuioObjects = new Array();
 					
 					for each(to in tuioContainerList) {
-						if (to.isAlive) this.tuioObjects.push(to);
+						if (to.isAlive) this._tuioObjects.push(to);
 						else {
 							dispatchRemoveObject(to);
 						}
@@ -258,12 +258,12 @@ package org.tuio.tuio {
 					
 				} else if (msg.addressPattern.indexOf("blb") > -1) {
 					
-					for each(var tb:TuioBlob in this.tuioBlobs) {
+					for each(var tb:TuioBlob in this._tuioBlobs) {
 						tb.isAlive = false;
 					}
 					
 					for (var u:uint = 1; u < msg.arguments.length; u++){
-						for each(tb in this.tuioBlobs) {
+						for each(tb in this._tuioBlobs) {
 							if (tb.sessionID == msg.arguments[u]) {
 								tb.isAlive = true;
 								break;
@@ -271,11 +271,11 @@ package org.tuio.tuio {
 						}
 					}
 					
-					tuioContainerList = this.tuioBlobs.concat();
-					this.tuioBlobs = new Array();
+					tuioContainerList = this._tuioBlobs.concat();
+					this._tuioBlobs = new Array();
 					
 					for each(tb in tuioContainerList) {
-						if (tb.isAlive) this.tuioBlobs.push(tb);
+						if (tb.isAlive) this._tuioBlobs.push(tb);
 						else {
 							dispatchRemoveBlob(tb);
 						}
@@ -321,6 +321,72 @@ package org.tuio.tuio {
 		 */
 		public function get currentSource():String {
 			return this.src;
+		}
+		
+		/**
+		 * @return A copy of the list of currently active tuioCursors
+		 */
+		public function get tuioCursors():Array {
+			return this._tuioCursors.concat();
+		}
+		
+		/**
+		 * @return A copy of the list of currently active tuioObjects
+		 */
+		public function get tuioObjects():Array {
+			return this._tuioObjects.concat();
+		}
+		
+		/**
+		 * @return A copy of the list of currently active tuioBlobs
+		 */
+		public function get tuioBlobs():Array {
+			return this._tuioBlobs.concat();
+		}
+		
+		/**
+		 * @param	sessionID The sessionID of the designated tuioCursor
+		 * @return The tuioCursor matching the given sessionID. Returns null if the tuioCursor doesn't exists
+		 */
+		public function getTuioCursor(sessionID:Number):TuioCursor {
+			var out:TuioCursor = null;
+			for each(var tc:TuioCursor in this._tuioCursors) {
+				if (tc.sessionID == sessionID) {
+					out = tc;
+					break;
+				}
+			}
+			return out;
+		}
+		
+		/**
+		 * @param	sessionID The sessionID of the designated tuioObject
+		 * @return The tuioObject matching the given sessionID. Returns null if the tuioObject doesn't exists
+		 */
+		public function getTuioObject(sessionID:Number):TuioObject {
+			var out:TuioObject = null;
+			for each(var to:TuioObject in this._tuioObjects) {
+				if (to.sessionID == sessionID) {
+					out = to;
+					break;
+				}
+			}
+			return out;
+		}
+		
+		/**
+		 * @param	sessionID The sessionID of the designated tuioBlob
+		 * @return The tuioBlob matching the given sessionID. Returns null if the tuioBlob doesn't exists
+		 */
+		public function getTuioBlob(sessionID:Number):TuioBlob {
+			var out:TuioBlob = null;
+			for each(var tb:TuioBlob in this._tuioBlobs) {
+				if (tb.sessionID == sessionID) {
+					out = tb;
+					break;
+				}
+			}
+			return out;
 		}
 		
 		/**
