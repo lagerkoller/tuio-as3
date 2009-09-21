@@ -196,7 +196,7 @@ package org.tuio.legacy
 				tuioObject = new TUIOObject("mouse", 0, stage.mouseX, stage.mouseY, 0, 0, 0, 0, 10, 10, null);
 			}else{
 				//look for blob/cursor in list
-				var objectArray:Array = tuioClient.getTuioCursors();
+				var objectArray:Array = tuioClient.tuioCursors;
 				for(var i:int=0; i<objectArray.length; i++)  {
 					if(objectArray[i].sessionID == id){
 						var stagePoint:Point = new Point((int)(stage.stageWidth*objectArray[i].x), (int)(stage.stageHeight*objectArray[i].y));
