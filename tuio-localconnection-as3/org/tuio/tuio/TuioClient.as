@@ -9,10 +9,7 @@
 	 * 
 	 */
 	public class TuioClient implements IOSCListener{
-		
-		public static const CONNECTION_MODE_TCP:uint = 0;
-		public static const CONNECTION_MODE_LC:uint = 1;
-		
+			
 		private var listeners:Array;
 		private var oscManager:OSCManager;
 		
@@ -24,25 +21,15 @@
 		private var _tuioBlobs:Array;
 		
 		/**
-		 * @param	connectionMode The connection mode used to receive the TUIO tracking data. Either TuioClient.CONNECTION_MODE_TCP or CONNECTION_MODE_LC. Default is TuioClient CONNECTION_MODE_LC.
+		 * @param	connector An instance that implements IOSConnector, establishes and handles an incoming connection. 
 		 */
-		public function TuioClient(connectionMode:uint = TuioClient.CONNECTION_MODE_LC) {
+		public function TuioClient(connector:IOSCConnector) {
 			
 			this.listeners = new Array();
 			
 			this._tuioCursors = new Array();
 			this._tuioObjects = new Array();
 			this._tuioBlobs = new Array();
-			
-			var connector:IOSCConnector;
-			
-			if (connectionMode == CONNECTION_MODE_TCP) {
-				connector = new TCPConnector();
-			} else if (connectionMode == CONNECTION_MODE_LC) {
-				connector = new LCConnector();
-			} else {
-				throw new ArgumentError("The specified connection mode isn't valid.");
-			}
 			
 			if (connector != null) {
 				this.oscManager = new OSCManager(connector);
