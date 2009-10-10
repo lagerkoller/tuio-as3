@@ -42,6 +42,7 @@ package org.tuio.legacy
 			}else{
 				this.stage = stage;
 				this.tuioClient = tuioClient;
+				this.tuioClient.addListener(this);
 				this.listenOnIdsArray = new Array();
 			}
 			
