@@ -47,8 +47,8 @@
 			
 			var tuioContainerList:Array;
 			
-			if (msg.arguments[0] == "fseq") this.fseq = int(parseInt(msg.arguments[1]));
-			else if (msg.arguments[0] == "source") this.src = msg.arguments[1];
+			if (msg.arguments[0] == "fseq") this.fseq = int(msg.arguments[1]);
+			else if (msg.arguments[0] == "source") this.src = String(msg.arguments[1]);
 			else if (msg.arguments[0] == "set"){
 				
 				var isObj:Boolean = false;

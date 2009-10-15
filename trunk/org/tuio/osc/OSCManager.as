@@ -67,7 +67,7 @@ package org.tuio.osc {
 			if (packet is OSCMessage) {
 				this.distributeOSCMessage(packet as OSCMessage);
 			} else if (packet is OSCBundle) {
-				var cont:Array = (packet as OSCBundle).subPackets.concat();
+				var cont:Array = (packet as OSCBundle).subPackets;
 				for each(var p:OSCPacket in cont) {
 					this.distributeOSCPacket(p);
 				}
