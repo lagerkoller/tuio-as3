@@ -33,8 +33,9 @@
 			//read the remaining bytes according to the parsing pattern
 			var innerArray:Array;
 			var openArray:Array = this.argumentArray;
+			var l:int = this.pattern.length;
 			try{
-				for(var c:int = 0; c < this.pattern.length; c++){
+				for(var c:int = 0; c < l; c++){
 					switch(this.pattern.charAt(c)){
 						case "s": openArray.push(this.readString()); break;
 						case "f": openArray.push(this.bytes.readFloat()); break;
