@@ -57,7 +57,7 @@ package org.tuio.osc {
 		}
 		
 		public function acceptOSCPacket(oscPacket:OSCPacket):void {
-			if(running){
+			if (running) {
 				this.currentPacket = oscPacket;
 				this.distributeOSCPacket(this.currentPacket);
 			}
