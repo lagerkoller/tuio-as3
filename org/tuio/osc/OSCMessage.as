@@ -57,6 +57,7 @@
 					}
 				}
 			} catch (e:EOFError) {
+				trace("corrupt");
 				this.argumentArray = new Array();
 				this.argumentArray.push("Corrupted OSCMessage");
 				openArray = null;
@@ -110,9 +111,9 @@
 		 */
 		public static function isMessage(bytes:ByteArray):Boolean {
 			if (bytes != null) {
-				bytes.position = 0;
+				//bytes.position = 0;
 				var header:String = bytes.readUTFBytes(1);
-				bytes.position = 0;
+				bytes.position -= 1;
 				if (header == "/") {
 					return true;
 				} else {
