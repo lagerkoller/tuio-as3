@@ -61,51 +61,51 @@ package org.tuio.tuio {
 			this._r = r;
 		}
 		
-		public function get a():uint {
+		public function get a():Number {
 			return this._a;
 		}
 		
-		public function get b():uint {
+		public function get b():Number {
 			return this._b;
 		}
 
-		public function get c():uint {
+		public function get c():Number {
 			return this._c;
 		}
 		
-		public function get w():uint {
+		public function get w():Number {
 			return this._w;
 		}
 		
-		public function get h():uint {
+		public function get h():Number {
 			return this._h;
 		}
 
-		public function get d():uint {
+		public function get d():Number {
 			return this._d;
 		}
 		
-		public function get f():uint {
+		public function get f():Number {
 			return this._f;
 		}
 
-		public function get v():uint {
+		public function get v():Number {
 			return this._v;
 		}
 		
-		public function get A():uint {
+		public function get A():Number {
 			return this._A;
 		}
 		
-		public function get B():uint {
+		public function get B():Number {
 			return this._B;
 		}
 
-		public function get C():uint {
+		public function get C():Number {
 			return this._C;
 		}
 		
-		public function get r():uint {
+		public function get r():Number {
 			return this.r;
 		}
 		

@@ -1,3 +1,4 @@
+
 package org.tuio.tuio {
 	
 	/**
@@ -52,31 +53,31 @@ package org.tuio.tuio {
 			return this._id;
 		}
 		
-		public function get a():uint {
+		public function get a():Number {
 			return this._a;
 		}
 		
-		public function get b():uint {
+		public function get b():Number {
 			return this._b;
 		}
 
-		public function get c():uint {
+		public function get c():Number {
 			return this._c;
 		}
 		
-		public function get A():uint {
+		public function get A():Number {
 			return this._A;
 		}
 		
-		public function get B():uint {
+		public function get B():Number {
 			return this._B;
 		}
 
-		public function get C():uint {
+		public function get C():Number {
 			return this._C;
 		}
 		
-		public function get r():uint {
+		public function get r():Number {
 			return this.r;
 		}
 		
