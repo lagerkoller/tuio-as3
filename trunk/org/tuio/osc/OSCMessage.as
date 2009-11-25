@@ -9,7 +9,7 @@
 	 */
 	public class OSCMessage extends OSCPacket {
 		
-		private var address:String;
+		private var addressPattern:String;
 		private var pattern:String;
 		private var action:String;
 		private var argumentArray:Array;
@@ -23,7 +23,7 @@
 			super(bytes);
 			
 			//read the OSCMessage head
-			this.address = this.readString();
+			this.addressPattern = this.readString();
 			
 			//read the parsing pattern for the following OSCMessage bytes
 			this.pattern = this.readString();
@@ -67,8 +67,8 @@
 		/**
 		 * @return The address pattern of the OSCMessage
 		 */
-		public function get addressPattern():String {
-			return address;
+		public function get address():String {
+			return addressPattern;
 		}
 		
 		/**
@@ -85,7 +85,7 @@
 		 */
 		public override function getPacketInfo():String {
 			var out:String = new String();
-			out += "\nMessagehead: " + this.address + " | " + this.pattern + " | ->  (" + this.argumentArray.length + ") \n" + this.argumentsToString() ;
+			out += "\nMessagehead: " + this.addressPattern + " | " + this.pattern + " | ->  (" + this.argumentArray.length + ") \n" + this.argumentsToString() ;
 			return out;
 		}
 		

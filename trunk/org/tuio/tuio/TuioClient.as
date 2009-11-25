@@ -59,19 +59,19 @@
 				var is25D:Boolean = false;
 				var is3D:Boolean = false;
 				
-				if (msg.addressPattern.indexOf("/tuio/2D") == 0) {
+				if (msg.address.indexOf("/tuio/2D") == 0) {
 					is2D = true;
-				} else if (msg.addressPattern.indexOf("/tuio/25D") == 0) {
+				} else if (msg.address.indexOf("/tuio/25D") == 0) {
 					is25D = true;
-				} else if (msg.addressPattern.indexOf("/tuio/3D") == 0) {
+				} else if (msg.address.indexOf("/tuio/3D") == 0) {
 					is3D = true;
 				} else return;
 				
-				if (msg.addressPattern.indexOf("cur") > -1) {
+				if (msg.address.indexOf("cur") > -1) {
 					isCur = true;
-				} else if (msg.addressPattern.indexOf("obj") > -1) {
+				} else if (msg.address.indexOf("obj") > -1) {
 					isObj = true;
-				} else if (msg.addressPattern.indexOf("blb") > -1) {
+				} else if (msg.address.indexOf("blb") > -1) {
 					isBlb = true;
 				} else return;
 				
@@ -129,7 +129,7 @@
 				
 				if (!isCur) {
 					A = Number(msg.arguments[index++]);
-					if (msg.addressPattern.indexOf("/tuio/3D") == 0) {
+					if (msg.address.indexOf("/tuio/3D") == 0) {
 						B = Number(msg.arguments[index++]);
 						C = Number(msg.arguments[index++]);
 					}
@@ -143,7 +143,7 @@
 				
 				//generate object
 				
-				var type:String = msg.addressPattern.substring(6, msg.addressPattern.length);
+				var type:String = msg.address.substring(6, msg.address.length);
 				
 				var tuioContainer:TuioContainer;
 				
@@ -193,7 +193,7 @@
 				
 			} else if (msg.arguments[0] == "alive") {
 				
-				if (msg.addressPattern.indexOf("cur") > -1) {
+				if (msg.address.indexOf("cur") > -1) {
 					
 					for each(var tcur:TuioCursor in this._tuioCursors) {
 						tcur.isAlive = false;
@@ -218,7 +218,7 @@
 						}
 					}
 					
-				} else if (msg.addressPattern.indexOf("obj") > -1) {
+				} else if (msg.address.indexOf("obj") > -1) {
 					
 					for each(var to:TuioObject in this._tuioObjects) {
 						to.isAlive = false;
@@ -243,7 +243,7 @@
 						}
 					}
 					
-				} else if (msg.addressPattern.indexOf("blb") > -1) {
+				} else if (msg.address.indexOf("blb") > -1) {
 					
 					for each(var tb:TuioBlob in this._tuioBlobs) {
 						tb.isAlive = false;

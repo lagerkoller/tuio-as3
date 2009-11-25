@@ -2,10 +2,10 @@ package org.tuio.osc {
 	
 	public class OSCManager implements IOSCConnectorListener {
 		
-		private var connIn:IOSCConnector;
-		private var connOut:IOSCConnector;
+		private var _connectorIn:IOSCConnector;
+		private var _connectorOut:IOSCConnector;
 		
-		private var currentPacket:OSCPacket;
+		private var _currentPacket:OSCPacket;
 		
 		private var msgListener:Array;
 		private var oscMethods:Array;
@@ -20,9 +20,9 @@ package org.tuio.osc {
 			this.msgListener = new Array();
 			this.oscMethods = new Array();
 			
-			this.connIn = connectorIn;
-			if(this.connIn != null) this.connIn.addListener(this);
-			this.connOut = connectorOut;
+			this._connectorIn = connectorIn;
+			if(this._connectorIn != null) this._connectorIn.addListener(this);
+			this._connectorOut = connectorOut;
 			
 			this.running = autoStart;
 			
@@ -36,30 +36,40 @@ package org.tuio.osc {
 			this.running = false;
 		}
 		
-		public function setConnectorIn(conn:IOSCConnector):void {
-			if (this.connIn != null) {
-				this.connIn.removeListener(this);
+		public function set connectorIn(conn:IOSCConnector):void {
+			if (this._connectorIn != null) {
+				this._connectorIn.removeListener(this);
 			}
-			this.connIn = conn;
-			this.connIn.addListener(this);
+			this._connectorIn = conn;
+			this._connectorIn.addListener(this);
 		}
 		
-		public function setConnectorOut(conn:IOSCConnector):void {
-			this.connOut = conn;
+		public function get connectorIn():IOSCConnector {
+			return this._connectorIn;
+		}
+		
+		public function set connectorOut(conn:IOSCConnector):void {
+			this._connectorOut = conn;
+		}
+		
+		public function get connectorOut():IOSCConnector {
+			return this._connectorOut;
 		}
 		
 		public function sendOSCPacket(oscPacket:OSCPacket):void {
-			this.connOut.sendOSCPacket(oscPacket);
+			if(this._connectorOut){
+				this._connectorOut.sendOSCPacket(oscPacket);
+			}
 		}
 		
-		public function getCurrentPacket():OSCPacket {
-			return this.currentPacket;
+		public function get currentPacket():OSCPacket {
+			return this._currentPacket;
 		}
 		
 		public function acceptOSCPacket(oscPacket:OSCPacket):void {
 			if (running) {
-				this.currentPacket = oscPacket;
-				this.distributeOSCPacket(this.currentPacket);
+				this._currentPacket = oscPacket;
+				this.distributeOSCPacket(this._currentPacket);
 			}
 		}
 		
@@ -86,12 +96,12 @@ package org.tuio.osc {
 				var oscMethods:Array;
 				
 				if (this.usePatternMatching) {
-					oscMethods = this.oscAddressSpace.getMethods(msg.addressPattern);
+					oscMethods = this.oscAddressSpace.getMethods(msg.address);
 					for each(l in oscMethods) {
 						l.acceptOSCMessage(msg);
 					}
 				} else {
-					oscMethod = this.oscMethods[msg.addressPattern];
+					oscMethod = this.oscMethods[msg.address];
 					if (oscMethod != null) oscMethod.acceptOSCMessage(msg);
 				}
 			}
