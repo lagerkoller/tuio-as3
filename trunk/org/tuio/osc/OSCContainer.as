@@ -3,18 +3,18 @@ package org.tuio.osc {
 	public class OSCContainer {
 		
 		private var children:Array;
-		private var name:String;
+		public var name:String;
 		public var method:IOSCListener;
 		public var parent:OSCContainer;
 		
-		public function OSCContainer(name:String, method:IOSCListener = null, parent:OSCContainer = null){
+		public function OSCContainer(name:String, method:IOSCListener = null){
 			this.name = name;
 			this.method = method;
-			this.parent = parent;
 		}
 		
 		public function addChild(child:OSCContainer):void {
 			this.children[child.name] = child;
+			child.parent = this;
 		}
 		
 		public function getChild(name:String):OSCContainer {

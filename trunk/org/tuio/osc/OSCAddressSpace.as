@@ -12,15 +12,15 @@ package org.tuio.osc {
 			var parts:Array = address.split("/");
 			var part:String;
 			var currentNode:OSCContainer = root;
-			var newNode:OSCContainer;
+			var nextNode:OSCContainer;
 			while (parts.length > 0) {
 				part = parts.pop();
-				newNode = currentNode.getChild(part);
-				if (newNode == null) {
-					newNode = new OSCContainer(part);
-					currentNode.addChild(newNode);
+				nextNode = currentNode.getChild(part);
+				if (nextNode == null) {
+					nextNode = new OSCContainer(part);
+					currentNode.addChild(nextNode);
 				}
-				currentNode = newNode;
+				currentNode = nextNode;
 			}
 			currentNode.method = method;
 		}
@@ -29,14 +29,14 @@ package org.tuio.osc {
 			var parts:Array = address.split("/");
 			var part:String;
 			var currentNode:OSCContainer = root;
-			var newNode:OSCContainer;
+			var nextNode:OSCContainer;
 			while (parts.length > 0) {
 				part = parts.pop();
-				newNode = currentNode.getChild(part);
-				if (newNode == null) {
+				nextNode = currentNode.getChild(part);
+				if (nextNode == null) {
 					break;
 				}
-				currentNode = newNode;
+				currentNode = nextNode;
 			}
 			currentNode.parent.removeChild(currentNode);
 		}
