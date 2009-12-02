@@ -78,7 +78,7 @@ package org.tuio.tuio {
 		}
 		
 		public function get r():Number {
-			return this.r;
+			return this._r;
 		}
 		
 		/* This function converts the TuioObjects values into a String for output purposes */
