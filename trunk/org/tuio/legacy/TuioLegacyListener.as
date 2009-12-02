@@ -18,6 +18,7 @@ package org.tuio.legacy
 {
 	import flash.display.DisplayObject;
 	import flash.display.Stage;
+	import flash.events.MouseEvent;
 	import flash.geom.Point;
 	
 	import org.tuio.tuio.ITuioListener;
@@ -34,6 +35,8 @@ package org.tuio.legacy
 		
 		private static var allowInst:Boolean;
 		private static var inst:TuioLegacyListener; 
+		
+		public var connected:Boolean = true;
 		
 		
 		public function TuioLegacyListener(stage:Stage, tuioClient:TuioClient){
@@ -98,7 +101,8 @@ package org.tuio.legacy
 			
 			if(displayObjArray.length > 0){							
 				dobj = displayObjArray[displayObjArray.length - 1];
-				var localPoint:Point = dobj.parent.globalToLocal(new Point(stagePoint.x, stagePoint.y));				
+				var localPoint:Point = dobj.parent.globalToLocal(new Point(stagePoint.x, stagePoint.y));
+				dobj.dispatchEvent(new MouseEvent(MouseEvent.CLICK));
 				dobj.dispatchEvent(new TouchEvent(TouchEvent.MOUSE_DOWN, true, false, stagePoint.x, stagePoint.y, localPoint.x, localPoint.y, 0, 0, dobj, false,false,false, true, 0,"2Dcur", tuioCursor.sessionID, tuioCursor.sessionID, 0));									
 				dobj.dispatchEvent(new TouchEvent(TouchEvent.MOUSE_OVER, true, false, stagePoint.x, stagePoint.y, localPoint.x, localPoint.y, 0, 0, dobj, false,false,false, true, 0,"2Dcur", tuioCursor.sessionID, tuioCursor.sessionID, 0));
 			}
@@ -133,6 +137,25 @@ package org.tuio.legacy
 		 * the Array listenOnIdsArray, which listen on the id of the removed touch.
 		 */
 		public function removeTuioCursor(tuioCursor:TuioCursor):void{
+			var dobj:DisplayObject;
+			var stagePoint:Point;					
+			var displayObjArray:Array;
+			
+			stagePoint = new Point((int)(stage.stageWidth*tuioCursor.x), (int)(stage.stageHeight*tuioCursor.y));					
+			displayObjArray = this.stage.getObjectsUnderPoint(stagePoint);
+			dobj = null;
+			
+			if(displayObjArray.length > 0){							
+				dobj = displayObjArray[displayObjArray.length - 1];
+				
+				//don't dispatch TouchEvent on debug cursor, debug object or debug blob but on the actual object
+//				if((dobj is ITuioDebugCursor || dobj is ITuioDebugBlob || dobj is ITuioDebugObject) && displayObjArray.length > 1){
+					dobj = displayObjArray[displayObjArray.length - 2];
+//				}
+				var localPoint:Point = dobj.parent.globalToLocal(new Point(stagePoint.x, stagePoint.y));				
+				dobj.dispatchEvent(new TouchEvent(TouchEvent.MOUSE_UP, true, false, stagePoint.x, stagePoint.y, localPoint.x, localPoint.y, 0, 0, dobj, false,false,false, true, 0,"2Dcur", tuioCursor.sessionID, tuioCursor.sessionID, 0));									
+			}
+			
 			var stagePoint:Point = new Point((int)(stage.stageWidth*tuioCursor.x), (int)(stage.stageHeight*tuioCursor.y));
 			stage.dispatchEvent(new TouchEvent(TouchEvent.MOUSE_UP, true, false, stagePoint.x, stagePoint.y, stagePoint.x, stagePoint.y, 0, 0, null, false,false,false, true, 0,"2Dcur", tuioCursor.sessionID, tuioCursor.sessionID, 0));
 			
