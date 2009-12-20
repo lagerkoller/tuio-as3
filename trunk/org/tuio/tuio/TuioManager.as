@@ -31,7 +31,7 @@ package org.tuio.tuio {
 		private function handleAdd(tuioContainer:TuioContainer):void {
 			var stagePos:Point = new Point(stage.stageWidth * tuioContainer.x, stage.stageHeight * tuioContainer.y);
 			var targets:Array =  stage.getObjectsUnderPoint(stagePos);
-			var target:DisplayObject = (targets.length > 0) ? targets[0] : stage;
+			var target:DisplayObject = (targets.length > 0) ? targets[targets.length-1] : stage;
 			var local:Point = target.globalToLocal(new Point(stagePos.x, stagePos.y));
 			
 			firstTarget[tuioContainer.sessionID] = target;
@@ -44,7 +44,7 @@ package org.tuio.tuio {
 		private function handleUpdate(tuioContainer:TuioContainer):void {
 			var stagePos:Point = new Point(stage.stageWidth * tuioContainer.x, stage.stageHeight * tuioContainer.y);
 			var targets:Array =  stage.getObjectsUnderPoint(stagePos);
-			var target:DisplayObject = (targets.length > 0) ? targets[0] : stage;
+			var target:DisplayObject = (targets.length > 0) ? targets[targets.length-1] : stage;
 			var local:Point = target.globalToLocal(new Point(stagePos.x, stagePos.y));
 			var last:DisplayObject = lastTarget[tuioContainer.sessionID];
 			
@@ -66,7 +66,7 @@ package org.tuio.tuio {
 		private function handleRemove(tuioContainer:TuioContainer):void {
 			var stagePos:Point = new Point(stage.stageWidth * tuioContainer.x, stage.stageHeight * tuioContainer.y);
 			var targets:Array =  stage.getObjectsUnderPoint(stagePos);
-			var target:DisplayObject = (targets.length > 0) ? targets[0] : stage;
+			var target:DisplayObject = (targets.length > 0) ? targets[targets.length-1] : stage;
 			var local:Point = target.globalToLocal(new Point(stagePos.x, stagePos.y));
 			
 			target.dispatchEvent(new TouchEvent(TouchEvent.MOUSE_UP, true, false, local.x, local.y, stagePos.x, stagePos.y, target, tuioContainer));
