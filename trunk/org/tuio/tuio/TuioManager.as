@@ -38,6 +38,7 @@ package org.tuio.tuio {
 			lastTarget[tuioContainer.sessionID] = target;
 			
 			target.dispatchEvent(new TouchEvent(TouchEvent.MOUSE_OVER, true, false, local.x, local.y, stagePos.x, stagePos.y, target, tuioContainer));
+			target.dispatchEvent(new TouchEvent(TouchEvent.ROLL_OVER, false, false, local.x, local.y, stagePos.x, stagePos.y, target, tuioContainer));
 			target.dispatchEvent(new TouchEvent(TouchEvent.MOUSE_DOWN, true, false, local.x, local.y, stagePos.x, stagePos.y, target, tuioContainer));
 		}
 		
@@ -57,6 +58,8 @@ package org.tuio.tuio {
 			if (target != last) {
 				var lastLocal:Point = last.globalToLocal(new Point(stagePos.x, stagePos.y));
 				last.dispatchEvent(new TouchEvent(TouchEvent.MOUSE_OUT, true, false, lastLocal.x, lastLocal.y, stagePos.x, stagePos.y, last, tuioContainer));
+				last.dispatchEvent(new TouchEvent(TouchEvent.ROLL_OUT, false, false, local.x, local.y, stagePos.x, stagePos.y, target, tuioContainer));
+				target.dispatchEvent(new TouchEvent(TouchEvent.ROLL_OVER, false, false, local.x, local.y, stagePos.x, stagePos.y, target, tuioContainer));
 				target.dispatchEvent(new TouchEvent(TouchEvent.MOUSE_OVER, true, false, local.x, local.y, stagePos.x, stagePos.y, target, tuioContainer));
 			}
 			
