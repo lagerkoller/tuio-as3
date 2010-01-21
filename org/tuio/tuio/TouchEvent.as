@@ -11,16 +11,18 @@ package org.tuio.tuio {
 	 */
 	public class TouchEvent extends Event {
 		
-		public static const MOUSE_UP:String = "org.tuio.tuio.TouchEvent.MOUSE_UP";
-		public static const MOUSE_DOWN:String = "org.tuio.tuio.TouchEvent.MOUSE_DOWN";
-		public static const MOUSE_MOVE:String = "org.tuio.tuio.TouchEvent.MOUSE_MOVE";
-		public static const MOUSE_OUT:String = "org.tuio.tuio.TouchEvent.MOUSE_OUT";
-		public static const MOUSE_OVER:String = "org.tuio.tuio.TouchEvent.MOUSE_OVER";
+		public static const TOUCH_UP:String = "org.tuio.tuio.TouchEvent.TOUCH_UP";
+		public static const TOUCH_DOWN:String = "org.tuio.tuio.TouchEvent.TOUCH_DOWN";
+		public static const TOUCH_MOVE:String = "org.tuio.tuio.TouchEvent.TOUCH_MOVE";
+		public static const TOUCH_OUT:String = "org.tuio.tuio.TouchEvent.TOUCH_OUT";
+		public static const TOUCH_OVER:String = "org.tuio.tuio.TouchEvent.TOUCH_OVER";
 		public static const ROLL_OUT:String = "org.tuio.tuio.TouchEvent.ROLL_OUT";
 		public static const ROLL_OVER:String = "org.tuio.tuio.TouchEvent.ROLL_OVER";
 		
-		public static const CLICK:String = "org.tuio.tuio.TouchEvent.CLICK";
-		public static const DOUBLE_CLICK:String = "org.tuio.tuio.TouchEvent.DOUBLE_CLICK";
+		public static const TAB:String = "org.tuio.tuio.TouchEvent.TAB";
+		public static const DOUBLE_TAB:String = "org.tuio.tuio.TouchEvent.DOUBLE_TAB";
+		
+		public static const HOLD:String = "org.tuio.tuio.TouchEvent.HOLD";
 		
 		private var _tuioContainer:TuioContainer;
 		
