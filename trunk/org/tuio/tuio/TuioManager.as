@@ -1,6 +1,7 @@
 package org.tuio.tuio {
 	
 	import flash.display.DisplayObject;
+	import flash.display.InteractiveObject;
 	import flash.display.Stage;
 	import flash.events.EventDispatcher;
 	import flash.geom.Point;
@@ -30,11 +31,24 @@ package org.tuio.tuio {
 		//if true a TouchEvent is triggered if a TuioBlob is received
 		public var triggerTouchOnBlob:Boolean = false;	
 		
+		//Sets the mode how to disvocer the TouchEvent's target object
+		public var touchTargetDiscoveryMode:uint = TOUCH_TARGET_DISCOVERY_MOUSE_ENABLED;
+		
+		//the possible touch target discovery modes.
+		//no special handling -> top object under point -> fastest, works for all DisplayObjects
+		public static const TOUCH_TARGET_DISCOVERY_NONE = 0;
+		//uses the InteractiveObject's mouseEnabled parameter to determin whether a TouchEvent can be received by a candidate object.
+		public static const TOUCH_TARGET_DISCOVERY_MOUSE_ENABLED = 1;
+		//uses an ignore list to determin whether a TouchEvent can be received by a candidate object.
+		public static const TOUCH_TARGET_DISCOVERY_IGNORELIST = 2;
+		
 		private var _tuioClient:TuioClient;
 		private var lastTarget:Array;
 		private var firstTarget:Array;
 		private var tabbed:Array;
 		private var hold:Array;
+		
+		private var ignoreList:Array;
 		
 		public var stage:Stage;
 		
@@ -46,12 +60,12 @@ package org.tuio.tuio {
 			this.firstTarget = new Array();
 			this.tabbed = new Array();
 			this.hold = new Array();
+			this.ignoreList = new Array();
 		}
 		
 		private function handleAdd(tuioContainer:TuioContainer):void {
 			var stagePos:Point = new Point(stage.stageWidth * tuioContainer.x, stage.stageHeight * tuioContainer.y);
-			var targets:Array =  stage.getObjectsUnderPoint(stagePos);
-			var target:DisplayObject = (targets.length > 0) ? targets[targets.length-1] : stage;
+			var target:DisplayObject = getTopDisplayObjectUnderPoint(stagePos);
 			var local:Point = target.globalToLocal(new Point(stagePos.x, stagePos.y));
 			
 			firstTarget[tuioContainer.sessionID] = target;
@@ -65,8 +79,7 @@ package org.tuio.tuio {
 		
 		private function handleUpdate(tuioContainer:TuioContainer):void {
 			var stagePos:Point = new Point(stage.stageWidth * tuioContainer.x, stage.stageHeight * tuioContainer.y);
-			var targets:Array =  stage.getObjectsUnderPoint(stagePos);
-			var target:DisplayObject = (targets.length > 0) ? targets[targets.length-1] : stage;
+			var target:DisplayObject = getTopDisplayObjectUnderPoint(stagePos);
 			var local:Point = target.globalToLocal(new Point(stagePos.x, stagePos.y));
 			var last:DisplayObject = lastTarget[tuioContainer.sessionID];
 			
@@ -93,8 +106,7 @@ package org.tuio.tuio {
 		
 		private function handleRemove(tuioContainer:TuioContainer):void {
 			var stagePos:Point = new Point(stage.stageWidth * tuioContainer.x, stage.stageHeight * tuioContainer.y);
-			var targets:Array =  stage.getObjectsUnderPoint(stagePos);
-			var target:DisplayObject = (targets.length > 0) ? targets[targets.length-1] : stage;
+			var target:DisplayObject = getTopDisplayObjectUnderPoint(stagePos);
 			var local:Point = target.globalToLocal(new Point(stagePos.x, stagePos.y));
 			
 			target.dispatchEvent(new TouchEvent(TouchEvent.TOUCH_UP, true, false, local.x, local.y, stagePos.x, stagePos.y, target, tuioContainer));
@@ -124,6 +136,58 @@ package org.tuio.tuio {
 			lastTarget[tuioContainer.sessionID] = null;
 			firstTarget[tuioContainer.sessionID] = null;
 			hold[tuioContainer.sessionID] = null;
+		}
+		
+		private function getTopDisplayObjectUnderPoint(point:Point):DisplayObject {
+			var targets:Array =  stage.getObjectsUnderPoint(point);
+			var item:DisplayObject = (targets.length > 0) ? targets[targets.length - 1] : stage;
+			
+			if(this.touchTargetDiscoveryMode == TOUCH_TARGET_DISCOVERY_MOUSE_ENABLED){
+				while(targets.length > 0) {
+					item = targets.pop() as DisplayObject;
+					if (item.parent != null && !(item is InteractiveObject)) item = item.parent;
+					if (item is InteractiveObject) {
+						if ((item as InteractiveObject).mouseEnabled) return item;
+					}
+				}
+				item = stage;
+			} else if (this.touchTargetDiscoveryMode == TOUCH_TARGET_DISCOVERY_IGNORELIST) {
+				while(targets.length > 0) {
+					item = targets.pop();
+					if (ignoreList.indexOf(item) < 0) return item;
+				}
+				item = stage;
+			}
+			
+			return item;
+		}
+		
+		/**
+		 * Adds the given DisplayObject to an internal list of DisplayObjects that won't receive TouchEvents.
+		 * If a DisplayobjectContainer is added to the list its children can still receive TouchEvents.
+		 * The touchTargetDiscoveryMode is automatically set to TOUCH_TARGET_DISCOVERY_IGNORELIST.
+		 * 
+		 * @param	item The DisplayObject that should be ignored by TouchEvents.
+		 */
+		public function addToIgnoreList(item:DisplayObject):void {
+			this.touchTargetDiscoveryMode = TOUCH_TARGET_DISCOVERY_IGNORELIST;
+			if(ignoreList.indexOf(item) < 0) ignoreList.push(item);
+		}
+		
+		/**
+		 * Removes the given DisplayObject from the internal list of DisplayObjects that won't receive TouchEvents.
+		 * 
+		 * @param	item The DisplayObject that should be ignored by TouchEvents.
+		 */
+		public function removeFromIgnoreList(item:DisplayObject):void {
+			var ignoreListCopy:Array = ignoreList.concat();
+			var tmpList:Array = new Array();
+			var listItem:Object;
+			while (ignoreListCopy.length > 0) {
+				listItem = ignoreList.pop();
+				if (listItem != item) tmpList.push(listItem);
+			}
+			ignoreList = tmpList.concat();
 		}
 		
 		public function addTuioObject(tuioObject:TuioObject):void {
