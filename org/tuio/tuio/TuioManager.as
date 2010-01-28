@@ -136,7 +136,7 @@ package org.tuio.tuio {
 			lastTarget[tuioContainer.sessionID] = null;
 			firstTarget[tuioContainer.sessionID] = null;
 			hold[tuioContainer.sessionID] = null;
-		}
+		}g report I'll hav
 		
 		private function getTopDisplayObjectUnderPoint(point:Point):DisplayObject {
 			var targets:Array =  stage.getObjectsUnderPoint(point);
@@ -180,10 +180,9 @@ package org.tuio.tuio {
 		 * @param	item The DisplayObject that should be ignored by TouchEvents.
 		 */
 		public function removeFromIgnoreList(item:DisplayObject):void {
-			var ignoreListCopy:Array = ignoreList.concat();
 			var tmpList:Array = new Array();
 			var listItem:Object;
-			while (ignoreListCopy.length > 0) {
+			while (ignoreList.length > 0) {
 				listItem = ignoreList.pop();
 				if (listItem != item) tmpList.push(listItem);
 			}
