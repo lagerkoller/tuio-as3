@@ -136,7 +136,7 @@ package org.tuio.tuio {
 			lastTarget[tuioContainer.sessionID] = null;
 			firstTarget[tuioContainer.sessionID] = null;
 			hold[tuioContainer.sessionID] = null;
-		}g report I'll hav
+		}
 		
 		private function getTopDisplayObjectUnderPoint(point:Point):DisplayObject {
 			var targets:Array =  stage.getObjectsUnderPoint(point);
