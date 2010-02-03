@@ -30,7 +30,6 @@ package org.tuio.tcp
 	    private function socketDataHandler(event:ProgressEvent):void {
 	    	
     		var data:ByteArray = new ByteArray();
-    		data.endian = Endian.LITTLE_ENDIAN;
     		if(PartialRecord){
     			Buffer.readBytes(data,0,Buffer.length);
     			PartialRecord = false;
