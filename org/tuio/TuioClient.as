@@ -1,4 +1,4 @@
-﻿package org.tuio.tuio {
+﻿package org.tuio {
 	
 	import org.tuio.osc.*;
 	

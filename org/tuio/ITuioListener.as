@@ -1,4 +1,4 @@
-package org.tuio.tuio {
+package org.tuio {
 	
 	/**
 	 * This Interface defines callback functions that will be called by the TuioClient if the 
