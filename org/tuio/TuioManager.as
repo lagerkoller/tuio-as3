@@ -7,6 +7,7 @@ package org.tuio {
 	import flash.geom.Point;
 	import org.tuio.TouchEvent;
 	import flash.utils.getTimer;
+	import flash.events.MouseEvent;
 	
 	/**
 	 * The TuioManager class implements the ITuioListener interface and triggers events 
@@ -42,6 +43,9 @@ package org.tuio {
 		//uses an ignore list to determin whether a TouchEvent can be received by a candidate object.
 		public static const TOUCH_TARGET_DISCOVERY_IGNORELIST = 2;
 		
+		//if true MouseEvents are dispatched alongside the TouchEvents
+		private var _dispatchMouseEvents:Boolean = false;
+		
 		private var _tuioClient:TuioClient;
 		private var lastTarget:Array;
 		private var firstTarget:Array;
@@ -75,6 +79,12 @@ package org.tuio {
 			target.dispatchEvent(new TouchEvent(TouchEvent.TOUCH_OVER, true, false, local.x, local.y, stagePos.x, stagePos.y, target, tuioContainer));
 			target.dispatchEvent(new TouchEvent(TouchEvent.ROLL_OVER, false, false, local.x, local.y, stagePos.x, stagePos.y, target, tuioContainer));
 			target.dispatchEvent(new TouchEvent(TouchEvent.TOUCH_DOWN, true, false, local.x, local.y, stagePos.x, stagePos.y, target, tuioContainer));
+			
+			if (_dispatchMouseEvents) {
+				target.dispatchEvent(new MouseEvent(MouseEvent.MOUSE_OVER, true, false, local.x, local.y, (target as InteractiveObject), false, false, false, false, 0));
+				target.dispatchEvent(new MouseEvent(MouseEvent.ROLL_OVER, false, false, local.x, local.y, (target as InteractiveObject), false, false, false, false, 0));
+				target.dispatchEvent(new MouseEvent(MouseEvent.MOUSE_DOWN, true, false, local.x, local.y, (target as InteractiveObject), false, false, false, false, 0));
+			}
 		}
 		
 		private function handleUpdate(tuioContainer:TuioContainer):void {
@@ -87,6 +97,9 @@ package org.tuio {
 			if (Math.abs(tuioContainer.X) > 0.001 || Math.abs(tuioContainer.Y) > 0.001 || Math.abs(tuioContainer.Z) > 0.001) {
 				hold[tuioContainer.sessionID] = getTimer();
 				target.dispatchEvent(new TouchEvent(TouchEvent.TOUCH_MOVE, true, false, local.x, local.y, stagePos.x, stagePos.y, target, tuioContainer));
+				if (_dispatchMouseEvents) {
+					target.dispatchEvent(new MouseEvent(MouseEvent.MOUSE_MOVE, true, false, local.x, local.y, (target as InteractiveObject), false, false, false, false, 0));
+				}
 			} else if (hold[tuioContainer.sessionID] < getTimer() - holdTimeout) {
 				hold[tuioContainer.sessionID] = getTimer();
 				target.dispatchEvent(new TouchEvent(TouchEvent.HOLD, true, false, local.x, local.y, stagePos.x, stagePos.y, target, tuioContainer));
@@ -96,9 +109,15 @@ package org.tuio {
 			if (target != last) {
 				var lastLocal:Point = last.globalToLocal(new Point(stagePos.x, stagePos.y));
 				last.dispatchEvent(new TouchEvent(TouchEvent.TOUCH_OUT, true, false, lastLocal.x, lastLocal.y, stagePos.x, stagePos.y, last, tuioContainer));
-				last.dispatchEvent(new TouchEvent(TouchEvent.ROLL_OUT, false, false, local.x, local.y, stagePos.x, stagePos.y, target, tuioContainer));
+				last.dispatchEvent(new TouchEvent(TouchEvent.ROLL_OUT, false, false, local.x, local.y, stagePos.x, stagePos.y, last, tuioContainer));
 				target.dispatchEvent(new TouchEvent(TouchEvent.ROLL_OVER, false, false, local.x, local.y, stagePos.x, stagePos.y, target, tuioContainer));
 				target.dispatchEvent(new TouchEvent(TouchEvent.TOUCH_OVER, true, false, local.x, local.y, stagePos.x, stagePos.y, target, tuioContainer));
+				if (_dispatchMouseEvents) {
+					last.dispatchEvent(new MouseEvent(MouseEvent.MOUSE_OUT, true, false, local.x, local.y, (last as InteractiveObject), false, false, false, false, 0));
+					last.dispatchEvent(new MouseEvent(MouseEvent.ROLL_OUT, false, false, local.x, local.y, (last as InteractiveObject), false, false, false, false, 0));
+					target.dispatchEvent(new MouseEvent(MouseEvent.MOUSE_OVER, true, false, local.x, local.y, (target as InteractiveObject), false, false, false, false, 0));
+					target.dispatchEvent(new MouseEvent(MouseEvent.ROLL_OVER, false, false, local.x, local.y, (target as InteractiveObject), false, false, false, false, 0));
+				}
 			}
 			
 			lastTarget[tuioContainer.sessionID] = target;
@@ -110,6 +129,9 @@ package org.tuio {
 			var local:Point = target.globalToLocal(new Point(stagePos.x, stagePos.y));
 			
 			target.dispatchEvent(new TouchEvent(TouchEvent.TOUCH_UP, true, false, local.x, local.y, stagePos.x, stagePos.y, target, tuioContainer));
+			if (_dispatchMouseEvents) {
+				target.dispatchEvent(new MouseEvent(MouseEvent.MOUSE_UP, true, false, local.x, local.y, (target as InteractiveObject), false, false, false, false, 0));
+			}
 			
 			//tab
 			if (target == firstTarget[tuioContainer.sessionID]) {
@@ -127,9 +149,15 @@ package org.tuio {
 				
 				if (double) {
 					target.dispatchEvent(new TouchEvent(TouchEvent.DOUBLE_TAB, true, false, local.x, local.y, stagePos.x, stagePos.y, target, tuioContainer));
+					if (_dispatchMouseEvents) {
+						target.dispatchEvent(new MouseEvent(MouseEvent.DOUBLE_CLICK, true, false, local.x, local.y, (target as InteractiveObject), false, false, false, false, 0));
+					}
 				} else {
 					tabbed.push(new DoubleTabStore(target, getTimer(), stagePos.x, stagePos.y));
 					target.dispatchEvent(new TouchEvent(TouchEvent.TAB, true, false, local.x, local.y, stagePos.x, stagePos.y, target, tuioContainer));
+					if (_dispatchMouseEvents) {
+						target.dispatchEvent(new MouseEvent(MouseEvent.CLICK, true, false, local.x, local.y, (target as InteractiveObject), false, false, false, false, 0));
+					}
 				}
 			}
 			
@@ -187,6 +215,19 @@ package org.tuio {
 				if (listItem != item) tmpList.push(listItem);
 			}
 			ignoreList = tmpList.concat();
+		}
+		
+		/**
+		 * If true MouseEvents are dispatched alongside the TouchEvents
+		 * If set true the touchTargetDicoveryMode is automatically set to TOUCH_TARGET_DISCOVERY_MOUSE_ENABLED
+		 */
+		public function set dispatchMouseEvents(value:Boolean):void {
+			if (value) this.touchTargetDiscoveryMode = TOUCH_TARGET_DISCOVERY_MOUSE_ENABLED;
+			this._dispatchMouseEvents = value;
+		}
+		
+		public function get dispatchMouseEvents():Boolean {
+			return this._dispatchMouseEvents;
 		}
 		
 		public function addTuioObject(tuioObject:TuioObject):void {
