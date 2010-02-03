@@ -1,4 +1,4 @@
-package org.tuio.tuio {
+package org.tuio {
 
 	/**
 	 * This is a generic class that contains values present in every profile specified in TUIO 1.1

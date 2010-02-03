@@ -1,4 +1,4 @@
-package org.tuio.tuio {
+package org.tuio {
 
 	/**
 	 * This class represents a TuioCursor as specified in TUIO 1.1

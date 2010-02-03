@@ -1,4 +1,4 @@
-package org.tuio.tuio {
+package org.tuio {
 	
 	public class TuioError extends Error {
 		

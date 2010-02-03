@@ -1,5 +1,5 @@
 
-package org.tuio.tuio {
+package org.tuio {
 	
 	/**
 	 * This class represents a TuioObject as specified in TUIO 1.1

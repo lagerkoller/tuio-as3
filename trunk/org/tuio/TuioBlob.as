@@ -1,4 +1,4 @@
-package org.tuio.tuio {
+package org.tuio {
 	
 	/**
 	 * This class represents a TuioBlob as specified in TUIO 1.1
