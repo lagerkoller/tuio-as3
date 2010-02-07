@@ -3,10 +3,10 @@
 	import org.tuio.osc.*;
 	
 	/**
-	 * A Class for receiving multitouch tracking data via the TUIO protocol.
+	 * A class for receiving tracking data via the TUIO protocol using a seperate OSC parser 
+	 * package located in org.tuio.osc.
 	 * 
 	 * @author Immanuel Bauer
-	 * 
 	 */
 	public class TuioClient implements IOSCListener{
 			
@@ -21,6 +21,8 @@
 		private var _tuioBlobs:Array;
 		
 		/**
+		 * Creates an instance of the TuioClient with the given IOSConnector.
+		 * 
 		 * @param	connector An instance that implements IOSConnector, establishes and handles an incoming connection. 
 		 */
 		public function TuioClient(connector:IOSCConnector) {
@@ -39,7 +41,7 @@
 		}
 		
 		/**
-		 * Callback function for receiving TUIO tracking data in OSCMessages.
+		 * Callback function for receiving TUIO tracking data in OSCMessages as specified in the IOSCListener interface.
 		 * 
 		 * @param	msg The OSCMessage containing a single TUIOEvent.
 		 */
@@ -274,7 +276,7 @@
 		}
 		
 		/**
-		 * Adds a listener to the callback stack . The callback functions of the listener will be called on incoming TUIOEvents.
+		 * Adds a listener to the callback stack. The callback functions of the listener will be called on incoming TUIOEvents.
 		 * 
 		 * @param	listener Object of a class that implements the callback functions defined in the ITuioListener interface.
 		 */

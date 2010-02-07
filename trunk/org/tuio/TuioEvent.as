@@ -3,27 +3,39 @@ package org.tuio {
 	import flash.events.Event;
 	
 	/**
-	 * The TuioEvent is an Event equivalent of the ITuioListener callback functions.
+	 * The TuioEvent is an event equivalent of the ITuioListener callback functions.
 	 * 
 	 * @author Immanuel Bauer
 	 */
 	public class TuioEvent extends Event {
 		
-		public static const ADD:String = "org.tuio.tuio.TuioEvent.add";
-		public static const UPDATE:String = "org.tuio.tuio.TuioEvent.update";
-		public static const REMOVE:String = "org.tuio.tuio.TuioEvent.remove";
+		/**Triggered if a new object was tracked in the tracking space.*/
+		public static const ADD:String = "org.tuio.TuioEvent.add";
+		/**Triggered if a tracked object was updated.*/
+		public static const UPDATE:String = "org.tuio.TuioEvent.update";
+		/**Triggered if a tracked object was removed from the tracking space.*/
+		public static const REMOVE:String = "org.tuio.TuioEvent.remove";
 		
-		public static const ADD_OBJECT:String = "org.tuio.tuio.TuioEvent.addObject";
-		public static const ADD_CURSOR:String = "org.tuio.tuio.TuioEvent.addCursor";
-		public static const ADD_BLOB:String = "org.tuio.tuio.TuioEvent.addBlob";
+		/**Triggered if a new object was tracked in the tracking space and was profiled as a TuioObject by the tracker.*/
+		public static const ADD_OBJECT:String = "org.tuio.TuioEvent.addObject";
+		/**Triggered if a new object was tracked in the tracking space and was profiled as a TuioCursor by the tracker.*/
+		public static const ADD_CURSOR:String = "org.tuio.TuioEvent.addCursor";
+		/**Triggered if a new object was tracked in the tracking space and was profiled as a TuioBlob by the tracker.*/
+		public static const ADD_BLOB:String = "org.tuio.TuioEvent.addBlob";
 		
-		public static const UPDATE_OBJECT:String = "org.tuio.tuio.TuioEvent.updateObject";
-		public static const UPDATE_CURSOR:String = "org.tuio.tuio.TuioEvent.updateCursor";
-		public static const UPDATE_BLOB:String = "org.tuio.tuio.TuioEvent.updateBlob";
+		/**Triggered if a TuioObject was updated.*/
+		public static const UPDATE_OBJECT:String = "org.tuio.TuioEvent.updateObject";
+		/**Triggered if a TuioCursor was updated.*/
+		public static const UPDATE_CURSOR:String = "org.tuio.TuioEvent.updateCursor";
+		/**Triggered if a TuioBlob was updated.*/
+		public static const UPDATE_BLOB:String = "org.tuio.TuioEvent.updateBlob";
 		
-		public static const REMOVE_OBJECT:String = "org.tuio.tuio.TuioEvent.removeObject";
-		public static const REMOVE_CURSOR:String = "org.tuio.tuio.TuioEvent.removeCursor";
-		public static const REMOVE_BLOB:String = "org.tuio.tuio.TuioEvent.removeBlob";
+		/**Triggered if a TuioObject was removed.*/
+		public static const REMOVE_OBJECT:String = "org.tuio.TuioEvent.removeObject";
+		/**Triggered if a TuioCursor was removed.*/
+		public static const REMOVE_CURSOR:String = "org.tuio.TuioEvent.removeCursor";
+		/**Triggered if a TuioBlob was removed.*/
+		public static const REMOVE_BLOB:String = "org.tuio.TuioEvent.removeBlob";
 		
 		private var _tuioContainer:TuioContainer;
 		

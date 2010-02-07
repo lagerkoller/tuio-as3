@@ -11,17 +11,27 @@ package org.tuio {
 	 */
 	public class TouchEvent extends Event {
 		
-		public static const TOUCH_UP:String = "org.tuio.tuio.TouchEvent.TOUCH_UP";
+		/**Triggered on a touch.*/
 		public static const TOUCH_DOWN:String = "org.tuio.tuio.TouchEvent.TOUCH_DOWN";
+		/**Triggered if a touch is released.*/
+		public static const TOUCH_UP:String = "org.tuio.tuio.TouchEvent.TOUCH_UP";
+		/**Triggered if a touch is moved.*/
 		public static const TOUCH_MOVE:String = "org.tuio.tuio.TouchEvent.TOUCH_MOVE";
+		/**Triggered if a touch is moved out of a DisplayObject.*/
 		public static const TOUCH_OUT:String = "org.tuio.tuio.TouchEvent.TOUCH_OUT";
+		/**Triggered if a touch is moved over a DisplayObject.*/
 		public static const TOUCH_OVER:String = "org.tuio.tuio.TouchEvent.TOUCH_OVER";
+		/**Triggered if a touch is moved out of a DisplayObject.*/
 		public static const ROLL_OUT:String = "org.tuio.tuio.TouchEvent.ROLL_OUT";
+		/**Triggered if a touch is moved over a DisplayObject.*/
 		public static const ROLL_OVER:String = "org.tuio.tuio.TouchEvent.ROLL_OVER";
 		
+		/**Triggered if a TOUCH_DOWN and TOUCH_UP occurred over the same DisplayObject.*/
 		public static const TAB:String = "org.tuio.tuio.TouchEvent.TAB";
+		/**Triggered if two subsequent TABs occurred over the same DisplayObject.*/
 		public static const DOUBLE_TAB:String = "org.tuio.tuio.TouchEvent.DOUBLE_TAB";
 		
+		/**Triggered if a touch is held for a certain time over the same DisplayObject without movement.*/
 		public static const HOLD:String = "org.tuio.tuio.TouchEvent.HOLD";
 		
 		private var _tuioContainer:TuioContainer;

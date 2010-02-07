@@ -9,38 +9,68 @@ package org.tuio {
 	import flash.utils.getTimer;
 	import flash.events.MouseEvent;
 	
+	/**@eventType org.tuio.TuioEvent.ADD*/
+	[Event(name = "TuioEvent.ADD", type = "org.tuio.TuioEvent")]
+	/**@eventType org.tuio.TuioEvent.UPDATE*/
+	[Event(name = "TuioEvent.UPDATE", type = "org.tuio.TuioEvent")]
+	/**@eventType org.tuio.TuioEvent.REMOVE*/
+	[Event(name = "TuioEvent.REMOVE", type = "org.tuio.TuioEvent")]
+	/**@eventType org.tuio.TuioEvent.ADD_OBJECT*/
+	[Event(name = "TuioEvent.ADD_OBJECT", type = "org.tuio.TuioEvent")]
+	/**@eventType org.tuio.TuioEvent.UPDATE_OBJECT*/
+	[Event(name = "TuioEvent.UPDATE_OBJECT", type = "org.tuio.TuioEvent")]
+	/**@eventType org.tuio.TuioEvent.REMOVE_OBJECT*/
+	[Event(name = "TuioEvent.REMOVE_OBJECT", type = "org.tuio.TuioEvent")]
+	/**@eventType org.tuio.TuioEvent.ADD_CURSOR*/
+	[Event(name = "TuioEvent.ADD_CURSOR", type = "org.tuio.TuioEvent")]
+	/**@eventType org.tuio.TuioEvent.UPDATE_CURSOR*/
+	[Event(name = "TuioEvent.UPDATE_CURSOR", type = "org.tuio.TuioEvent")]
+	/**@eventType org.tuio.TuioEvent.REMOVE_CURSOR*/
+	[Event(name = "TuioEvent.REMOVE_CURSOR", type = "org.tuio.TuioEvent")]
+	/**@eventType org.tuio.TuioEvent.ADD_BLOB*/
+	[Event(name = "TuioEvent.ADD_BLOB", type = "org.tuio.TuioEvent")]
+	/**@eventType org.tuio.TuioEvent.UPDATE_BLOB*/
+	[Event(name = "TuioEvent.UPDATE_BLOB", type = "org.tuio.TuioEvent")]
+	/**@eventType org.tuio.TuioEvent.REMOVE_BLOB*/
+	[Event(name = "TuioEvent.REMOVE_BLOB", type = "org.tuio.TuioEvent")]
+	
 	/**
 	 * The TuioManager class implements the ITuioListener interface and triggers events 
 	 * into Flash's event flow according to the called callback functions.
+	 * <p><b>Triggered events</b></p>
+	 * <ul>
+	 * 	<li>TuioEvent: Is triggered on the TuioManager itself.</li>
+	 * 	<li>TouchEvent: Is triggered on DisplayObjects under the tracked point according to the TuioManager's settings.</li>
+	 * </ul>
 	 * 
 	 * @author Immanuel Bauer
 	 */
 	public class TuioManager extends EventDispatcher implements ITuioListener {
 		
-		/**number of milliseconds within two subsequent tabs trigger a double tab in ms*/
+		/**The number of milliseconds within two subsequent tabs trigger a double tab.*/
 		public var doubleTabTimeout:int = 300;
 		
-		/**the maximum distance between two subsequent tabs on the x/y axis to be counted as double tab in px*/
+		/**The maximum distance between two subsequent tabs on the x/y axis to be counted as double tab in px*/
 		public var doubleTabDistance:Number = 10;
 		 
-		/**the time between a touch down event and a hold event in ms*/
+		/**The time between a touch down event and a hold event in ms*/
 		public var holdTimeout:int = 500;
 		
-		/**if true a TouchEvent is triggered if a TuioObject is received*/
+		/**If set true a TouchEvent is triggered if a TuioObject is received. The default is false.*/
 		public var triggerTouchOnObject:Boolean = false;
 		
-		/**if true a TouchEvent is triggered if a TuioBlob is received*/
+		/**If set true a TouchEvent is triggered if a TuioBlob is received. The default is false.*/
 		public var triggerTouchOnBlob:Boolean = false;	
 		
-		/**Sets the mode how to disvocer the TouchEvent's target object*/
+		/**Sets the method how to discover the TouchEvent's target object. The default is TOUCH_TARGET_DISCOVERY_MOUSE_ENABLED.*/
 		public var touchTargetDiscoveryMode:uint = TOUCH_TARGET_DISCOVERY_MOUSE_ENABLED;
 		
 		//the possible touch target discovery modes.
-		/**no special handling -> top object under point -> fastest, works for all DisplayObjects*/
+		/**The events will be triggered on the top object under the tracked point. Fastest method. Works for DisplayObject and subclasses.*/
 		public static const TOUCH_TARGET_DISCOVERY_NONE:Number = 0;
-		/**uses the InteractiveObject's mouseEnabled parameter to determin whether a TouchEvent can be received by a candidate object.*/
+		/**The InteractiveObject's mouseEnabled parameter is used to determine whether a TouchEvent is triggered on an InteractiveObject under the tracked point. Works only for InteractiveObject and subclasses.*/
 		public static const TOUCH_TARGET_DISCOVERY_MOUSE_ENABLED:Number = 1;
-		/**uses an ignore list to determin whether a TouchEvent can be received by a candidate object.*/
+		/**An ignore list is used to determin whether a TouchEvent is triggered on an InteractiveObject under the tracked point. Works for DisplayObject and subclasses.*/
 		public static const TOUCH_TARGET_DISCOVERY_IGNORELIST:Number = 2;
 		
 		//if true MouseEvents are dispatched alongside the TouchEvents
@@ -54,8 +84,14 @@ package org.tuio {
 		
 		private var ignoreList:Array;
 		
-		public var stage:Stage;
+		private var stage:Stage;
 		
+		/**
+		 * Creates a new TuioManager instance which processes the Tuio tracking data received by the given TuioClient.
+		 * 
+		 * @param	stage The Stage object of the Flashmovie.
+		 * @param	tuioClient A TuioClient instance that receives Tuio tracking data from a tracker.
+		 */
 		public function TuioManager(stage:Stage, tuioClient:TuioClient) {
 			this._tuioClient = tuioClient;
 			this._tuioClient.addListener(this);
@@ -218,8 +254,9 @@ package org.tuio {
 		}
 		
 		/**
-		 * If true MouseEvents are dispatched alongside the TouchEvents
-		 * If set true the touchTargetDicoveryMode is automatically set to TOUCH_TARGET_DISCOVERY_MOUSE_ENABLED
+		 * If set true MouseEvents are dispatched alongside the TouchEvents also the touchTargetDicoveryMode
+		 * is automatically set to TOUCH_TARGET_DISCOVERY_MOUSE_ENABLED.
+		 * The default value is false.
 		 */
 		public function set dispatchMouseEvents(value:Boolean):void {
 			if (value) this.touchTargetDiscoveryMode = TOUCH_TARGET_DISCOVERY_MOUSE_ENABLED;
