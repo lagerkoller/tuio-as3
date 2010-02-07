@@ -17,31 +17,31 @@ package org.tuio {
 	 */
 	public class TuioManager extends EventDispatcher implements ITuioListener {
 		
-		//number of milliseconds within two subsequent tabs trigger a double tab in ms
+		/**number of milliseconds within two subsequent tabs trigger a double tab in ms*/
 		public var doubleTabTimeout:int = 300;
 		
-		//the maximum distance between two subsequent tabs on the x/y axis to be counted as double tab in px
+		/**the maximum distance between two subsequent tabs on the x/y axis to be counted as double tab in px*/
 		public var doubleTabDistance:Number = 10;
 		 
-		//the time between a touch down event and a hold event in ms
+		/**the time between a touch down event and a hold event in ms*/
 		public var holdTimeout:int = 500;
 		
-		//if true a TouchEvent is triggered if a TuioObject is received
+		/**if true a TouchEvent is triggered if a TuioObject is received*/
 		public var triggerTouchOnObject:Boolean = false;
 		
-		//if true a TouchEvent is triggered if a TuioBlob is received
+		/**if true a TouchEvent is triggered if a TuioBlob is received*/
 		public var triggerTouchOnBlob:Boolean = false;	
 		
-		//Sets the mode how to disvocer the TouchEvent's target object
+		/**Sets the mode how to disvocer the TouchEvent's target object*/
 		public var touchTargetDiscoveryMode:uint = TOUCH_TARGET_DISCOVERY_MOUSE_ENABLED;
 		
 		//the possible touch target discovery modes.
-		//no special handling -> top object under point -> fastest, works for all DisplayObjects
-		public static const TOUCH_TARGET_DISCOVERY_NONE = 0;
-		//uses the InteractiveObject's mouseEnabled parameter to determin whether a TouchEvent can be received by a candidate object.
-		public static const TOUCH_TARGET_DISCOVERY_MOUSE_ENABLED = 1;
-		//uses an ignore list to determin whether a TouchEvent can be received by a candidate object.
-		public static const TOUCH_TARGET_DISCOVERY_IGNORELIST = 2;
+		/**no special handling -> top object under point -> fastest, works for all DisplayObjects*/
+		public static const TOUCH_TARGET_DISCOVERY_NONE:Number = 0;
+		/**uses the InteractiveObject's mouseEnabled parameter to determin whether a TouchEvent can be received by a candidate object.*/
+		public static const TOUCH_TARGET_DISCOVERY_MOUSE_ENABLED:Number = 1;
+		/**uses an ignore list to determin whether a TouchEvent can be received by a candidate object.*/
+		public static const TOUCH_TARGET_DISCOVERY_IGNORELIST:Number = 2;
 		
 		//if true MouseEvents are dispatched alongside the TouchEvents
 		private var _dispatchMouseEvents:Boolean = false;
@@ -295,17 +295,17 @@ internal class DoubleTabStore {
 	
 	internal var target:DisplayObject;
 	internal var time:int;
-	internal var x;
-	internal var y;
+	internal var x:Number;
+	internal var y:Number;
 	
-	function DoubleTabStore(target:DisplayObject, time:int, x, y) {
+	function DoubleTabStore(target:DisplayObject, time:int, x:Number, y:Number) {
 		this.target = target;
 		this.time = time;
 		this.x = x;
 		this.y = y;
 	}
 	
-	function check(timeout:int):Boolean {
+	internal function check(timeout:int):Boolean {
 		if (time > getTimer() - timeout) return true;
 		else return false;
 	}

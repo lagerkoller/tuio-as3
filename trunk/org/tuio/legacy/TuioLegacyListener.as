@@ -21,11 +21,11 @@ package org.tuio.legacy
 	import flash.events.MouseEvent;
 	import flash.geom.Point;
 	
-	import org.tuio.tuio.ITuioListener;
-	import org.tuio.tuio.TuioBlob;
-	import org.tuio.tuio.TuioClient;
-	import org.tuio.tuio.TuioCursor;
-	import org.tuio.tuio.TuioObject;
+	import org.tuio.ITuioListener;
+	import org.tuio.TuioBlob;
+	import org.tuio.TuioClient;
+	import org.tuio.TuioCursor;
+	import org.tuio.TuioObject;
 
 	public class TuioLegacyListener implements ITuioListener
 	{
