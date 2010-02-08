@@ -10,29 +10,29 @@ package org.tuio {
 	import flash.events.MouseEvent;
 	
 	/**@eventType org.tuio.TuioEvent.ADD*/
-	[Event(name = "TuioEvent.ADD", type = "org.tuio.TuioEvent")]
+	[Event(name = "org.tuio.TuioEvent.add", type = "org.tuio.TuioEvent")]
 	/**@eventType org.tuio.TuioEvent.UPDATE*/
-	[Event(name = "TuioEvent.UPDATE", type = "org.tuio.TuioEvent")]
+	[Event(name = "org.tuio.TuioEvent.update", type = "org.tuio.TuioEvent")]
 	/**@eventType org.tuio.TuioEvent.REMOVE*/
-	[Event(name = "TuioEvent.REMOVE", type = "org.tuio.TuioEvent")]
+	[Event(name = "org.tuio.TuioEvent.remove", type = "org.tuio.TuioEvent")]
 	/**@eventType org.tuio.TuioEvent.ADD_OBJECT*/
-	[Event(name = "TuioEvent.ADD_OBJECT", type = "org.tuio.TuioEvent")]
+	[Event(name = "org.tuio.TuioEvent.addObject", type = "org.tuio.TuioEvent")]
 	/**@eventType org.tuio.TuioEvent.UPDATE_OBJECT*/
-	[Event(name = "TuioEvent.UPDATE_OBJECT", type = "org.tuio.TuioEvent")]
+	[Event(name = "org.tuio.TuioEvent.updateObject", type = "org.tuio.TuioEvent")]
 	/**@eventType org.tuio.TuioEvent.REMOVE_OBJECT*/
-	[Event(name = "TuioEvent.REMOVE_OBJECT", type = "org.tuio.TuioEvent")]
+	[Event(name = "org.tuio.TuioEvent.removeObject", type = "org.tuio.TuioEvent")]
 	/**@eventType org.tuio.TuioEvent.ADD_CURSOR*/
-	[Event(name = "TuioEvent.ADD_CURSOR", type = "org.tuio.TuioEvent")]
+	[Event(name = "org.tuio.TuioEvent.addCursor", type = "org.tuio.TuioEvent")]
 	/**@eventType org.tuio.TuioEvent.UPDATE_CURSOR*/
-	[Event(name = "TuioEvent.UPDATE_CURSOR", type = "org.tuio.TuioEvent")]
+	[Event(name = "org.tuio.TuioEvent.updateCursor", type = "org.tuio.TuioEvent")]
 	/**@eventType org.tuio.TuioEvent.REMOVE_CURSOR*/
-	[Event(name = "TuioEvent.REMOVE_CURSOR", type = "org.tuio.TuioEvent")]
+	[Event(name = "org.tuio.TuioEvent.removeCursor", type = "org.tuio.TuioEvent")]
 	/**@eventType org.tuio.TuioEvent.ADD_BLOB*/
-	[Event(name = "TuioEvent.ADD_BLOB", type = "org.tuio.TuioEvent")]
+	[Event(name = "org.tuio.TuioEvent.addBlob", type = "org.tuio.TuioEvent")]
 	/**@eventType org.tuio.TuioEvent.UPDATE_BLOB*/
-	[Event(name = "TuioEvent.UPDATE_BLOB", type = "org.tuio.TuioEvent")]
+	[Event(name = "org.tuio.TuioEvent.updateBlob", type = "org.tuio.TuioEvent")]
 	/**@eventType org.tuio.TuioEvent.REMOVE_BLOB*/
-	[Event(name = "TuioEvent.REMOVE_BLOB", type = "org.tuio.TuioEvent")]
+	[Event(name = "org.tuio.TuioEvent.removeBlob", type = "org.tuio.TuioEvent")]
 	
 	/**
 	 * The TuioManager class implements the ITuioListener interface and triggers events 
