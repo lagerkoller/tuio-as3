@@ -47,11 +47,11 @@ package org.tuio {
 	 */
 	public class TuioManager extends EventDispatcher implements ITuioListener {
 		
-		/**The number of milliseconds within two subsequent tabs trigger a double tab.*/
-		public var doubleTabTimeout:int = 300;
+		/**The number of milliseconds within two subsequent taps trigger a double tap.*/
+		public var doubleTapTimeout:int = 300;
 		
-		/**The maximum distance between two subsequent tabs on the x/y axis to be counted as double tab in px*/
-		public var doubleTabDistance:Number = 10;
+		/**The maximum distance between two subsequent taps on the x/y axis to be counted as double tap in px*/
+		public var doubleTapDistance:Number = 10;
 		 
 		/**The time between a touch down event and a hold event in ms*/
 		public var holdTimeout:int = 500;
@@ -79,7 +79,7 @@ package org.tuio {
 		private var _tuioClient:TuioClient;
 		private var lastTarget:Array;
 		private var firstTarget:Array;
-		private var tabbed:Array;
+		private var tapped:Array;
 		private var hold:Array;
 		
 		private var ignoreList:Array;
@@ -98,7 +98,7 @@ package org.tuio {
 			this.stage = stage;
 			this.lastTarget = new Array();
 			this.firstTarget = new Array();
-			this.tabbed = new Array();
+			this.tapped = new Array();
 			this.hold = new Array();
 			this.ignoreList = new Array();
 		}
@@ -169,28 +169,28 @@ package org.tuio {
 				target.dispatchEvent(new MouseEvent(MouseEvent.MOUSE_UP, true, false, local.x, local.y, (target as InteractiveObject), false, false, false, false, 0));
 			}
 			
-			//tab
+			//tap
 			if (target == firstTarget[tuioContainer.sessionID]) {
 				var double:Boolean = false;
 				var tmpArray:Array = new Array();
-				var item:DoubleTabStore;
-				while (tabbed.length > 0) {
-					item = tabbed.pop() as DoubleTabStore;
-					if (item.check(this.doubleTabTimeout)) {
-						if (item.target == target && Math.abs(stagePos.x-item.x) < this.doubleTabDistance && Math.abs(stagePos.y - item.y) < this.doubleTabDistance ) double = true;
+				var item:DoubleTapStore;
+				while (tapped.length > 0) {
+					item = tapped.pop() as DoubleTapStore;
+					if (item.check(this.doubleTapTimeout)) {
+						if (item.target == target && Math.abs(stagePos.x-item.x) < this.doubleTapDistance && Math.abs(stagePos.y - item.y) < this.doubleTapDistance ) double = true;
 						else tmpArray.push(item);
 					}
 				}
-				tabbed = tmpArray.concat();
+				tapped = tmpArray.concat();
 				
 				if (double) {
-					target.dispatchEvent(new TouchEvent(TouchEvent.DOUBLE_TAB, true, false, local.x, local.y, stagePos.x, stagePos.y, target, tuioContainer));
+					target.dispatchEvent(new TouchEvent(TouchEvent.DOUBLE_TAP, true, false, local.x, local.y, stagePos.x, stagePos.y, target, tuioContainer));
 					if (_dispatchMouseEvents) {
 						target.dispatchEvent(new MouseEvent(MouseEvent.DOUBLE_CLICK, true, false, local.x, local.y, (target as InteractiveObject), false, false, false, false, 0));
 					}
 				} else {
-					tabbed.push(new DoubleTabStore(target, getTimer(), stagePos.x, stagePos.y));
-					target.dispatchEvent(new TouchEvent(TouchEvent.TAB, true, false, local.x, local.y, stagePos.x, stagePos.y, target, tuioContainer));
+					tapped.push(new DoubleTapStore(target, getTimer(), stagePos.x, stagePos.y));
+					target.dispatchEvent(new TouchEvent(TouchEvent.TAP, true, false, local.x, local.y, stagePos.x, stagePos.y, target, tuioContainer));
 					if (_dispatchMouseEvents) {
 						target.dispatchEvent(new MouseEvent(MouseEvent.CLICK, true, false, local.x, local.y, (target as InteractiveObject), false, false, false, false, 0));
 					}
@@ -328,14 +328,14 @@ package org.tuio {
 import flash.display.DisplayObject;
 import flash.utils.getTimer;
 
-internal class DoubleTabStore {
+internal class DoubleTapStore {
 	
 	internal var target:DisplayObject;
 	internal var time:int;
 	internal var x:Number;
 	internal var y:Number;
 	
-	function DoubleTabStore(target:DisplayObject, time:int, x:Number, y:Number) {
+	function DoubleTapStore(target:DisplayObject, time:int, x:Number, y:Number) {
 		this.target = target;
 		this.time = time;
 		this.x = x;
