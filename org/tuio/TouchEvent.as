@@ -27,9 +27,9 @@ package org.tuio {
 		public static const ROLL_OVER:String = "org.tuio.tuio.TouchEvent.ROLL_OVER";
 		
 		/**Triggered if a TOUCH_DOWN and TOUCH_UP occurred over the same DisplayObject.*/
-		public static const TAB:String = "org.tuio.tuio.TouchEvent.TAB";
+		public static const TAP:String = "org.tuio.tuio.TouchEvent.TAP";
 		/**Triggered if two subsequent TABs occurred over the same DisplayObject.*/
-		public static const DOUBLE_TAB:String = "org.tuio.tuio.TouchEvent.DOUBLE_TAB";
+		public static const DOUBLE_TAP:String = "org.tuio.tuio.TouchEvent.DOUBLE_TAP";
 		
 		/**Triggered if a touch is held for a certain time over the same DisplayObject without movement.*/
 		public static const HOLD:String = "org.tuio.tuio.TouchEvent.HOLD";
