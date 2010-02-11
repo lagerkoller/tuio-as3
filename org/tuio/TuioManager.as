@@ -216,14 +216,32 @@ package org.tuio {
 				}
 				item = stage;
 			} else if (this.touchTargetDiscoveryMode == TOUCH_TARGET_DISCOVERY_IGNORELIST) {
-				while(targets.length > 0) {
+				while (targets.length > 0) {
 					item = targets.pop();
-					if (ignoreList.indexOf(item) < 0) return item;
+					if (!bubbleListCheck(item)) return item;
 				}
 				item = stage;
 			}
 			
 			return item;
+		}
+		
+		/**
+		 * Checks if a DisplayObject or its parents are in the ignoreList.
+		 * 
+		 * @param	obj The DisplayObject that has to be checked.
+		 * @return Is true if the DisplayObject or one of its parents is in the ignoreList.
+		 */
+		private function bubbleListCheck(obj:DisplayObject):Boolean {
+			if (ignoreList.indexOf(obj) < 0){
+				if (obj.parent != null) {
+					return bubbleListCheck(obj.parent);
+				} else {
+					return false;
+				}
+			} else {
+				return true;
+			}
 		}
 		
 		/**
