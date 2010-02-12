@@ -139,6 +139,7 @@ package org.tuio.legacy
 		public function removeTuioCursor(tuioCursor:TuioCursor):void{
 			var dobj:DisplayObject;
 			var stagePoint:Point;					
+			var localPoint:Point;
 			var displayObjArray:Array;
 			
 			stagePoint = new Point((int)(stage.stageWidth*tuioCursor.x), (int)(stage.stageHeight*tuioCursor.y));					
@@ -152,15 +153,14 @@ package org.tuio.legacy
 //				if((dobj is ITuioDebugCursor || dobj is ITuioDebugBlob || dobj is ITuioDebugObject) && displayObjArray.length > 1){
 					dobj = displayObjArray[displayObjArray.length - 2];
 //				}
-				var localPoint:Point = dobj.parent.globalToLocal(new Point(stagePoint.x, stagePoint.y));				
+				localPoint = dobj.parent.globalToLocal(new Point(stagePoint.x, stagePoint.y));				
 				dobj.dispatchEvent(new TouchEvent(TouchEvent.MOUSE_UP, true, false, stagePoint.x, stagePoint.y, localPoint.x, localPoint.y, 0, 0, dobj, false,false,false, true, 0,"2Dcur", tuioCursor.sessionID, tuioCursor.sessionID, 0));									
 			}
 			
-			var stagePoint:Point = new Point((int)(stage.stageWidth*tuioCursor.x), (int)(stage.stageHeight*tuioCursor.y));
+			stagePoint = new Point((int)(stage.stageWidth*tuioCursor.x), (int)(stage.stageHeight*tuioCursor.y));
 			stage.dispatchEvent(new TouchEvent(TouchEvent.MOUSE_UP, true, false, stagePoint.x, stagePoint.y, stagePoint.x, stagePoint.y, 0, 0, null, false,false,false, true, 0,"2Dcur", tuioCursor.sessionID, tuioCursor.sessionID, 0));
 			
 			//legacy listener concept: dispatch MOUSE_UP event on objects in listener array
-			var localPoint:Point;
 			for each(var listeningObject:Object in listenOnIdsArray){
 				if(listeningObject.id == tuioCursor.sessionID){
 					localPoint = listeningObject.receiver.parent.globalToLocal(new Point(stagePoint.x, stagePoint.y));			
