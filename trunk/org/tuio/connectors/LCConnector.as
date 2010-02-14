@@ -1,37 +1,32 @@
-package org.tuio.osc {
+package org.tuio.connectors {
 	
-	import flash.net.Socket;
 	import flash.utils.ByteArray;
+	import org.tuio.lc.*;
 	
-	import org.tuio.tcp.*;
-	
-	public class TCPConnector implements IOSCConnector {
+	public class LCConnector implements IOSCConnector {
 		
-		private var host:String;
-		private var port:int;
+		private var connectionNameIn:String;
+		private var connectionNameOut:String;
 		
-		private var connection:OSCSocket;
+		private var connectionOut:LCSender;
+		private var connectionIn:LCReceiver;
 		
 		private var listeners:Array;
 		
-		public function TCPConnector(host:String = "127.0.0.1", port:int = 3333) {
+		public function LCConnector(connectionNameIn:String = "_OscDataStream", connectionNameOut:String = "_OscDataStreamOut") {
 			
 			this.listeners = new Array();
 			
-			this.host = host;
-			this.port = port;
+			this.connectionNameIn = connectionNameIn;
+			this.connectionNameOut = connectionNameOut;
 			
-			this.connection = new OSCSocket();
-			this.connection.addEventListener(OSCEvent.OSC_DATA,receiveOscData);
+			this.connectionIn = new LCReceiver(this.connectionNameIn, this);
+			this.connectionOut = new LCSender(this.connectionNameOut, "receiveOscData");
 			
-			this.connection.connect(host, port);
+			this.connectionIn.start();
 		}
 		
-		public function receiveOscData(e:OSCEvent):void {
-			var packet:ByteArray = new ByteArray();
-			packet.writeBytes(e.data,4);
-			packet.position = 0;
-			
+		public function receiveOscData(packet:ByteArray):void {		
 			if (packet != null) {
 				if (this.listeners.length > 0) {
 					//call receive listeners and push the received messages
@@ -71,7 +66,9 @@ package org.tuio.osc {
 		}
 		
 		public function sendOSCPacket(oscPacket:OSCPacket):void {
-			// Not Implemented
+			
+			this.connectionOut.send(oscPacket);
+			
 		}
 		
 		private function debug(msg:String):void {
