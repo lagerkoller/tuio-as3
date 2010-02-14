@@ -1,4 +1,4 @@
-package org.tuio.tcp
+package org.tuio.connectors.tcp
 {
 	import flash.events.DataEvent;
 	import flash.events.Event;

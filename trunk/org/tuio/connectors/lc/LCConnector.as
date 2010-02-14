@@ -1,4 +1,4 @@
-package org.tuio.connectors {
+package org.tuio.connectors.lc {
 	
 	import flash.utils.ByteArray;
 	import org.tuio.lc.*;

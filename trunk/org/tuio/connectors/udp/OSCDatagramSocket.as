@@ -1,4 +1,4 @@
-package org.tuio.udp
+package org.tuio.connectors.udp
 {
 	import flash.events.DatagramSocketDataEvent;
 	import flash.events.Event;
