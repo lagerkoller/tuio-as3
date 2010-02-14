@@ -27,7 +27,7 @@
  * or
  * var tuio:TuioClient = new TuioClient(new UDPConnector("192.0.0.5",3334));
  */
-package org.tuio.osc
+package org.tuio.connectors
 {
 	import flash.utils.ByteArray;
 	
