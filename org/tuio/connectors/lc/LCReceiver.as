@@ -1,4 +1,4 @@
-package org.tuio.lc {
+package org.tuio.connectors.lc {
 	
 	import flash.utils.ByteArray;
 	import flash.net.LocalConnection;

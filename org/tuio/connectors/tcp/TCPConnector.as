@@ -1,4 +1,4 @@
-package org.tuio.connectors {
+package org.tuio.connectors.tcp {
 	
 	import flash.net.Socket;
 	import flash.utils.ByteArray;
