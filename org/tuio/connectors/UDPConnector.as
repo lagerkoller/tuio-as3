@@ -27,17 +27,12 @@
  * or
  * var tuio:TuioClient = new TuioClient(new UDPConnector("192.0.0.5",3334));
  */
-package org.tuio.connectors.udp
+package org.tuio.connectors
 {
 	import flash.utils.ByteArray;
 	
-	import org.tuio.osc.IOSCConnector;
-	import org.tuio.osc.IOSCConnectorListener;
-	import org.tuio.osc.OSCBundle;
-	import org.tuio.osc.OSCMessage;
-	import org.tuio.osc.OSCPacket;
-	import org.tuio.osc.OSCEvent;
-	import org.tuio.udp.OSCDatagramSocket;
+	import org.tuio.osc.*;
+	import org.tuio.connectors.udp.OSCDatagramSocket;
 
 	public class UDPConnector implements IOSCConnector
 	{
