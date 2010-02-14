@@ -27,7 +27,7 @@
  * or
  * var tuio:TuioClient = new TuioClient(new UDPConnector("192.0.0.5",3334));
  */
-package org.tuio.udp
+package org.tuio.osc
 {
 	import flash.utils.ByteArray;
 	
@@ -36,19 +36,20 @@ package org.tuio.udp
 	import org.tuio.osc.OSCBundle;
 	import org.tuio.osc.OSCMessage;
 	import org.tuio.osc.OSCPacket;
-	import org.tuio.tcp.OSCEvent;
+	import org.tuio.osc.OSCEvent;
+	import org.tuio.udp.OSCDatagramSocket;
 
 	public class UDPConnector implements IOSCConnector
 	{
-		private var connection:OSCSocket;
+		private var connection:OSCDatagramSocket;
 		private var listeners:Array;
 		
 		public function UDPConnector(host:String = "127.0.0.1", port:int = 3333)
 		{
 			this.listeners = new Array();
 			
-			this.connection = new OSCSocket(host, port);
-			this.connection.addEventListener(OSCEvent.OSC_DATA,receiveOscData);
+			this.connection = new OSCDatagramSocket(host, port);
+			this.connection.addEventListener(OSCEvent.OSC_DATA, receiveOscData);
 		}
 		
 		public function receiveOscData(e:OSCEvent):void {
@@ -71,6 +72,7 @@ package org.tuio.udp
 				}
 			}
 		}
+		
 		public function addListener(listener:IOSCConnectorListener):void
 		{
 			if (this.listeners.indexOf(listener) > -1) return;

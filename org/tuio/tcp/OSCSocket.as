@@ -8,6 +8,7 @@ package org.tuio.tcp
 	import flash.net.Socket;
 	import flash.utils.ByteArray;
 	import flash.utils.Endian;
+	import org.tuio.osc.OSCEvent;
 	
 	public class OSCSocket extends Socket
 	{

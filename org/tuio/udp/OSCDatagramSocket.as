@@ -7,16 +7,15 @@ package org.tuio.udp
 	import flash.net.DatagramSocket;
 	import flash.utils.ByteArray;
 	import flash.utils.Endian;
-	
-	import org.tuio.tcp.OSCEvent;
+	import org.tuio.osc.OSCEvent;
 
-	public class OSCSocket extends DatagramSocket
+	public class OSCDatagramSocket extends DatagramSocket
 	{
 		private var Debug:Boolean = true;
 		private var Buffer:ByteArray = new ByteArray();
 		private var PartialRecord:Boolean = false;
 		
-		public function OSCSocket(host:String = "127.0.0.1", port:int = 3333)
+		public function OSCDatagramSocket(host:String = "127.0.0.1", port:int = 3333)
 		{
 			configureListeners();
 			bind(port, host);

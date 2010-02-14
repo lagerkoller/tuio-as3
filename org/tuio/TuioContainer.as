@@ -7,15 +7,15 @@ package org.tuio {
 	 */
 	public class TuioContainer {
 		
-		protected var _sessionID:uint;
-		protected var _x:Number;
-		protected var _y:Number;
-		protected var _z:Number;
-		protected var _X:Number;
-		protected var _Y:Number;
-		protected var _Z:Number;
-		protected var _m:Number;
-		protected var _type:String;
+		internal var _sessionID:uint;
+		internal var _x:Number;
+		internal var _y:Number;
+		internal var _z:Number;
+		internal var _X:Number;
+		internal var _Y:Number;
+		internal var _Z:Number;
+		internal var _m:Number;
+		internal var _type:String;
 		
 		public var isAlive:Boolean;
 		
