@@ -106,6 +106,10 @@ package org.tuio {
 			
 			return out;
 		}
+		
+		public function clone():TuioObject{
+			return new TuioObject(_type,_sessionID, _id, _x, _y, _z, _a, _b, _c, _X, _Y, _Z, _A, _B, _C, _m, _r);
+		}
 	}
 	
 }
