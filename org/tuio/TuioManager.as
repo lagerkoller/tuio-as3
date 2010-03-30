@@ -4,10 +4,16 @@ package org.tuio {
 	import flash.display.InteractiveObject;
 	import flash.display.Stage;
 	import flash.events.EventDispatcher;
-	import flash.geom.Point;
-	import org.tuio.TouchEvent;
-	import flash.utils.getTimer;
 	import flash.events.MouseEvent;
+	import flash.geom.Point;
+	import flash.utils.Dictionary;
+	import flash.utils.getTimer;
+	
+	import org.tuio.debug.ITuioDebugBlob;
+	import org.tuio.debug.ITuioDebugCursor;
+	import org.tuio.debug.ITuioDebugObject;
+	import org.tuio.debug.ITuioDebugTextSprite;
+	import org.tuio.fiducial.TuioFiducialDispatcher;
 	
 	/**@eventType org.tuio.TuioEvent.ADD*/
 	[Event(name = "org.tuio.TuioEvent.add", type = "org.tuio.TuioEvent")]
@@ -85,6 +91,11 @@ package org.tuio {
 		private var ignoreList:Array;
 		
 		private var stage:Stage;
+
+		private var touchReceiversDict:Dictionary;
+		
+		private static var allowInst:Boolean;
+		private static var inst:TuioManager;
 		
 		/**
 		 * Creates a new TuioManager instance which processes the Tuio tracking data received by the given TuioClient.
@@ -93,14 +104,45 @@ package org.tuio {
 		 * @param	tuioClient A TuioClient instance that receives Tuio tracking data from a tracker.
 		 */
 		public function TuioManager(stage:Stage, tuioClient:TuioClient) {
-			this._tuioClient = tuioClient;
-			this._tuioClient.addListener(this);
-			this.stage = stage;
-			this.lastTarget = new Array();
-			this.firstTarget = new Array();
-			this.tapped = new Array();
-			this.hold = new Array();
-			this.ignoreList = new Array();
+			if (!allowInst) {
+	            throw new Error("Error: Instantiation failed: Use TuioManager.getInstance() instead of new.");
+			}else{
+				this._tuioClient = tuioClient;
+				this._tuioClient.addListener(this);
+				this.stage = stage;
+				this.lastTarget = new Array();
+				this.firstTarget = new Array();
+				this.tapped = new Array();
+				this.hold = new Array();
+				this.ignoreList = new Array();
+				this.touchReceiversDict = new Dictionary();
+			}
+		}
+		
+		/**
+		 * initializes Singleton instance.
+		 * 
+		 * @param	stage The Stage object of the Flashmovie.
+		 * @param	tuioClient A TuioClient instance that receives Tuio tracking data from a tracker.
+		 */
+		public static function init(stage:Stage, tuioClient:TuioClient):TuioManager{
+			if(inst == null){
+				allowInst = true;
+				inst = new TuioManager(stage, tuioClient);
+				allowInst = false;
+			}
+			
+			return inst;
+		}
+		
+		/**
+		 * gets Singleton instance
+		 */
+		public static function getInstance():TuioManager{
+			if(inst == null){
+				throw new Error("Please initialize with method TuioManager.init(...) first!");
+			}
+			return inst;
 		}
 		
 		private function handleAdd(tuioContainer:TuioContainer):void {
@@ -126,6 +168,7 @@ package org.tuio {
 		private function handleUpdate(tuioContainer:TuioContainer):void {
 			var stagePos:Point = new Point(stage.stageWidth * tuioContainer.x, stage.stageHeight * tuioContainer.y);
 			var target:DisplayObject = getTopDisplayObjectUnderPoint(stagePos);
+			var targetDict:Dictionary = createDict(stage.getObjectsUnderPoint(stagePos));
 			var local:Point = target.globalToLocal(new Point(stagePos.x, stagePos.y));
 			var last:DisplayObject = lastTarget[tuioContainer.sessionID];
 			
@@ -157,6 +200,59 @@ package org.tuio {
 			}
 			
 			lastTarget[tuioContainer.sessionID] = target;
+			
+			//handle updates on receivers: call updateTouch from each receiver that listens on sessionID
+			if(this.touchReceiversDict[tuioContainer.sessionID]){
+				for each(var receiver:ITuioTouchReceiver in this.touchReceiversDict[tuioContainer.sessionID]){
+					receiver.updateTouch(new TouchEvent(TouchEvent.TOUCH_MOVE, true, false, local.x, local.y, stagePos.x, stagePos.y, target, tuioContainer));
+				}
+			}
+		}
+		
+		/**
+		 * adds a touch callback class to TuioManager that listens on a certain sessionId.
+		 * 
+		 * @param receiver callback class.
+		 * @param sessionId of the cursor/blob to listen to.
+		 * 
+		 */
+		public function registerReceiver(receiver:ITuioTouchReceiver, sessionId:Number):void{
+			if(!this.touchReceiversDict[sessionId]){
+				this.touchReceiversDict[sessionId] = new Array();
+			}
+			this.touchReceiversDict[sessionId].push(receiver);	
+		}
+		
+		public function removeReceiver(receiver:ITuioTouchReceiver, sessionId:Number):void{
+//			var i:Number = 0;
+//			for each(var receiverObject:Object in receivers){
+//				if(receiverObject.receiver == receiver && receiverObject.classID == fiducialId){
+//					receivers.splice(i,1);
+//					break;
+//				}
+//				i = i+1;
+//			}
+			
+		}
+		
+		private function subtractDicts(dict1:Dictionary, dict2:Dictionary):Array{
+			var diffArray:Array = new Array();
+			
+			for (var key:Object in dict1){
+				var isIn:Object = dict2[key];
+				if(isIn == null){
+					diffArray.push(key);
+				}
+			}
+			
+			return diffArray;
+		}
+		private function createDict(objectsUnderPoint:Array):Dictionary{
+			var objectsDict:Dictionary = new Dictionary();
+			for each(var displayObject:DisplayObject in objectsUnderPoint){
+				objectsDict[displayObject] = "";
+			}
+			return objectsDict;
 		}
 		
 		private function handleRemove(tuioContainer:TuioContainer):void {
@@ -167,6 +263,17 @@ package org.tuio {
 			target.dispatchEvent(new TouchEvent(TouchEvent.TOUCH_UP, true, false, local.x, local.y, stagePos.x, stagePos.y, target, tuioContainer));
 			if (_dispatchMouseEvents) {
 				target.dispatchEvent(new MouseEvent(MouseEvent.MOUSE_UP, true, false, local.x, local.y, (target as InteractiveObject), false, false, false, false, 0));
+			}
+			
+			//handle receivers
+			if(this.touchReceiversDict[tuioContainer.sessionID]){
+				//call removeTouch from each receiver that listens on sessionID
+				for each(var receiver:ITuioTouchReceiver in this.touchReceiversDict[tuioContainer.sessionID]){
+					receiver.removeTouch(new TouchEvent(TouchEvent.TOUCH_UP, true, false, local.x, local.y, stagePos.x, stagePos.y, target, tuioContainer));
+				}
+				
+				//delete receivers from dictionary
+				delete this.touchReceiversDict[tuioContainer.sessionID];
 			}
 			
 			//tap
@@ -209,6 +316,10 @@ package org.tuio {
 			if(this.touchTargetDiscoveryMode == TOUCH_TARGET_DISCOVERY_MOUSE_ENABLED){
 				while(targets.length > 0) {
 					item = targets.pop() as DisplayObject;
+					//ignore debug cursor/object/blob and send object under debug cursor/object/blob
+					if((item is ITuioDebugCursor || item is ITuioDebugBlob || item is ITuioDebugObject || item is ITuioDebugTextSprite) && targets.length > 1){
+						continue;
+					}
 					if (item.parent != null && !(item is InteractiveObject)) item = item.parent;
 					if (item is InteractiveObject) {
 						if ((item as InteractiveObject).mouseEnabled) return item;
@@ -216,8 +327,12 @@ package org.tuio {
 				}
 				item = stage;
 			} else if (this.touchTargetDiscoveryMode == TOUCH_TARGET_DISCOVERY_IGNORELIST) {
-				while (targets.length > 0) {
+				while(targets.length > 0) {
 					item = targets.pop();
+					//ignore debug cursor/object/blob and send object under debug cursor/object/blob
+					if((item is ITuioDebugCursor || item is ITuioDebugBlob || item is ITuioDebugObject || item is ITuioDebugTextSprite) && targets.length > 1){
+						continue;
+					}
 					if (!bubbleListCheck(item)) return item;
 				}
 				item = stage;
@@ -339,6 +454,9 @@ package org.tuio {
 			if(triggerTouchOnBlob) this.handleRemove(tuioBlob);
 		}
 		
+		public function get tuioClient():TuioClient{
+			return _tuioClient;
+		}
 	}
 	
 }
