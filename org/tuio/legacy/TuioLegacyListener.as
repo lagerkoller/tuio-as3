@@ -1,23 +1,8 @@
-/**
- * TuioLegacyListener takes over the interface duties of the old TUIO class. As TuioLegacyListener is
- * implemented as a Singleton class, there can only be one instance of TuioLegacyListener in the Flash
- * app. This provides global access to the functions of TuioLegacyListener. 
- * 
- * TuioLegacyListener implements the interface ITuioListener. Thus, it is being called whenever a Tuio
- * object, cursor or blob is being received. When a cursor (== a touch) is being received in the function 
- * addTuioCursor, addTuioCursor looks if there is a DisplayObject under the cursor and dispatches a 
- * TouchEvent.MOUSE_DOWN on this DisplayObject. Additionally, a TouchEvent.MOUSE_DOWN is being dispatched 
- * on the stage.
- * 
- * Following legacy functions have been transfered from TUIO to TuioLegacyListener:
- * - listenForObject
- * - getObjectById 
- * 
- */
 package org.tuio.legacy
 {
 	import flash.display.DisplayObject;
 	import flash.display.Stage;
+	import flash.events.EventDispatcher;
 	import flash.events.MouseEvent;
 	import flash.geom.Point;
 	
@@ -26,8 +11,42 @@ package org.tuio.legacy
 	import org.tuio.TuioClient;
 	import org.tuio.TuioCursor;
 	import org.tuio.TuioObject;
+	import org.tuio.debug.ITuioDebugBlob;
+	import org.tuio.debug.ITuioDebugCursor;
+	import org.tuio.debug.ITuioDebugObject;
 
-	public class TuioLegacyListener implements ITuioListener
+	/**
+	 * Adopts function of <code>TUIO</code> class from Touchlib's Tuio AS3 framework. All functions of
+	 * <code>TUIO</code> can be found within <code>TuioLegacyListener</code>. Additionally, <code>TuioLegacyListener</code>
+	 * dispatches <code>TouchEvent</code>s Touchlib's Tuio AS3 framework. Thus, existing multitouch software that
+	 * has been built with Touchlib's Tuio AS3 framework can be easily ported to the TUIO AS3 framework.
+	 * 
+	 * All existing calls to <code>TUIO</code> must be replaced with <code>TuioLegacyListener.getInstance()</code> and
+	 * the import paths of TouchEvent have to be changed to <code>org.tuio.legacy.TouchEvent</code>. 
+	 * 
+	 * Following legacy functions have been transfered from TUIO to TuioLegacyListener:
+	 * - listenForObject
+	 * - getObjectById
+	 *  
+	 * <code>TuioLegacyListener</code> implements the interface <code>ITuioListener</code>. Thus, it is being called whenever a Tuio
+	 * object, cursor or blob is being received. When a cursor (== a touch) is being received in the function 
+	 * <code>addTuioCursor</code>, <code>addTuioCursor</code> looks if there is a <code>DisplayObject</code> under the cursor and dispatches a 
+	 * <code>TouchEvent.MOUSE_DOWN</code> on this <code>DisplayObject</code>. Additionally, a <code>TouchEvent.MOUSE_DOWN</code> is being dispatched 
+	 * on the stage.
+	 * 
+	 * <b>Use only for the port of existing code to TUIO AS3.</b>
+	 * For the current Tuio event implementation see:
+	 * @see org.tuio.TuioManager
+	 * @see org.tuio.TouchEvent
+	 *  
+	 * For more information about this legacy Tuio implementation see: 
+	 * @see TouchEvent
+	 * @see TUIOObject
+	 * 
+	 * @author Johannes Luderschmidt
+	 * 
+	 */
+	public class TuioLegacyListener extends EventDispatcher implements ITuioListener
 	{
 		private var stage:Stage;
 		private var tuioClient:TuioClient;
@@ -52,7 +71,13 @@ package org.tuio.legacy
 		}
 		
 		/**
-		 * initializes Singleton instance.
+		 * initializes Singleton instance. Must be called before <code>getInstance()</code>.
+		 *  
+		 * @param stage
+		 * @param tuioClient
+		 * 
+		 * @return singleton instance of <code>TuioLegacyListener</code>.
+		 * 
 		 */
 		public static function init(stage:Stage, tuioClient:TuioClient):TuioLegacyListener{
 			if(inst == null){
@@ -65,7 +90,9 @@ package org.tuio.legacy
 		}
 		
 		/**
-		 * gets Singleton instance
+		 * 
+		 * @return singleton instance of <code>TuioLegacyListener</code>.
+		 * 
 		 */
 		public static function getInstance():TuioLegacyListener{
 			if(inst == null){
@@ -73,14 +100,32 @@ package org.tuio.legacy
 			}
 			return inst;
 		} 
-
+		
+		/**
+		 * <code>ITuioListener</code> callback method. Not implemented.
+		 *  
+		 * @param tuioCursor
+		 * 
+		 */
 		public function addTuioObject(tuioObject:TuioObject):void{
 			
 		}
 		
+		/**
+		 * <code>ITuioListener</code> callback method. Not implemented.
+		 *  
+		 * @param tuioCursor
+		 * 
+		 */
 		public function updateTuioObject(tuioObject:TuioObject):void{
 		}
 		
+		/**
+		 * <code>ITuioListener</code> callback method. Not implemented.
+		 *  
+		 * @param tuioCursor
+		 * 
+		 */
 		public function removeTuioObject(tuioObject:TuioObject):void{
 		}
 		
@@ -88,7 +133,10 @@ package org.tuio.legacy
 		 * dispatches TouchEvent.MOUSE_DOWN and TouchEvent.MOUSE_OVER events on the DisplayObject under the touch. 
 		 * Additionally, the same events are being dispatched on the stage object in order to provide the possibility 
 		 * to objects to listen on TouchEvents that are being dispatched on the stage (useful for the implementation of 
-		 * dragging and so on). 
+		 * dragging and so on).
+		 *  
+		 * @param tuioCursor
+		 * 
 		 */
 		public function addTuioCursor(tuioCursor:TuioCursor):void{
 			var dobj:DisplayObject;
@@ -97,10 +145,11 @@ package org.tuio.legacy
 			
 			stagePoint = new Point((int)(stage.stageWidth*tuioCursor.x), (int)(stage.stageHeight*tuioCursor.y));					
 			displayObjArray = this.stage.getObjectsUnderPoint(stagePoint);
-			dobj = null;
+//			dobj = null;
 			
 			if(displayObjArray.length > 0){							
-				dobj = displayObjArray[displayObjArray.length - 1];
+//				dobj = displayObjArray[displayObjArray.length - 1];
+				dobj = getTopDisplayObjectUnderPoint(stagePoint);
 				var localPoint:Point = dobj.parent.globalToLocal(new Point(stagePoint.x, stagePoint.y));
 				dobj.dispatchEvent(new MouseEvent(MouseEvent.CLICK));
 				dobj.dispatchEvent(new TouchEvent(TouchEvent.MOUSE_DOWN, true, false, stagePoint.x, stagePoint.y, localPoint.x, localPoint.y, 0, 0, dobj, false,false,false, true, 0,"2Dcur", tuioCursor.sessionID, tuioCursor.sessionID, 0));									
@@ -115,6 +164,9 @@ package org.tuio.legacy
 		 * 
 		 * Additionally, TouchEvent.MOUSE_MOVE events are being dispatched on all receiver objects in
 		 * the Array listenOnIdsArray, which listen on the id of the updated touch.
+		 *  
+		 * @param tuioCursor
+		 * 
 		 */
 		public function updateTuioCursor(tuioCursor:TuioCursor):void{
 			var stagePoint:Point = new Point((int)(stage.stageWidth*tuioCursor.x), (int)(stage.stageHeight*tuioCursor.y));
@@ -135,11 +187,12 @@ package org.tuio.legacy
 		 * 
 		 * Additionally, TouchEvent.MOUSE_UP events are being dispatched on all receiver objects in
 		 * the Array listenOnIdsArray, which listen on the id of the removed touch.
+		 * 
+		 * @param tuioCursor
 		 */
 		public function removeTuioCursor(tuioCursor:TuioCursor):void{
 			var dobj:DisplayObject;
 			var stagePoint:Point;					
-			var localPoint:Point;
 			var displayObjArray:Array;
 			
 			stagePoint = new Point((int)(stage.stageWidth*tuioCursor.x), (int)(stage.stageHeight*tuioCursor.y));					
@@ -150,17 +203,18 @@ package org.tuio.legacy
 				dobj = displayObjArray[displayObjArray.length - 1];
 				
 				//don't dispatch TouchEvent on debug cursor, debug object or debug blob but on the actual object
-//				if((dobj is ITuioDebugCursor || dobj is ITuioDebugBlob || dobj is ITuioDebugObject) && displayObjArray.length > 1){
+				if((dobj is ITuioDebugCursor || dobj is ITuioDebugBlob || dobj is ITuioDebugObject) && displayObjArray.length > 1){
 					dobj = displayObjArray[displayObjArray.length - 2];
-//				}
-				localPoint = dobj.parent.globalToLocal(new Point(stagePoint.x, stagePoint.y));				
-				dobj.dispatchEvent(new TouchEvent(TouchEvent.MOUSE_UP, true, false, stagePoint.x, stagePoint.y, localPoint.x, localPoint.y, 0, 0, dobj, false,false,false, true, 0,"2Dcur", tuioCursor.sessionID, tuioCursor.sessionID, 0));									
+				}
+				var localPoint2:Point = dobj.parent.globalToLocal(new Point(stagePoint.x, stagePoint.y));				
+				dobj.dispatchEvent(new TouchEvent(TouchEvent.MOUSE_UP, true, false, stagePoint.x, stagePoint.y, localPoint2.x, localPoint2.y, 0, 0, dobj, false,false,false, true, 0,"2Dcur", tuioCursor.sessionID, tuioCursor.sessionID, 0));									
 			}
 			
 			stagePoint = new Point((int)(stage.stageWidth*tuioCursor.x), (int)(stage.stageHeight*tuioCursor.y));
 			stage.dispatchEvent(new TouchEvent(TouchEvent.MOUSE_UP, true, false, stagePoint.x, stagePoint.y, stagePoint.x, stagePoint.y, 0, 0, null, false,false,false, true, 0,"2Dcur", tuioCursor.sessionID, tuioCursor.sessionID, 0));
 			
 			//legacy listener concept: dispatch MOUSE_UP event on objects in listener array
+			var localPoint:Point;
 			for each(var listeningObject:Object in listenOnIdsArray){
 				if(listeningObject.id == tuioCursor.sessionID){
 					localPoint = listeningObject.receiver.parent.globalToLocal(new Point(stagePoint.x, stagePoint.y));			
@@ -170,21 +224,65 @@ package org.tuio.legacy
 			}
 		}
 		
+		private function getTopDisplayObjectUnderPoint(point:Point):DisplayObject {
+			var targets:Array =  stage.getObjectsUnderPoint(point);
+			var item:DisplayObject = (targets.length > 0) ? targets[targets.length - 1] : stage;
+			
+			var topmostDisplayObject:DisplayObject;
+			
+			while(targets.length > 0) {
+				item = targets.pop();
+				//ignore debug cursor/object/blob and send object under debug cursor/object/blob
+				if((item is ITuioDebugCursor || item is ITuioDebugBlob || item is ITuioDebugObject) && targets.length > 1){
+					continue;
+				}
+				topmostDisplayObject = item;
+				break;
+			}
+			if(topmostDisplayObject == null){
+				topmostDisplayObject = stage;
+			}
+			
+			return topmostDisplayObject;
+		}
+		
+		/**
+		 * <code>ITuioListener</code> callback method. Not implemented.
+		 *  
+		 * @param tuioCursor
+		 * 
+		 */
 		public function addTuioBlob(tuioBlob:TuioBlob):void
 		{
 		}
 		
+		/**
+		 * <code>ITuioListener</code> callback method. Not implemented.
+		 *  
+		 * @param tuioCursor
+		 * 
+		 */
 		public function updateTuioBlob(tuioBlob:TuioBlob):void
 		{
 		}
 		
+		/**
+		 * <code>ITuioListener</code> callback method. Not implemented.
+		 *  
+		 * @param tuioCursor
+		 * 
+		 */
 		public function removeTuioBlob(tuioBlob:TuioBlob):void
 		{
 		}
 		
 		/**
-		 * allows a receiver DisplayObject to register themself to be notified whenever
+		 * adds a receiver object that will be notified whenever
 		 * a touch with the id id arrives.
+		 *  
+		 * @param id session id of touch
+		 * @param receiver object 
+		 * 
 		 */
 		public function listenForObject(id:Number, receiver:Object):void{
 			var tmpObj:TUIOObject = getObjectById(id);			
@@ -195,7 +293,11 @@ package org.tuio.legacy
 		}
 		
 		/**
-		 * removes a receiver DisplayObject to listen on touches with the id id.
+		 * removes a receiver object from the notification list.
+		 * 
+		 * @param id session id of touch
+		 * @param receiver object
+		 * 
 		 */
 		public function removeListenForObject(id:Number, receiver:Object):void {
 			var i:Number = 0;
@@ -208,11 +310,15 @@ package org.tuio.legacy
 		}
 		
 		/**
-		 * takes over the duties of the function getObjectById from TUIO. getObjectById looks in 
-		 * the global cursor list (tuioClient.getTuioCursors()) for the tuio element with the id id.
-		 * It this element is being found it will be repackaged into a (legacy) TUIOObject instance and
+		 * takes over the duties of the function <code>getObjectById</code> from <code>TUIO</code>. <code>getObjectById</code> looks in 
+		 * the global cursor list for the tuio element with the id id.
+		 * If this element is being found it will be repackaged into a (legacy) <code>TUIOObject</code> instance and
 		 * returned to the caller.
-		 */		
+		 *  
+		 * @param id session id of requested blob.
+		 * @return TUIOObject with the blob with the id id
+		 * 
+		 */
 		public function getObjectById(id:Number):TUIOObject {
 			var tuioObject:TUIOObject;
 			//returns mouse cursor as blob
@@ -233,5 +339,27 @@ package org.tuio.legacy
 			return tuioObject;
 		}
 		
+		/**
+		 * takes over the duties of the function getObjects from TUIO. getObjects puts all elements from  
+		 * the global cursor list (tuioClient.getTuioCursors()) into TUIOObjects and adds them to an array
+		 * that is being returned.
+		 *  
+		 * @return Array with all pravailing tuio cursors and objects. 
+		 * 
+		 */
+		public function getObjects():Array {
+			var objects:Array = new Array();
+			
+			var objectArray:Array = tuioClient.tuioCursors;
+			for(var i:int=0; i<objectArray.length; i++)  {
+				var tuioObject:TUIOObject;
+				var stagePoint:Point = new Point((int)(stage.stageWidth*objectArray[i].x), (int)(stage.stageHeight*objectArray[i].y));
+				var diffPoint:Point = new Point((int)(stage.stageWidth*objectArray[i].X), (int)(stage.stageHeight*objectArray[i].Y));
+				tuioObject = new TUIOObject("2Dcur", objectArray[i].sessionID, stagePoint.x, stagePoint.y, diffPoint.x, diffPoint.y,-1,0,0,0, null);
+				objects.push(tuioObject);
+			}
+			
+			return objects;
+		}	
 	}
 }
