@@ -105,7 +105,7 @@ package org.tuio {
 		 */
 		public function TuioManager(stage:Stage, tuioClient:TuioClient) {
 			if (!allowInst) {
-	            throw new Error("Error: Instantiation failed: Use TuioManager.getInstance() instead of new.");
+				throw new Error("Error: Instantiation failed: Use TuioManager.getInstance() instead of new.");
 			}else{
 				this._tuioClient = tuioClient;
 				this._tuioClient.addListener(this);
@@ -149,20 +149,23 @@ package org.tuio {
 			var stagePos:Point = new Point(stage.stageWidth * tuioContainer.x, stage.stageHeight * tuioContainer.y);
 			var target:DisplayObject = getTopDisplayObjectUnderPoint(stagePos);
 			var local:Point = target.globalToLocal(new Point(stagePos.x, stagePos.y));
+			var ancestorLocal:Point = new Point(local.x+target.x, local.y+target.y);
+			var ancestors:Array = createAncestorList(target);
 			
 			firstTarget[tuioContainer.sessionID] = target;
 			lastTarget[tuioContainer.sessionID] = target;
 			hold[tuioContainer.sessionID] = getTimer();
 			
-			target.dispatchEvent(new TouchEvent(TouchEvent.TOUCH_OVER, true, false, local.x, local.y, stagePos.x, stagePos.y, target, tuioContainer));
-			target.dispatchEvent(new TouchEvent(TouchEvent.ROLL_OVER, false, false, local.x, local.y, stagePos.x, stagePos.y, target, tuioContainer));
+			//target.dispatchEvent(new TouchEvent(TouchEvent.TOUCH_OVER, true, false, local.x, local.y, stagePos.x, stagePos.y, target, tuioContainer));
+			//target.dispatchEvent(new TouchEvent(TouchEvent.ROLL_OVER, false, false, local.x, local.y, stagePos.x, stagePos.y, target, tuioContainer));
 			target.dispatchEvent(new TouchEvent(TouchEvent.TOUCH_DOWN, true, false, local.x, local.y, stagePos.x, stagePos.y, target, tuioContainer));
 			
 			if (_dispatchMouseEvents) {
-				target.dispatchEvent(new MouseEvent(MouseEvent.MOUSE_OVER, true, false, local.x, local.y, (target as InteractiveObject), false, false, false, false, 0));
-				target.dispatchEvent(new MouseEvent(MouseEvent.ROLL_OVER, false, false, local.x, local.y, (target as InteractiveObject), false, false, false, false, 0));
+				//target.dispatchEvent(new MouseEvent(MouseEvent.MOUSE_OVER, true, false, local.x, local.y, (target as InteractiveObject), false, false, false, false, 0));
+				//target.dispatchEvent(new MouseEvent(MouseEvent.ROLL_OVER, false, false, local.x, local.y, (target as InteractiveObject), false, false, false, false, 0));
 				target.dispatchEvent(new MouseEvent(MouseEvent.MOUSE_DOWN, true, false, local.x, local.y, (target as InteractiveObject), false, false, false, false, 0));
 			}
+			
 		}
 		
 		private function handleUpdate(tuioContainer:TuioContainer):void {
@@ -187,15 +190,58 @@ package org.tuio {
 			//mouse out/over
 			if (target != last) {
 				var lastLocal:Point = last.globalToLocal(new Point(stagePos.x, stagePos.y));
-				last.dispatchEvent(new TouchEvent(TouchEvent.TOUCH_OUT, true, false, lastLocal.x, lastLocal.y, stagePos.x, stagePos.y, last, tuioContainer));
-				last.dispatchEvent(new TouchEvent(TouchEvent.ROLL_OUT, false, false, local.x, local.y, stagePos.x, stagePos.y, last, tuioContainer));
-				target.dispatchEvent(new TouchEvent(TouchEvent.ROLL_OVER, false, false, local.x, local.y, stagePos.x, stagePos.y, target, tuioContainer));
-				target.dispatchEvent(new TouchEvent(TouchEvent.TOUCH_OVER, true, false, local.x, local.y, stagePos.x, stagePos.y, target, tuioContainer));
+				var lastAncestors:Array = createAncestorList(last);
+				var ancestors:Array = createAncestorList(target);
+				var lastAncestorLocal:Point = new Point(lastLocal.x+last.x, lastLocal.y+last.y);
+				var ancestorLocal:Point = new Point(local.x+target.x, local.y+target.y);
+				var la:DisplayObject = lastAncestors.pop();
+				while (la != null && la == ancestors.pop()) {
+					la = lastAncestors.pop();
+				}
+				if (la != null) lastAncestors.push(la);
+				
 				if (_dispatchMouseEvents) {
-					last.dispatchEvent(new MouseEvent(MouseEvent.MOUSE_OUT, true, false, local.x, local.y, (last as InteractiveObject), false, false, false, false, 0));
-					last.dispatchEvent(new MouseEvent(MouseEvent.ROLL_OUT, false, false, local.x, local.y, (last as InteractiveObject), false, false, false, false, 0));
 					target.dispatchEvent(new MouseEvent(MouseEvent.MOUSE_OVER, true, false, local.x, local.y, (target as InteractiveObject), false, false, false, false, 0));
 					target.dispatchEvent(new MouseEvent(MouseEvent.ROLL_OVER, false, false, local.x, local.y, (target as InteractiveObject), false, false, false, false, 0));
+				}
+				
+				if (ancestors.indexOf(last) < 0) {
+					if (_dispatchMouseEvents) {
+						last.dispatchEvent(new MouseEvent(MouseEvent.MOUSE_OUT, true, false, local.x, local.y, (last as InteractiveObject), false, false, false, false, 0));
+						last.dispatchEvent(new MouseEvent(MouseEvent.ROLL_OUT, false, false, local.x, local.y, (last as InteractiveObject), false, false, false, false, 0));
+					}
+					last.dispatchEvent(new TouchEvent(TouchEvent.TOUCH_OUT, true, false, lastLocal.x, lastLocal.y, stagePos.x, stagePos.y, last, tuioContainer));
+					last.dispatchEvent(new TouchEvent(TouchEvent.ROLL_OUT, false, false, local.x, local.y, stagePos.x, stagePos.y, last, tuioContainer));
+					
+					for each(var a:InteractiveObject in lastAncestors) {
+						if(a != target){
+							a.dispatchEvent(new TouchEvent(TouchEvent.ROLL_OUT, false, false, lastAncestorLocal.x, lastAncestorLocal.y, stagePos.x, stagePos.y, a, tuioContainer));
+							if (_dispatchMouseEvents) {
+								a.dispatchEvent(new MouseEvent(MouseEvent.ROLL_OUT, false, false, lastAncestorLocal.x, lastAncestorLocal.y, a, false, false, false, false, 0));
+							}
+						}
+						lastAncestorLocal.x += a.x;
+						lastAncestorLocal.y += a.y;
+					}
+					
+				} else {
+					var ta:InteractiveObject = ancestors.pop();
+					while (last != ta && ta != null) {
+						ta = ancestors.pop();
+					}
+				}
+				
+				if (lastAncestors.indexOf(target) < 0) {
+					target.dispatchEvent(new TouchEvent(TouchEvent.TOUCH_OVER, true, false, local.x, local.y, stagePos.x, stagePos.y, target, tuioContainer));
+					target.dispatchEvent(new TouchEvent(TouchEvent.ROLL_OVER, false, false, local.x, local.y, stagePos.x, stagePos.y, target, tuioContainer));
+					for each(var b:InteractiveObject in ancestors) {
+						b.dispatchEvent(new TouchEvent(TouchEvent.ROLL_OVER, false, false, ancestorLocal.x, ancestorLocal.y, stagePos.x, stagePos.y, b, tuioContainer));
+						if (_dispatchMouseEvents) {
+							b.dispatchEvent(new MouseEvent(MouseEvent.ROLL_OVER, false, false, ancestorLocal.x, ancestorLocal.y, b, false, false, false, false, 0));
+						}
+						ancestorLocal.x += b.x;
+						ancestorLocal.y += b.y;
+					}
 				}
 			}
 			
@@ -357,6 +403,23 @@ package org.tuio {
 			} else {
 				return true;
 			}
+		}
+		
+		/**
+		 * Creates a list of all ancestors for the given <code>DisplayObject</code> from 
+		 * the <code>DisplayObject</code>'s parent to the stage.
+		 * 
+		 * @param	item The <code>DisplayObject</code> of which the list will be created.
+		 * @return The ancestor list of the given <code>DisplayObject</code>
+		 */
+		private function createAncestorList(item:DisplayObject):Array {
+			var list:Array = new Array();
+			var stage:Stage = item.stage;
+			while (item != stage) {
+				list.push(item.parent);
+				item = item.parent;
+			}
+			return list;
 		}
 		
 		/**
