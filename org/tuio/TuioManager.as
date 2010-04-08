@@ -145,7 +145,7 @@ package org.tuio {
 			return inst;
 		}
 		
-		private function handleAdd(tuioContainer:TuioContainer):void {
+		public function handleAdd(tuioContainer:TuioContainer):void {
 			var stagePos:Point = new Point(stage.stageWidth * tuioContainer.x, stage.stageHeight * tuioContainer.y);
 			var target:DisplayObject = getTopDisplayObjectUnderPoint(stagePos);
 			var local:Point = target.globalToLocal(new Point(stagePos.x, stagePos.y));
@@ -168,7 +168,7 @@ package org.tuio {
 			
 		}
 		
-		private function handleUpdate(tuioContainer:TuioContainer):void {
+		public function handleUpdate(tuioContainer:TuioContainer):void {
 			var stagePos:Point = new Point(stage.stageWidth * tuioContainer.x, stage.stageHeight * tuioContainer.y);
 			var target:DisplayObject = getTopDisplayObjectUnderPoint(stagePos);
 			var targetDict:Dictionary = createDict(stage.getObjectsUnderPoint(stagePos));
@@ -301,7 +301,7 @@ package org.tuio {
 			return objectsDict;
 		}
 		
-		private function handleRemove(tuioContainer:TuioContainer):void {
+		public function handleRemove(tuioContainer:TuioContainer):void {
 			var stagePos:Point = new Point(stage.stageWidth * tuioContainer.x, stage.stageHeight * tuioContainer.y);
 			var target:DisplayObject = getTopDisplayObjectUnderPoint(stagePos);
 			var local:Point = target.globalToLocal(new Point(stagePos.x, stagePos.y));
