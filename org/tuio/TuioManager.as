@@ -149,8 +149,6 @@ package org.tuio {
 			var stagePos:Point = new Point(stage.stageWidth * tuioContainer.x, stage.stageHeight * tuioContainer.y);
 			var target:DisplayObject = getTopDisplayObjectUnderPoint(stagePos);
 			var local:Point = target.globalToLocal(new Point(stagePos.x, stagePos.y));
-			var ancestorLocal:Point = new Point(local.x+target.x, local.y+target.y);
-			var ancestors:Array = createAncestorList(target);
 			
 			firstTarget[tuioContainer.sessionID] = target;
 			lastTarget[tuioContainer.sessionID] = target;
@@ -159,6 +157,7 @@ package org.tuio {
 			//target.dispatchEvent(new TouchEvent(TouchEvent.TOUCH_OVER, true, false, local.x, local.y, stagePos.x, stagePos.y, target, tuioContainer));
 			//target.dispatchEvent(new TouchEvent(TouchEvent.ROLL_OVER, false, false, local.x, local.y, stagePos.x, stagePos.y, target, tuioContainer));
 			target.dispatchEvent(new TouchEvent(TouchEvent.TOUCH_DOWN, true, false, local.x, local.y, stagePos.x, stagePos.y, target, tuioContainer));
+			this.dispatchEvent(new TouchEvent(TouchEvent.TOUCH_DOWN, true, false, local.x, local.y, stagePos.x, stagePos.y, target, tuioContainer));
 			
 			if (_dispatchMouseEvents) {
 				//target.dispatchEvent(new MouseEvent(MouseEvent.MOUSE_OVER, true, false, local.x, local.y, (target as InteractiveObject), false, false, false, false, 0));
@@ -179,12 +178,14 @@ package org.tuio {
 			if (Math.abs(tuioContainer.X) > 0.001 || Math.abs(tuioContainer.Y) > 0.001 || Math.abs(tuioContainer.Z) > 0.001) {
 				hold[tuioContainer.sessionID] = getTimer();
 				target.dispatchEvent(new TouchEvent(TouchEvent.TOUCH_MOVE, true, false, local.x, local.y, stagePos.x, stagePos.y, target, tuioContainer));
+				this.dispatchEvent(new TouchEvent(TouchEvent.TOUCH_MOVE, true, false, local.x, local.y, stagePos.x, stagePos.y, target, tuioContainer));
 				if (_dispatchMouseEvents) {
 					target.dispatchEvent(new MouseEvent(MouseEvent.MOUSE_MOVE, true, false, local.x, local.y, (target as InteractiveObject), false, false, false, false, 0));
 				}
 			} else if (hold[tuioContainer.sessionID] < getTimer() - holdTimeout) {
 				hold[tuioContainer.sessionID] = getTimer();
 				target.dispatchEvent(new TouchEvent(TouchEvent.HOLD, true, false, local.x, local.y, stagePos.x, stagePos.y, target, tuioContainer));
+				this.dispatchEvent(new TouchEvent(TouchEvent.HOLD, true, false, local.x, local.y, stagePos.x, stagePos.y, target, tuioContainer));
 			}
 			
 			//mouse out/over
@@ -212,10 +213,13 @@ package org.tuio {
 					}
 					last.dispatchEvent(new TouchEvent(TouchEvent.TOUCH_OUT, true, false, lastLocal.x, lastLocal.y, stagePos.x, stagePos.y, last, tuioContainer));
 					last.dispatchEvent(new TouchEvent(TouchEvent.ROLL_OUT, false, false, local.x, local.y, stagePos.x, stagePos.y, last, tuioContainer));
+					this.dispatchEvent(new TouchEvent(TouchEvent.TOUCH_OUT, true, false, lastLocal.x, lastLocal.y, stagePos.x, stagePos.y, last, tuioContainer));
+					this.dispatchEvent(new TouchEvent(TouchEvent.ROLL_OUT, false, false, local.x, local.y, stagePos.x, stagePos.y, last, tuioContainer));
 					
 					for each(var a:InteractiveObject in lastAncestors) {
 						if(a != target){
 							a.dispatchEvent(new TouchEvent(TouchEvent.ROLL_OUT, false, false, lastAncestorLocal.x, lastAncestorLocal.y, stagePos.x, stagePos.y, a, tuioContainer));
+							this.dispatchEvent(new TouchEvent(TouchEvent.ROLL_OUT, false, false, lastAncestorLocal.x, lastAncestorLocal.y, stagePos.x, stagePos.y, a, tuioContainer));
 							if (_dispatchMouseEvents) {
 								a.dispatchEvent(new MouseEvent(MouseEvent.ROLL_OUT, false, false, lastAncestorLocal.x, lastAncestorLocal.y, a, false, false, false, false, 0));
 							}
@@ -236,6 +240,7 @@ package org.tuio {
 					target.dispatchEvent(new TouchEvent(TouchEvent.ROLL_OVER, false, false, local.x, local.y, stagePos.x, stagePos.y, target, tuioContainer));
 					for each(var b:InteractiveObject in ancestors) {
 						b.dispatchEvent(new TouchEvent(TouchEvent.ROLL_OVER, false, false, ancestorLocal.x, ancestorLocal.y, stagePos.x, stagePos.y, b, tuioContainer));
+						this.dispatchEvent(new TouchEvent(TouchEvent.ROLL_OVER, false, false, ancestorLocal.x, ancestorLocal.y, stagePos.x, stagePos.y, b, tuioContainer));
 						if (_dispatchMouseEvents) {
 							b.dispatchEvent(new MouseEvent(MouseEvent.ROLL_OVER, false, false, ancestorLocal.x, ancestorLocal.y, b, false, false, false, false, 0));
 						}
@@ -307,6 +312,7 @@ package org.tuio {
 			var local:Point = target.globalToLocal(new Point(stagePos.x, stagePos.y));
 			
 			target.dispatchEvent(new TouchEvent(TouchEvent.TOUCH_UP, true, false, local.x, local.y, stagePos.x, stagePos.y, target, tuioContainer));
+			this.dispatchEvent(new TouchEvent(TouchEvent.TOUCH_UP, true, false, local.x, local.y, stagePos.x, stagePos.y, target, tuioContainer));
 			if (_dispatchMouseEvents) {
 				target.dispatchEvent(new MouseEvent(MouseEvent.MOUSE_UP, true, false, local.x, local.y, (target as InteractiveObject), false, false, false, false, 0));
 			}
@@ -338,12 +344,14 @@ package org.tuio {
 				
 				if (double) {
 					target.dispatchEvent(new TouchEvent(TouchEvent.DOUBLE_TAP, true, false, local.x, local.y, stagePos.x, stagePos.y, target, tuioContainer));
+					this.dispatchEvent(new TouchEvent(TouchEvent.DOUBLE_TAP, true, false, local.x, local.y, stagePos.x, stagePos.y, target, tuioContainer));
 					if (_dispatchMouseEvents) {
 						target.dispatchEvent(new MouseEvent(MouseEvent.DOUBLE_CLICK, true, false, local.x, local.y, (target as InteractiveObject), false, false, false, false, 0));
 					}
 				} else {
 					tapped.push(new DoubleTapStore(target, getTimer(), stagePos.x, stagePos.y));
 					target.dispatchEvent(new TouchEvent(TouchEvent.TAP, true, false, local.x, local.y, stagePos.x, stagePos.y, target, tuioContainer));
+					this.dispatchEvent(new TouchEvent(TouchEvent.TAP, true, false, local.x, local.y, stagePos.x, stagePos.y, target, tuioContainer));
 					if (_dispatchMouseEvents) {
 						target.dispatchEvent(new MouseEvent(MouseEvent.CLICK, true, false, local.x, local.y, (target as InteractiveObject), false, false, false, false, 0));
 					}
