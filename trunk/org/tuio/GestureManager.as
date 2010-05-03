@@ -77,6 +77,7 @@ package org.tuio {
 				this.activeGestures = new Array();
 				this.addGesture(new ScrollGesture());
 				this.addGesture(new OneDownOneMoveGesture());
+				this.addGesture(new PressTapGesture());
 			} else {
 				throw new Error("Error: Instantiation failed: Use GestureManager.getInstance() instead of new.");
 			}
@@ -120,6 +121,7 @@ package org.tuio {
 			var temp:Array = new Array();
 			var l:int = this.activeGestures.length;
 			var used:Boolean = false;
+			
 			for (var c:int = 0; c < l; c++ ) {
 				var m:GestureStepGroup = this.activeGestures.pop();
 				var r:uint = m.step(event, target, tuioContainer);
@@ -148,7 +150,6 @@ package org.tuio {
 			var tuioContainer:TuioContainer = tuioEvent.tuioContainer;
 			var stagePos:Point = new Point(stage.stageWidth * tuioContainer.x, stage.stageHeight * tuioContainer.y);
 			var target:DisplayObject = getTopDisplayObjectUnderPoint(stagePos);
-			
 			
 			if (!progressGestures(tuioEvent.type, target, tuioEvent.tuioContainer)) {
 				initGestures(tuioEvent.type, target, tuioEvent.tuioContainer);
