@@ -90,7 +90,7 @@ package org.tuio.gestures {
 			var dieOffset:int = 0;
 			var goto:int;
 			
-			while(true){
+			while (true) {
 				if (result == Gesture.SATURATED && !step.dies) {
 					stepPosition++;
 					if (stepPosition < steps.length) {
@@ -98,8 +98,9 @@ package org.tuio.gestures {
 						return Gesture.PROGRESS;
 					} else {
 						goto = step.goto;
-						if (goto > 0 && goto < steps.length) {
-							stepPosition = step.goto-1;
+						if (goto > 0 && goto <= steps.length) {
+							stepPosition = goto - 1;
+							prepareNext();
 						} else {
 							this._active = false;
 						}
@@ -125,7 +126,7 @@ package org.tuio.gestures {
 		}
 		
 		private function prepareNext():void {
-			var o:int;
+			var o:int = 0;
 			var nextStep:GestureStep = this.steps[stepPosition];
 			var stepLength:int = this.steps.length-1;
 			nextStep.prepare();
@@ -141,7 +142,7 @@ package org.tuio.gestures {
 			out.gesture = this.gesture;
 			var al:int = steps.length;
 			for (var c:int = 0; c < al; c++ ) {
-				out.addStep(steps[c] as GestureStep);
+				out.addStep((steps[c] as GestureStep).copy());
 			}
 			return out;
 		}

@@ -26,11 +26,11 @@ package org.tuio.gestures {
 			this._minDelay = (properties.minDelay)?(properties.minDelay as uint):0;
 			this._maxDelay = (properties.maxDelay)?(properties.maxDelay as uint):0;
 			this._die = (properties.die)?(properties.die as Boolean):false;
-			this._goto = (properties.goto)?(properties.goto as int):-1;
+			this._goto = (properties.goto)?(properties.goto as int):0;
 		}
 		
 		public function prepare():void {
-			if(this._maxDelay > 0) this._prepareTime = getTimer();
+			if(this._maxDelay > 0 || this._minDelay > 0) this._prepareTime = getTimer();
 		}
 		
 		public function step(event:String, target:DisplayObject, tuioContainer:TuioContainer):uint {
@@ -43,8 +43,8 @@ package org.tuio.gestures {
 					if (this._tuioContainerAlias == "*" || tc == tuioContainer || (!tc && !group.getTuioContainerAlias(tuioContainer))) {
 						dObj = group.getTarget(this._targetAlias);
 						if (this._targetAlias == "*" || dObj == target || (!dObj && !group.getTargetAlias(target))) {
-							if (!tc) group.addTuioContainer(this._tuioContainerAlias, tuioContainer);
-							if (!dObj) group.addTarget(this._targetAlias, target);
+							if (!tc && this._tuioContainerAlias != "*") group.addTuioContainer(this._tuioContainerAlias, tuioContainer);
+							if (!dObj && this._targetAlias != "*") group.addTarget(this._targetAlias, target);
 							this._prepareTime = 0;
 							return Gesture.SATURATED;
 						} else {
@@ -71,6 +71,7 @@ package org.tuio.gestures {
 				frameIDAlias:this._frameIDAlias,
 				minDelay:this._minDelay,
 				maxDelay:this._maxDelay,
+				goto:this._goto,
 				die:this._die 
 			});
 		}
