@@ -320,6 +320,8 @@ package org.tuio.debug
 					throw new Error("Custom Tuio Debug Cursor class must implement ITuioDebugCursor.");
 				}
 			}
+			(cursorSprite as ITuioDebugCursor).sessionId = tuioCursor.sessionID;
+			
 			var cursorObject:Object = new Object();
 			
 			if(_showCursors){
