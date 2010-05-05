@@ -41,7 +41,7 @@ package org.tuio.gestures {
 		}
 		
 		internal function getTarget(alias:String):DisplayObject {
-			return this.targetAliasMap[alias];
+			return this.targetAliasMap[alias] as DisplayObject;
 		}
 		
 		internal function addTarget(alias:String, target:DisplayObject):void {
@@ -49,18 +49,20 @@ package org.tuio.gestures {
 		}
 		
 		internal function getTuioContainer(alias:String):TuioContainer {
-			return this.tuioContainerAliasMap[alias];
+			return this.tuioContainerAliasMap[alias] as TuioContainer;
 		}
 		
 		internal function addTuioContainer(alias:String, tuioContainer:TuioContainer):void {
 			this.tuioContainerAliasMap[alias] = tuioContainer;
 		}
 		
-		internal function getFrameID(alias:String):int {
-			return this.frameIDAliasMap[alias];
+		internal function getFrameID(alias:String):uint {
+			if (alias.charAt(0) == "!") alias = alias.substr(1);
+			return uint(this.frameIDAliasMap[alias]);
 		}
 		
-		internal function addFrameID(alias:String, frameID:int):void {
+		internal function addFrameID(alias:String, frameID:uint):void {
+			if (alias.charAt(0) == "!") alias = alias.substr(1);
 			this.frameIDAliasMap[alias] = frameID;
 		}
 		

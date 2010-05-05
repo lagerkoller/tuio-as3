@@ -36,22 +36,29 @@ package org.tuio.gestures {
 		public function step(event:String, target:DisplayObject, tuioContainer:TuioContainer):uint {
 			var wt:int = getTimer() - this._prepareTime;
 			var tc:TuioContainer;
+			var fID:uint;
 			var dObj:DisplayObject;
 			if ((this._minDelay <= wt || this._minDelay == 0) && (this._maxDelay >= wt || this._maxDelay == 0)) {
 				if (this._event == event) {
-					tc = group.getTuioContainer(this._tuioContainerAlias);
-					if (this._tuioContainerAlias == "*" || tc == tuioContainer || (!tc && !group.getTuioContainerAlias(tuioContainer))) {
-						dObj = group.getTarget(this._targetAlias);
-						if (this._targetAlias == "*" || dObj == target || (!dObj && !group.getTargetAlias(target))) {
-							if (!tc && this._tuioContainerAlias != "*") group.addTuioContainer(this._tuioContainerAlias, tuioContainer);
-							if (!dObj && this._targetAlias != "*") group.addTarget(this._targetAlias, target);
-							this._prepareTime = 0;
-							return Gesture.SATURATED;
+					fID = group.getFrameID(this._frameIDAlias);
+					if (this._frameIDAlias == "*" || fID == tuioContainer.frameID || (fID == 0 && !group.getFrameIDAlias(tuioContainer.frameID))) {
+						tc = group.getTuioContainer(this._tuioContainerAlias);
+						if (this._tuioContainerAlias == "*" || tc == tuioContainer || (!tc && !group.getTuioContainerAlias(tuioContainer))) {
+							dObj = group.getTarget(this._targetAlias);
+							if (this._targetAlias == "*" || dObj == target || (!dObj && !group.getTargetAlias(target))) {
+								if (!tc && this._tuioContainerAlias != "*") group.addTuioContainer(this._tuioContainerAlias, tuioContainer);
+								if (!dObj && this._targetAlias != "*") group.addTarget(this._targetAlias, target);
+								if ((fID == 0 && this._frameIDAlias != "*") || this._frameIDAlias.charAt(0) == "!") group.addFrameID(this._frameIDAlias, tuioContainer.frameID);
+								this._prepareTime = 0;
+								return Gesture.SATURATED;
+							} else {
+								return Gesture.ALIVE;
+							}
 						} else {
 							return Gesture.ALIVE;
 						}
 					} else {
-						return Gesture.ALIVE;
+						return Gesture.DEAD;
 					}
 				} else {
 					return Gesture.ALIVE;
