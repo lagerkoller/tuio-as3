@@ -37,6 +37,9 @@ package org.tuio {
 		/**Triggered if a TuioBlob was removed.*/
 		public static const REMOVE_BLOB:String = "org.tuio.TuioEvent.removeBlob";
 		
+		/**Triggere if there is a new frameID. The <code>tuioContainer</code> will be <code>null</code> */
+		public static const NEW_FRAME:String = "org.tuio.TuioEvent.newFrame";
+		
 		private var _tuioContainer:TuioContainer;
 		
 		public function TuioEvent(type:String, tuioContainer:TuioContainer) {

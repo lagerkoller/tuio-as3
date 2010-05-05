@@ -13,7 +13,7 @@
 		private var listeners:Array;
 		private var oscManager:OSCManager;
 		
-		private var fseq:int;
+		private var fseq:uint;
 		private var src:String;
 		
 		private var _tuioCursors:Array;
@@ -49,7 +49,13 @@
 			
 			var tuioContainerList:Array;
 			
-			if (msg.arguments[0] == "fseq") this.fseq = int(msg.arguments[1]);
+			if (msg.arguments[0] == "fseq") {
+				var newFseq:uint = uint(msg.arguments[1]);
+				if (newFseq != this.fseq) {
+					dispatchNewFseq();
+					this.fseq = newFseq;
+				}
+			} 
 			else if (msg.arguments[0] == "source") this.src = String(msg.arguments[1]);
 			else if (msg.arguments[0] == "set"){
 				
@@ -167,28 +173,28 @@
 				
 				if(tuioContainer == null){
 					if (isCur) {
-						tuioContainer = new TuioCursor(type, s, x, y, z, X, Y, Z, m);
+						tuioContainer = new TuioCursor(type, s, x, y, z, X, Y, Z, m, this.fseq);
 						this._tuioCursors.push(tuioContainer);
 						dispatchAddCursor(tuioContainer as TuioCursor);
 					} else if (isObj) {
-						tuioContainer = new TuioObject(type, s, i, x, y, z, a, b, c, X, Y, Z, A, B, C, m, r);
+						tuioContainer = new TuioObject(type, s, i, x, y, z, a, b, c, X, Y, Z, A, B, C, m, r, this.fseq);
 						this._tuioObjects.push(tuioContainer);
 						dispatchAddObject(tuioContainer as TuioObject);
 					} else if (isBlb) {
-						tuioContainer = new TuioBlob(type, s, x, y, z, a, b, c, w, h, d, f, v, X, Y, Z, A, B, C, m, r);
+						tuioContainer = new TuioBlob(type, s, x, y, z, a, b, c, w, h, d, f, v, X, Y, Z, A, B, C, m, r, this.fseq);
 						this._tuioBlobs.push(tuioContainer);
 						dispatchAddBlob(tuioContainer as TuioBlob);
 					} else return;
 					
 				} else {
 					if (isCur) {
-						(tuioContainer as TuioCursor).update(x, y, z, X, Y, Z, m);
+						(tuioContainer as TuioCursor).update(x, y, z, X, Y, Z, m, this.fseq);
 						dispatchUpdateCursor(tuioContainer as TuioCursor);
 					} else if (isObj) {
-						(tuioContainer as TuioObject).update(x, y, z, a, b, c, X, Y, Z, A, B, C, m, r);
+						(tuioContainer as TuioObject).update(x, y, z, a, b, c, X, Y, Z, A, B, C, m, r, this.fseq);
 						dispatchUpdateObject(tuioContainer as TuioObject);
 					} else if (isBlb) {
-						(tuioContainer as TuioBlob).update(x, y, z, a, b, c, w, h, d, f, v, X, Y, Z, A, B, C, m, r);
+						(tuioContainer as TuioBlob).update(x, y, z, a, b, c, w, h, d, f, v, X, Y, Z, A, B, C, m, r, this.fseq);
 						dispatchUpdateBlob(tuioContainer as TuioBlob);
 					} else return;
 				}
@@ -301,7 +307,7 @@
 		/**
 		 * @return The last received fseq value by the tracker.
 		 */
-		public function get currentFseq():int {
+		public function get currentFseq():uint {
 			return this.fseq;
 		}
 		
@@ -433,6 +439,12 @@
 		private function dispatchRemoveBlob(tuioBlob:TuioBlob):void {
 			for each(var l:ITuioListener in this.listeners) {
 				l.removeTuioBlob(tuioBlob);
+			}
+		}
+		
+		private function dispatchNewFseq():void {
+			for each(var l:ITuioListener in this.listeners) {
+				l.newFrame(this.fseq);
 			}
 		}
 

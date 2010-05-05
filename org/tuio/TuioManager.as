@@ -525,6 +525,10 @@ package org.tuio {
 			if(triggerTouchOnBlob) this.handleRemove(tuioBlob);
 		}
 		
+		public function newFrame(id:uint):void {
+			this.dispatchEvent(new TuioEvent(TuioEvent.NEW_FRAME, null));
+		}
+		
 		public function get tuioClient():TuioClient{
 			return _tuioClient;
 		}

@@ -62,6 +62,7 @@ package org.tuio {
 				this._tuioManager.addEventListener(TuioEvent.REMOVE_CURSOR, handleTuioEvent);
 				this._tuioManager.addEventListener(TuioEvent.REMOVE_OBJECT, handleTuioEvent);
 				this._tuioManager.addEventListener(TuioEvent.REMOVE_BLOB, handleTuioEvent);
+				this._tuioManager.addEventListener(TuioEvent.NEW_FRAME, handleTuioEvent);
 				this._tuioManager.addEventListener(TouchEvent.TAP, handleTouchEvent);
 				this._tuioManager.addEventListener(TouchEvent.DOUBLE_TAP, handleTouchEvent);
 				this._tuioManager.addEventListener(TouchEvent.HOLD, handleTouchEvent);
@@ -75,9 +76,11 @@ package org.tuio {
 				this.ignoreList = new Array();
 				this.gestures = new Array();
 				this.activeGestures = new Array();
-				this.addGesture(new ScrollGesture());
-				this.addGesture(new OneDownOneMoveGesture());
-				this.addGesture(new PressTapGesture());
+				//this.addGesture(new ScrollGesture());
+				//this.addGesture(new OneDownOneMoveGesture());
+				//this.addGesture(new PressTapGesture());
+				this.addGesture(new TwoFingerMoveGesture());
+				this.addGesture(new ThreeFingerMoveGesture());
 			} else {
 				throw new Error("Error: Instantiation failed: Use GestureManager.getInstance() instead of new.");
 			}
@@ -148,11 +151,15 @@ package org.tuio {
 		
 		private function handleTuioEvent(tuioEvent:TuioEvent):void {
 			var tuioContainer:TuioContainer = tuioEvent.tuioContainer;
-			var stagePos:Point = new Point(stage.stageWidth * tuioContainer.x, stage.stageHeight * tuioContainer.y);
-			var target:DisplayObject = getTopDisplayObjectUnderPoint(stagePos);
+			var stagePos:Point = new Point(0,0);
+			var target:DisplayObject = stage;
+			if(tuioContainer != null){
+				stagePos = new Point(stage.stageWidth * tuioContainer.x, stage.stageHeight * tuioContainer.y);
+				target = getTopDisplayObjectUnderPoint(stagePos);
+			}
 			
-			if (!progressGestures(tuioEvent.type, target, tuioEvent.tuioContainer)) {
-				initGestures(tuioEvent.type, target, tuioEvent.tuioContainer);
+			if (!progressGestures(tuioEvent.type, target, tuioContainer)) {
+				initGestures(tuioEvent.type, target, tuioContainer);
 			}
 		}
 		

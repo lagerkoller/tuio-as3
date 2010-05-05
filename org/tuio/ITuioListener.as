@@ -62,6 +62,12 @@ package org.tuio {
 		 */
 		function removeTuioBlob(tuioBlob:TuioBlob):void;
 		
+		/**
+		 * Called if a new frameID is received.
+		 * @param	id The new frameID
+		 */
+		function newFrame(id:uint):void;
+		
     }
 	
 }

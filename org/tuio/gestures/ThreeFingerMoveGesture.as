@@ -6,18 +6,20 @@ package org.tuio.gestures {
 	import org.tuio.TuioEvent;
 	import org.tuio.TouchEvent;
 	
-	public class TwoFingerMoveGesture extends Gesture {
+	public class ThreeFingerMoveGesture extends Gesture {
 		
-		public function TwoFingerMoveGesture() {
+		public function ThreeFingerMoveGesture() {
 			this.addStep(new GestureStep(TouchEvent.TOUCH_MOVE, {tuioContainerAlias:"A"}));
 			this.addStep(new GestureStep(TuioEvent.NEW_FRAME, {die:true} ));
 			this.addStep(new GestureStep(TouchEvent.TOUCH_MOVE, { tuioContainerAlias:"B"} ));
+			this.addStep(new GestureStep(TuioEvent.NEW_FRAME, {die:true} ));
+			this.addStep(new GestureStep(TouchEvent.TOUCH_MOVE, { tuioContainerAlias:"C" } ));
 			this.addStep(new GestureStep(TouchEvent.TOUCH_MOVE, { die:true } ));
 			this.addStep(new GestureStep(TuioEvent.NEW_FRAME, {goto:1} ));
 		}
 		
 		public override function dispatchGestureEvent(target:DisplayObject, gsg:GestureStepGroup):void {
-			trace("two finger move" + getTimer());
+			trace("three finger move" + getTimer());
 		}
 		
 	}
