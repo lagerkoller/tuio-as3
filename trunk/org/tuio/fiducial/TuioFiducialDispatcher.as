@@ -422,5 +422,12 @@ package org.tuio.fiducial
 		 */
 		public function removeTuioBlob(tuioBlob:TuioBlob):void {
 		}
+		
+		/**
+		 * @inheritDoc 
+		 * 
+		 */
+		public function newFrame(id:uint):void {
+		}
 	}
 }

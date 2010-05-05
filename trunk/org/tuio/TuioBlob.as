@@ -20,8 +20,8 @@ package org.tuio {
 		private var _C:Number;
 		private var _r:Number;
 		
-		public function TuioBlob(type:String, sID:Number, x:Number, y:Number, z:Number, a:Number, b:Number, c:Number, w:Number, h:Number, d:Number, f:Number, v:Number, X:Number, Y:Number, Z:Number, A:Number, B:Number, C:Number, m:Number, r:Number) {
-			super(type, sID, x, y, z, X, Y, Z, m);
+		public function TuioBlob(type:String, sID:Number, x:Number, y:Number, z:Number, a:Number, b:Number, c:Number, w:Number, h:Number, d:Number, f:Number, v:Number, X:Number, Y:Number, Z:Number, A:Number, B:Number, C:Number, m:Number, r:Number, frameID:uint) {
+			super(type, sID, x, y, z, X, Y, Z, m, frameID);
 			
 			this._a = a;
 			this._b = b;
@@ -35,10 +35,12 @@ package org.tuio {
 			this._B = B;
 			this._C = C;
 			this._r = r;
+			
+			this._frameID;
 		}
 		
 		/* Updates the values of the TuioBlob */
-		public function update(x:Number, y:Number, z:Number, a:Number, b:Number, c:Number, w:Number, h:Number, d:Number, f:Number, v:Number, X:Number, Y:Number, Z:Number, A:Number, B:Number, C:Number, m:Number, r:Number):void {
+		public function update(x:Number, y:Number, z:Number, a:Number, b:Number, c:Number, w:Number, h:Number, d:Number, f:Number, v:Number, X:Number, Y:Number, Z:Number, A:Number, B:Number, C:Number, m:Number, r:Number, frameID:uint):void {
 			this._x = x;
 			this._y = y;
 			this._z = z;
@@ -59,6 +61,8 @@ package org.tuio {
 			this._B = B;
 			this._C = C;
 			this._r = r;
+			
+			this._frameID = frameID;
 		}
 		
 		public function get a():Number {

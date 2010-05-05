@@ -7,12 +7,12 @@ package org.tuio {
 	 */
 	public class TuioCursor extends TuioContainer {
 		
-		public function TuioCursor(type:String, sID:Number, x:Number, y:Number, z:Number, X:Number, Y:Number, Z:Number, m:Number ) {
-			super(type, sID, x, y, z, X, Y, Z, m);
+		public function TuioCursor(type:String, sID:Number, x:Number, y:Number, z:Number, X:Number, Y:Number, Z:Number, m:Number, frameID:uint ) {
+			super(type, sID, x, y, z, X, Y, Z, m, frameID);
 		}
 	
 		/* Updates the values of the TuioCursor */
-		public function update(x:Number, y:Number, z:Number, X:Number, Y:Number, Z:Number, m:Number):void {
+		public function update(x:Number, y:Number, z:Number, X:Number, Y:Number, Z:Number, m:Number, frameID:uint):void {
 			this._x = x;
 			this._y = y;
 			this._z = z;
@@ -20,6 +20,7 @@ package org.tuio {
 			this._Y = Y;
 			this._Z = Z;
 			this._m = m;
+			this._frameID = frameID;
 		}
 		
 		/* This function converts the TuioCursors values into a String for output purposes */

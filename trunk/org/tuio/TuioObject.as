@@ -17,8 +17,8 @@ package org.tuio {
 		private var _C:Number;
 		private var _r:Number;
 		
-		public function TuioObject(type:String, sID:Number, i:Number, x:Number, y:Number, z:Number, a:Number, b:Number, c:Number, X:Number, Y:Number, Z:Number, A:Number, B:Number, C:Number, m:Number, r:Number):void {
-			super(type, sID, x, y, z, X, Y, Z, m);
+		public function TuioObject(type:String, sID:Number, i:Number, x:Number, y:Number, z:Number, a:Number, b:Number, c:Number, X:Number, Y:Number, Z:Number, A:Number, B:Number, C:Number, m:Number, r:Number, frameID:uint):void {
+			super(type, sID, x, y, z, X, Y, Z, m, frameID);
 			
 			this._id = i;
 			this._a = a;
@@ -31,7 +31,7 @@ package org.tuio {
 		}
 		
 		/* Updates the values of the TuioObject */
-		public function update(x:Number, y:Number, z:Number, a:Number, b:Number, c:Number, X:Number, Y:Number, Z:Number, A:Number, B:Number, C:Number, m:Number, r:Number):void {
+		public function update(x:Number, y:Number, z:Number, a:Number, b:Number, c:Number, X:Number, Y:Number, Z:Number, A:Number, B:Number, C:Number, m:Number, r:Number, frameID:uint):void {
 			this._x = x;
 			this._y = y;
 			this._z = z;
@@ -47,6 +47,8 @@ package org.tuio {
 			this._B = B;
 			this._C = C;
 			this._r = r;
+			
+			this._frameID = frameID;
 		}
 		
 		public function get classID():uint {
@@ -108,7 +110,7 @@ package org.tuio {
 		}
 		
 		public function clone():TuioObject{
-			return new TuioObject(_type,_sessionID, _id, _x, _y, _z, _a, _b, _c, _X, _Y, _Z, _A, _B, _C, _m, _r);
+			return new TuioObject(_type,_sessionID, _id, _x, _y, _z, _a, _b, _c, _X, _Y, _Z, _A, _B, _C, _m, _r, _frameID);
 		}
 	}
 	
