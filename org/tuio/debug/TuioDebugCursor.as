@@ -17,6 +17,8 @@ package org.tuio.debug
 	 */
 	public class TuioDebugCursor extends Sprite implements ITuioDebugCursor
 	{
+		private var _sessionId:uint;
+		
 		/**
 		 * 
 		 * @param radius of the debug circle.
@@ -49,6 +51,15 @@ package org.tuio.debug
 			this.graphics.lineStyle(lineThickness, lineColor, lineAlpha);
 			this.graphics.drawCircle(0, 0, radius);
 			this.graphics.endFill();
+		}
+		
+		
+		public function get sessionId():uint{
+			return _sessionId;
+		}
+		
+		public function set sessionId(sessionId:uint):void{
+			this._sessionId = sessionId;
 		}
 	}
 }
