@@ -1,8 +1,9 @@
 package org.tuio.gestures {
 	
 	import flash.display.DisplayObject;
+	import flash.events.EventDispatcher;
 	
-	public class Gesture {
+	public class Gesture extends EventDispatcher {
 			
 		public static const SATURATED:uint = 1;
 		public static const ALIVE:uint = 2;

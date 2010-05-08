@@ -95,6 +95,7 @@ package org.tuio.gestures {
 			while (true) {
 				if (result == Gesture.SATURATED && !step.dies) {
 					stepPosition++;
+					this.gesture.dispatchEvent(new GestureStepEvent(GestureStepEvent.SATURATED, stepPosition, this));
 					if (stepPosition < steps.length) {
 						prepareNext();
 						return Gesture.PROGRESS;
@@ -119,6 +120,7 @@ package org.tuio.gestures {
 						return Gesture.ALIVE;
 					}
 				} else {
+					this.gesture.dispatchEvent(new GestureStepEvent(GestureStepEvent.DEAD, stepPosition, this));
 					this._active = false;
 					return Gesture.DEAD;
 				}
