@@ -24,7 +24,12 @@ package org.tuio.gestures {
 		}
 
 		public function get firstStep():GestureStep {
-			return (this.steps[0] as GestureStep).copy();
+			var step:GestureStep;
+			for (var i:int = 0; i < steps.length; i++ ) {
+				step = this.steps[i] as GestureStep;
+				if(!step.dies) return step.copy();
+			}
+			return null;
 		}
 		
 		public function get gesture():Gesture {
@@ -86,7 +91,7 @@ package org.tuio.gestures {
 		}
 		
 		public function step(event:String, target:DisplayObject, tuioContainer:TuioContainer):uint {
-			
+
 			var step:GestureStep = this.steps[stepPosition] as GestureStep;
 			var result:uint = step.step(event, target, tuioContainer);
 			var dieOffset:int = 0;
@@ -120,7 +125,7 @@ package org.tuio.gestures {
 						return Gesture.ALIVE;
 					}
 				} else {
-					this.gesture.dispatchEvent(new GestureStepEvent(GestureStepEvent.DEAD, stepPosition, this));
+					this.gesture.dispatchEvent(new GestureStepEvent(GestureStepEvent.DEAD, stepPosition+1, this));
 					this._active = false;
 					return Gesture.DEAD;
 				}
