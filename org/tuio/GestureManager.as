@@ -79,8 +79,8 @@ package org.tuio {
 				//this.addGesture(new ScrollGesture());
 				//this.addGesture(new OneDownOneMoveGesture());
 				//this.addGesture(new PressTapGesture());
-				this.addGesture(new TwoFingerMoveGesture());
-				this.addGesture(new ThreeFingerMoveGesture());
+				this.addGesture(new ZoomGesture());
+				//this.addGesture(new ThreeFingerMoveGesture());
 			} else {
 				throw new Error("Error: Instantiation failed: Use GestureManager.getInstance() instead of new.");
 			}
@@ -144,8 +144,8 @@ package org.tuio {
 		}
 		
 		private function handleTouchEvent(touchEvent:TouchEvent):void {
-			if (!progressGestures(touchEvent.type, touchEvent.target as DisplayObject, touchEvent.tuioContainer)) {
-				initGestures(touchEvent.type, touchEvent.target as DisplayObject, touchEvent.tuioContainer);
+			if (!progressGestures(touchEvent.type, touchEvent.relatedObject as DisplayObject, touchEvent.tuioContainer)) {
+				initGestures(touchEvent.type, touchEvent.relatedObject as DisplayObject, touchEvent.tuioContainer);
 			}
 		}
 		
