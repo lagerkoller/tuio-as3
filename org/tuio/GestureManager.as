@@ -33,7 +33,7 @@ package org.tuio {
 		
 		private var ignoreList:Array;
 		
-		private var gestures:Array;
+		internal var gestures:Array;
 		private var activeGestures:Array;
 		
 		private static var inst:GestureManager;
@@ -76,11 +76,6 @@ package org.tuio {
 				this.ignoreList = new Array();
 				this.gestures = new Array();
 				this.activeGestures = new Array();
-				//this.addGesture(new ScrollGesture());
-				//this.addGesture(new OneDownOneMoveGesture());
-				//this.addGesture(new PressTapGesture());
-				this.addGesture(new ZoomGesture());
-				//this.addGesture(new ThreeFingerMoveGesture());
 			} else {
 				throw new Error("Error: Instantiation failed: Use GestureManager.getInstance() instead of new.");
 			}
@@ -93,6 +88,12 @@ package org.tuio {
 				inst = new GestureManager();
 				inst.stage = stage;
 				allowInst = false;
+				
+				//this.addGesture(new ScrollGesture());
+				//this.addGesture(new OneDownOneMoveGesture());
+				//this.addGesture(new PressTapGesture());
+				GestureManager.addGesture(new ZoomGesture());
+				//this.addGesture(new ThreeFingerMoveGesture());
 			}
 			
 			return inst;
@@ -105,8 +106,12 @@ package org.tuio {
 			return inst;
 		}
 		
-		public function addGesture(gesture:Gesture):void {
-			this.gestures.push(gesture);
+		public static function addGesture(gesture:Gesture):void {
+			if(inst == null){
+				throw new Error("Please initialize with method GestureManager.init(...) first!");
+			} else {
+				inst.gestures.push(gesture);
+			}
 		}
 		
 		private function initGestures(event:String, target:DisplayObject, tuioContainer:TuioContainer):void {
