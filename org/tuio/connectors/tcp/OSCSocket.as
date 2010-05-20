@@ -38,12 +38,14 @@ package org.tuio.connectors.tcp
 
         	super.readBytes(data,data.length,super.bytesAvailable);
    			
+			var Length:int;
+			
     		// While we have data to read
 			while(data.position < data.length){
+					
+				Length = data.readInt() + 4;
 				
-				var Length:int = data.readInt() + 4;
-	    		
-	    		data.position -= 4;
+				data.position -= 4;
 				
 				// If we have enough data to form a full packet.
 				if(Length <= (data.length - data.position)){
