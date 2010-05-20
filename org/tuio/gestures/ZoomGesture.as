@@ -16,9 +16,7 @@ package org.tuio.gestures {
 		public override function dispatchGestureEvent(target:DisplayObject, gsg:GestureStepGroup):void {
 			var diffX:Number = gsg.getTuioContainer("A").X * gsg.getTuioContainer("B").X;
 			var diffY:Number = gsg.getTuioContainer("A").Y * gsg.getTuioContainer("B").Y;
-			if (diffX < 0 || diffY < 0) {
-				trace("zoom " + getTimer() + gsg.getTarget("A").name);
-				
+			if (diffX < 0 || diffY < 0) {				
 				var distance:Number = Math.sqrt(Math.pow(gsg.getTuioContainer("A").x - gsg.getTuioContainer("B").x, 2) + Math.pow(gsg.getTuioContainer("A").y - gsg.getTuioContainer("B").y, 2));
 				
 				if (lastDistance) {
@@ -30,7 +28,6 @@ package org.tuio.gestures {
 		
 		private function handleDead(e:GestureStepEvent):void {
 			if (e.step <= 5 && e.step != 3) {
-				trace("dead");
 				lastDistance = NaN;
 			}
 		}
