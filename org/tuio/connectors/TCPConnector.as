@@ -32,7 +32,6 @@ package org.tuio.connectors {
 			var packet:ByteArray = new ByteArray();
 			packet.writeBytes(e.data,4);
 			packet.position = 0;
-			
 			if (packet != null) {
 				if (this.listeners.length > 0) {
 					//call receive listeners and push the received messages
