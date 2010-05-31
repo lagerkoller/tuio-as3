@@ -82,6 +82,9 @@ package org.tuio {
 		//if true MouseEvents are dispatched alongside the TouchEvents
 		private var _dispatchMouseEvents:Boolean = false;
 		
+		//if true native TouchEvents are dispatched alongside the org.tuio.TouchEvents
+		private var _dispatchNativeTouchEvents:Boolean = false;
+		
 		private var _tuioClient:TuioClient;
 		private var lastTarget:Array;
 		private var firstTarget:Array;
@@ -165,6 +168,10 @@ package org.tuio {
 				target.dispatchEvent(new MouseEvent(MouseEvent.MOUSE_DOWN, true, false, local.x, local.y, (target as InteractiveObject), false, false, false, false, 0));
 			}
 			
+			if (_dispatchNativeTouchEvents) {
+				target.dispatchEvent(new flash.events.TouchEvent(flash.events.TouchEvent.TOUCH_BEGIN, true, false, tuioContainer.sessionID, false, local.x, local.y, 0, 0, 0, target as InteractiveObject));
+			}
+			
 		}
 		
 		public function handleUpdate(tuioContainer:TuioContainer):void {
@@ -181,6 +188,9 @@ package org.tuio {
 				this.dispatchEvent(new TouchEvent(TouchEvent.TOUCH_MOVE, true, false, local.x, local.y, stagePos.x, stagePos.y, target, tuioContainer));
 				if (_dispatchMouseEvents) {
 					target.dispatchEvent(new MouseEvent(MouseEvent.MOUSE_MOVE, true, false, local.x, local.y, (target as InteractiveObject), false, false, false, false, 0));
+				}
+				if (_dispatchNativeTouchEvents) {
+					target.dispatchEvent(new flash.events.TouchEvent(flash.events.TouchEvent.TOUCH_MOVE, true, false, tuioContainer.sessionID, false, local.x, local.y, 0, 0, 0, target as InteractiveObject));
 				}
 			} else if (hold[tuioContainer.sessionID] < getTimer() - holdTimeout) {
 				hold[tuioContainer.sessionID] = getTimer();
@@ -205,11 +215,19 @@ package org.tuio {
 					target.dispatchEvent(new MouseEvent(MouseEvent.MOUSE_OVER, true, false, local.x, local.y, (target as InteractiveObject), false, false, false, false, 0));
 					target.dispatchEvent(new MouseEvent(MouseEvent.ROLL_OVER, false, false, local.x, local.y, (target as InteractiveObject), false, false, false, false, 0));
 				}
+				if (_dispatchNativeTouchEvents) {
+					target.dispatchEvent(new flash.events.TouchEvent(flash.events.TouchEvent.TOUCH_OVER, true, false, tuioContainer.sessionID, false, local.x, local.y, 0, 0, 0, target as InteractiveObject));
+					target.dispatchEvent(new flash.events.TouchEvent(flash.events.TouchEvent.TOUCH_ROLL_OVER, false, false, tuioContainer.sessionID, false, local.x, local.y, 0, 0, 0, target as InteractiveObject));
+				}
 				
 				if (ancestors.indexOf(last) < 0) {
 					if (_dispatchMouseEvents) {
 						last.dispatchEvent(new MouseEvent(MouseEvent.MOUSE_OUT, true, false, local.x, local.y, (last as InteractiveObject), false, false, false, false, 0));
 						last.dispatchEvent(new MouseEvent(MouseEvent.ROLL_OUT, false, false, local.x, local.y, (last as InteractiveObject), false, false, false, false, 0));
+					}
+					if (_dispatchNativeTouchEvents) {
+						last.dispatchEvent(new flash.events.TouchEvent(flash.events.TouchEvent.TOUCH_OUT, true, false, tuioContainer.sessionID, false, local.x, local.y, 0, 0, 0, last as InteractiveObject));
+						last.dispatchEvent(new flash.events.TouchEvent(flash.events.TouchEvent.TOUCH_ROLL_OUT, false, false, tuioContainer.sessionID, false, local.x, local.y, 0, 0, 0, last as InteractiveObject));
 					}
 					last.dispatchEvent(new TouchEvent(TouchEvent.TOUCH_OUT, true, false, lastLocal.x, lastLocal.y, stagePos.x, stagePos.y, last, tuioContainer));
 					last.dispatchEvent(new TouchEvent(TouchEvent.ROLL_OUT, false, false, local.x, local.y, stagePos.x, stagePos.y, last, tuioContainer));
@@ -222,6 +240,9 @@ package org.tuio {
 							this.dispatchEvent(new TouchEvent(TouchEvent.ROLL_OUT, false, false, lastAncestorLocal.x, lastAncestorLocal.y, stagePos.x, stagePos.y, a, tuioContainer));
 							if (_dispatchMouseEvents) {
 								a.dispatchEvent(new MouseEvent(MouseEvent.ROLL_OUT, false, false, lastAncestorLocal.x, lastAncestorLocal.y, a, false, false, false, false, 0));
+							}
+							if (_dispatchNativeTouchEvents) {
+								a.dispatchEvent(new flash.events.TouchEvent(flash.events.TouchEvent.TOUCH_ROLL_OUT, false, false, tuioContainer.sessionID, false, lastAncestorLocal.x, lastAncestorLocal.y, 0, 0, 0, a));
 							}
 						}
 						lastAncestorLocal.x += a.x;
@@ -243,6 +264,9 @@ package org.tuio {
 						this.dispatchEvent(new TouchEvent(TouchEvent.ROLL_OVER, false, false, ancestorLocal.x, ancestorLocal.y, stagePos.x, stagePos.y, b, tuioContainer));
 						if (_dispatchMouseEvents) {
 							b.dispatchEvent(new MouseEvent(MouseEvent.ROLL_OVER, false, false, ancestorLocal.x, ancestorLocal.y, b, false, false, false, false, 0));
+						}
+						if (_dispatchNativeTouchEvents) {
+							b.dispatchEvent(new flash.events.TouchEvent(flash.events.TouchEvent.TOUCH_ROLL_OVER, false, false, tuioContainer.sessionID, false, ancestorLocal.x, ancestorLocal.y, 0, 0, 0, b));
 						}
 						ancestorLocal.x += b.x;
 						ancestorLocal.y += b.y;
@@ -316,6 +340,10 @@ package org.tuio {
 			if (_dispatchMouseEvents) {
 				target.dispatchEvent(new MouseEvent(MouseEvent.MOUSE_UP, true, false, local.x, local.y, (target as InteractiveObject), false, false, false, false, 0));
 			}
+			if (_dispatchNativeTouchEvents) {
+				target.dispatchEvent(new flash.events.TouchEvent(flash.events.TouchEvent.TOUCH_END, true, false, tuioContainer.sessionID, false, local.x, local.y, 0, 0, 0, target as InteractiveObject));
+			}
+			
 			
 			//handle receivers
 			if(this.touchReceiversDict[tuioContainer.sessionID]){
@@ -354,6 +382,9 @@ package org.tuio {
 					this.dispatchEvent(new TouchEvent(TouchEvent.TAP, true, false, local.x, local.y, stagePos.x, stagePos.y, target, tuioContainer));
 					if (_dispatchMouseEvents) {
 						target.dispatchEvent(new MouseEvent(MouseEvent.CLICK, true, false, local.x, local.y, (target as InteractiveObject), false, false, false, false, 0));
+					}
+					if (_dispatchNativeTouchEvents) {
+						target.dispatchEvent(new flash.events.TouchEvent(flash.events.TouchEvent.TOUCH_TAP, true, false, tuioContainer.sessionID, false, local.x, local.y, 0, 0, 0, target as InteractiveObject));
 					}
 				}
 			}
@@ -469,6 +500,20 @@ package org.tuio {
 		
 		public function get dispatchMouseEvents():Boolean {
 			return this._dispatchMouseEvents;
+		}
+		
+		/**
+		 * If set true native TouchEvents (since Flash 10.1 and Air2.0) are dispatched alongside the org.tuio.TouchEvents also the touchTargetDicoveryMode
+		 * is automatically set to TOUCH_TARGET_DISCOVERY_MOUSE_ENABLED.
+		 * The default value is false.
+		 */
+		public function set dispatchNativeTouchEvents(value:Boolean):void {
+			if (value) this.touchTargetDiscoveryMode = TOUCH_TARGET_DISCOVERY_MOUSE_ENABLED;
+			this._dispatchNativeTouchEvents = value;
+		}
+		
+		public function get dispatchNativeTouchEvents():Boolean {
+			return this._dispatchNativeTouchEvents;
 		}
 		
 		public function addTuioObject(tuioObject:TuioObject):void {

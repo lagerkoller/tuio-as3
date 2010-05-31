@@ -53,6 +53,8 @@ package org.tuio.mouse
 		private var shiftKey:Boolean;
 		private var groups:Dictionary;
 		
+		private var frameId:uint = 0;
+		
 		private var offsetX:Number;
 		private var offsetY:Number;
 		private var lastX:Number;
@@ -114,7 +116,7 @@ package org.tuio.mouse
 			var target:DisplayObject = DisplayListHelper.getTopDisplayObjectUnderPoint(stagePos, stage);
 			var local:Point = target.globalToLocal(new Point(stagePos.x, stagePos.y));
 			
-			target.dispatchEvent(new TouchEvent(TouchEvent.TAP, true, false, local.x, local.y, stagePos.x, stagePos.y, target, createTuioContainer(event.stageX, event.stageY, this.touchId)));
+			target.dispatchEvent(new TouchEvent(TouchEvent.TAP, true, false, local.x, local.y, stagePos.x, stagePos.y, target, createTuioContainer(event.stageX, event.stageY, this.touchId, this.frameId++)));
 		}
 		
 		/**
@@ -128,7 +130,7 @@ package org.tuio.mouse
 			var target:DisplayObject = DisplayListHelper.getTopDisplayObjectUnderPoint(stagePos, stage);
 			var local:Point = target.globalToLocal(new Point(stagePos.x, stagePos.y));
 			
-			target.dispatchEvent(new TouchEvent(TouchEvent.DOUBLE_TAP, true, false, local.x, local.y, stagePos.x, stagePos.y, target, createTuioContainer(event.stageX, event.stageY, this.touchId)));
+			target.dispatchEvent(new TouchEvent(TouchEvent.DOUBLE_TAP, true, false, local.x, local.y, stagePos.x, stagePos.y, target, createTuioContainer(event.stageX, event.stageY, this.touchId, this.frameId++)));
 		}
 		
 		
@@ -148,8 +150,9 @@ package org.tuio.mouse
 		private function dispatchTouchDown(event:MouseEvent):void{
 			var cursorUnderPoint:ITuioDebugCursor = getCursorUnderPointer(event.stageX, event.stageY); 
 			//add new mouse pointer
-			if(cursorUnderPoint == null){
-				var tuioContainer:TuioContainer = createTuioContainer(event.stageX,event.stageY, this.touchId); 
+			if (cursorUnderPoint == null) {
+				var frameId:uint = this.frameId++;	
+				var tuioContainer:TuioContainer = createTuioContainer(event.stageX,event.stageY, this.touchId, frameId); 
 				//standard
 				if(this.useTuioManager){
 					TuioManager.getInstance().handleAdd(tuioContainer);
@@ -161,7 +164,7 @@ package org.tuio.mouse
 					target.dispatchEvent(new TouchEvent(TouchEvent.TOUCH_DOWN, true, false, local.x, local.y, stagePos.x, stagePos.y, target, tuioContainer));
 				}
 				if(this.useTuioDebug){
-					var cursor:TuioCursor = createTuioCursor(event.stageX, event.stageY, this.touchId);
+					var cursor:TuioCursor = createTuioCursor(event.stageX, event.stageY, this.touchId, frameId);
 					TuioDebug.getInstance().addTuioCursor(cursor);
 				}
 				
@@ -299,7 +302,8 @@ package org.tuio.mouse
 		 * 
 		 */
 		private function moveCursor(stageX:Number, stageY:Number, touchId:uint):void{
-			var tuioContainer:TuioContainer = createTuioContainer(stageX, stageY, touchId);
+			var frameId:uint = this.frameId++;
+			var tuioContainer:TuioContainer = createTuioContainer(stageX, stageY, touchId, frameID);
 			
 			if(this.useTuioManager){
 				TuioManager.getInstance().handleUpdate(tuioContainer);
@@ -312,7 +316,7 @@ package org.tuio.mouse
 			}
 			
 			if(this.useTuioDebug){
-				var cursor:TuioCursor = createTuioCursor(stageX, stageY, touchId);
+				var cursor:TuioCursor = createTuioCursor(stageX, stageY, touchId, frameId);
 				TuioDebug.getInstance().updateTuioCursor(cursor);
 			}
 		}
@@ -372,18 +376,19 @@ package org.tuio.mouse
 		 * 
 		 */
 		private function removeCursor(event:MouseEvent, touchId:uint):void{
+			var frameId:uint = this.frameId++;
 			if(this.useTuioManager){
-				TuioManager.getInstance().handleRemove(createTuioContainer(event.stageX, event.stageY, touchId));
+				TuioManager.getInstance().handleRemove(createTuioContainer(event.stageX, event.stageY, touchId, frameId));
 			}else{
 				var stagePos:Point = new Point(event.stageX, event.stageY);
 				var target:DisplayObject = DisplayListHelper.getTopDisplayObjectUnderPoint(stagePos, stage);
 				var local:Point = target.globalToLocal(new Point(stagePos.x, stagePos.y));
 				
-				target.dispatchEvent(new TouchEvent(TouchEvent.TOUCH_UP, true, false, local.x, local.y, stagePos.x, stagePos.y, target, createTuioContainer(event.stageX, event.stageY, touchId)));
+				target.dispatchEvent(new TouchEvent(TouchEvent.TOUCH_UP, true, false, local.x, local.y, stagePos.x, stagePos.y, target, createTuioContainer(event.stageX, event.stageY, touchId, frameId)));
 			}
 			
 			if(this.useTuioDebug){
-				TuioDebug.getInstance().removeTuioCursor(createTuioCursor(event.stageX, event.stageY, touchId));
+				TuioDebug.getInstance().removeTuioCursor(createTuioCursor(event.stageX, event.stageY, touchId, frameId));
 			}	
 		}
 		
@@ -494,8 +499,8 @@ package org.tuio.mouse
 		 * @return the TuioContainer.
 		 * 
 		 */
-		private function createTuioContainer(stageX:Number, stageY:Number, touchId:uint):TuioContainer{
-			return new TuioContainer("2Dcur",touchId,stageX/stage.stageWidth, stageY/stage.stageHeight,0,0,0,0,0);
+		private function createTuioContainer(stageX:Number, stageY:Number, touchId:uint, frameId:uint):TuioContainer{
+			return new TuioContainer("2Dcur",touchId,stageX/stage.stageWidth, stageY/stage.stageHeight,0,0,0,0,0,frameId);
 		}
 		
 		/**
@@ -508,8 +513,8 @@ package org.tuio.mouse
 		 * @return the TuioCursor.
 		 * 
 		 */
-		private function createTuioCursor(stageX:Number, stageY:Number, touchId:uint):TuioCursor{
-			return new TuioCursor("2Dcur",touchId,stageX/stage.stageWidth, stageY/stage.stageHeight,0,0,0,0,0);
+		private function createTuioCursor(stageX:Number, stageY:Number, touchId:uint, frameId:uint):TuioCursor{
+			return new TuioCursor("2Dcur",touchId,stageX/stage.stageWidth, stageY/stage.stageHeight,0,0,0,0,0,frameId);
 		}
 		
 	}

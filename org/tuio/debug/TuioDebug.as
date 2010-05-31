@@ -513,7 +513,7 @@ package org.tuio.debug
 			trace(this, "addTuioBlob");
 			if(_showBlobs){
 				_showCursors = true;
-				addTuioCursor(new TuioCursor("2dcur", tuioBlob.sessionID, tuioBlob.x, tuioBlob.y, tuioBlob.z,tuioBlob.X, tuioBlob.Y, tuioBlob.Z, tuioBlob.m));
+				addTuioCursor(new TuioCursor("2dcur", tuioBlob.sessionID, tuioBlob.x, tuioBlob.y, tuioBlob.z,tuioBlob.X, tuioBlob.Y, tuioBlob.Z, tuioBlob.m, tuioBlob.frameID));
 			}
 		}
 
@@ -524,7 +524,7 @@ package org.tuio.debug
 		public function updateTuioBlob(tuioBlob:TuioBlob):void{
 			if(_showBlobs){
 				_showCursors = true;
-				updateTuioCursor(new TuioCursor("2dcur", tuioBlob.sessionID, tuioBlob.x, tuioBlob.y, tuioBlob.z,tuioBlob.X, tuioBlob.Y, tuioBlob.Z, tuioBlob.m));
+				updateTuioCursor(new TuioCursor("2dcur", tuioBlob.sessionID, tuioBlob.x, tuioBlob.y, tuioBlob.z,tuioBlob.X, tuioBlob.Y, tuioBlob.Z, tuioBlob.m, tuioBlob.frameID));
 			}
 				
 		}
@@ -536,9 +536,13 @@ package org.tuio.debug
 		public function removeTuioBlob(tuioBlob:TuioBlob):void{
 			if(_showBlobs){
 				_showCursors = true;
-				removeTuioCursor(new TuioCursor("2dcur", tuioBlob.sessionID, tuioBlob.x, tuioBlob.y, tuioBlob.z,tuioBlob.X, tuioBlob.Y, tuioBlob.Z, tuioBlob.m));
+				removeTuioCursor(new TuioCursor("2dcur", tuioBlob.sessionID, tuioBlob.x, tuioBlob.y, tuioBlob.z,tuioBlob.X, tuioBlob.Y, tuioBlob.Z, tuioBlob.m, tuioBlob.frameID));
 			}
 		}
+		
+		public function newFrame(id:uint):void {
+            // TODO
+        }
 		
 		private function drawObjectString(textField:TextField, dObj:Sprite):void{
 			var translationX:Number = -0.5*dObj.width+0.5*textField.width;
