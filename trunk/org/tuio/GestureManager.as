@@ -93,6 +93,7 @@ package org.tuio {
 				//this.addGesture(new OneDownOneMoveGesture());
 				//this.addGesture(new PressTapGesture());
 				GestureManager.addGesture(new ZoomGesture());
+				GestureManager.addGesture(new RotateGesture());
 				//this.addGesture(new ThreeFingerMoveGesture());
 			}
 			
@@ -143,6 +144,7 @@ package org.tuio {
 					m.gesture.dispatchGestureEvent(target, m);
 					if (m.active) temp.push(m);
 				}
+				m = null;
 			}
 			this.activeGestures = temp;
 			return used;
