@@ -70,6 +70,7 @@ package org.tuio.osc {
 			if (running) {
 				this._currentPacket = oscPacket;
 				this.distributeOSCPacket(this._currentPacket);
+				oscPacket = null;
 			}
 		}
 		

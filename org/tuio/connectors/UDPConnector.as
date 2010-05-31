@@ -90,6 +90,8 @@ package org.tuio.connectors
 					}
 				}
 			}
+			
+			packet = null;
 		}
 		
 		/**

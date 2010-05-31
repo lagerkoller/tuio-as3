@@ -8,7 +8,7 @@ package org.tuio.connectors.udp
 	import flash.utils.ByteArray;
 	import flash.utils.Endian;
 	import org.tuio.osc.OSCEvent;
-
+	
 	public class OSCDatagramSocket extends DatagramSocket
 	{
 		private var Debug:Boolean = true;
