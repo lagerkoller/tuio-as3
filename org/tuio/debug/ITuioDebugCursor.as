@@ -17,6 +17,7 @@ package org.tuio.debug
 	 */
 	public interface ITuioDebugCursor
 	{
+		//necessary for mouse to tuio simulation
 		function get sessionId():uint;
 		function set sessionId(sessionId:uint):void;
 	}

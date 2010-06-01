@@ -303,7 +303,7 @@ package org.tuio.mouse
 		 */
 		private function moveCursor(stageX:Number, stageY:Number, touchId:uint):void{
 			var frameId:uint = this.frameId++;
-			var tuioContainer:TuioContainer = createTuioContainer(stageX, stageY, touchId, frameID);
+			var tuioContainer:TuioContainer = createTuioContainer(stageX, stageY, touchId, frameId);
 			
 			if(this.useTuioManager){
 				TuioManager.getInstance().handleUpdate(tuioContainer);

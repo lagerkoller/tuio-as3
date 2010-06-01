@@ -361,5 +361,11 @@ package org.tuio.legacy
 			
 			return objects;
 		}	
+		
+		/**
+		 * Called if a new frameID is received.
+		 * @param	id The new frameID
+		 */
+		public function newFrame(id:uint):void{}
 	}
 }

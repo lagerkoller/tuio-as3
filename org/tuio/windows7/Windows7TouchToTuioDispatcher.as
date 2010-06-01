@@ -88,10 +88,10 @@ package org.tuio.windows7
 		}
 		
 		private function createTuioContainer(event:TouchEvent):TuioContainer{
-			return new TuioContainer("2Dcur",event.touchPointID,event.stageX/stage.stageWidth, event.stageY/stage.stageHeight,0,0,0,0,0);
+			return new TuioContainer("2Dcur",event.touchPointID,event.stageX/stage.stageWidth, event.stageY/stage.stageHeight,0,0,0,0,0,0);
 		}
 		private function createTuioCursor(event:TouchEvent):TuioCursor{
-			return new TuioCursor("2Dcur",event.touchPointID,event.stageX/stage.stageWidth, event.stageY/stage.stageHeight,0,0,0,0,0);
+			return new TuioCursor("2Dcur",event.touchPointID,event.stageX/stage.stageWidth, event.stageY/stage.stageHeight,0,0,0,0,0,0);
 		}
 	}
 }
