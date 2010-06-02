@@ -35,7 +35,7 @@ package org.tuio.gestures {
 		
 		private function handleDead(e:GestureStepEvent):void {
 			if (e.step <= 5 && e.step != 3) {
-				lastDistance = NaN;
+				lastAngle = NaN;
 			}
 		}
 		
