@@ -9,7 +9,6 @@ package org.tuio.gestures {
 	
 	public class RotateGesture extends TwoFingerMoveGesture {
 		
-		private var lastDistance:Number;
 		private var lastAngle:Number;
 		
 		public function RotateGesture() {
@@ -23,19 +22,20 @@ package org.tuio.gestures {
 			else  vector = new Point(gsg.getTuioContainer("B").x - gsg.getTuioContainer("A").x, gsg.getTuioContainer("B").y - gsg.getTuioContainer("A").y);
 			var length:Number = Math.sqrt(Math.pow(vector.x, 2) + Math.pow(vector.y, 2));
 			var angle:Number = Math.acos( vector.x / length);
+			lastAngle = Number(gsg.getValue("lA"));
 			
 			var rotation:Number = 0;
 			
-			if (lastAngle) {
+			if (lastAngle != 0) {
 				rotation = 180*(angle - lastAngle)/Math.PI;
 			} 
-			lastAngle = angle;
+			gsg.storeValue("lA", angle);
 			gsg.getTarget("A").dispatchEvent(new TransformGestureEvent(TransformGestureEvent.GESTURE_ROTATE, true, false, null, 0, 0, 0, 0, rotation)); ;
 		}
 		
 		private function handleDead(e:GestureStepEvent):void {
 			if (e.step <= 5 && e.step != 3) {
-				lastAngle = NaN;
+				e.group.storeValue("lA", NaN);
 			}
 		}
 		
