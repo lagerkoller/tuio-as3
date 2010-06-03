@@ -21,20 +21,20 @@ package org.tuio.gestures {
 			if (diffX < 0 || diffY < 0) {                           
 				var distance:Number = Math.sqrt(Math.pow(gsg.getTuioContainer("A").x - gsg.getTuioContainer("B").x, 2) + Math.pow(gsg.getTuioContainer("A").y - gsg.getTuioContainer("B").y, 2));
 				var scale:Number = 0;
+				lastDistance = Number(gsg.getValue("lD"));
 				
-				if (lastDistance) {
+				if (lastDistance != 0) {
 					scale = distance - lastDistance;
 				}
 				
 				gsg.getTarget("A").dispatchEvent(new TransformGestureEvent(TransformGestureEvent.GESTURE_ZOOM, true, false, null, 0, 0, scale, scale));
-				
-				lastDistance = distance;
+				gsg.storeValue("lD", distance);
 			}
 		}
 		
 		private function handleDead(e:GestureStepEvent):void {
 			if (e.step <= 5 && e.step != 3) {
-				lastDistance = NaN;
+				e.group.storeValue("lD", NaN);
 			}
 		}
 		

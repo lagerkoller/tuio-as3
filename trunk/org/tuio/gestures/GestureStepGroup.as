@@ -4,6 +4,16 @@ package org.tuio.gestures {
 	import flash.display.DisplayObject;
 	import org.tuio.TuioContainer;
 	
+	
+	/**
+	 * This class is the heart of the <code>GestureManager</code>'s gesture system.
+	 * The <code>GestureStepGroup</code> stores a sequence of <code>GestureStep</code>s that determine the events needed
+	 * until a certain <code>GestureEvent</code> may be dispatched.
+	 * 
+	 * This class also provides the means to share targets, <code>TuioContainer</code>s, Tuio frameIDs and custom values between
+	 * the steps and with the final dispatching of the <code>GestureEvent</code>.
+	 * 
+	 */
 	public class GestureStepGroup {
 		
 		private var steps:Array;
@@ -11,6 +21,7 @@ package org.tuio.gestures {
 		private var targetAliasMap:Object;
 		private var tuioContainerAliasMap:Object;
 		private var frameIDAliasMap:Object;
+		private var values:Object;
 		private var _gesture:Gesture;
 		private var _active:Boolean;
 		
@@ -19,6 +30,7 @@ package org.tuio.gestures {
 			this.targetAliasMap = {};
 			this.tuioContainerAliasMap = {};
 			this.frameIDAliasMap = {};
+			this.values = { foo:123 };
 			this.stepPosition = 0;
 			this._active = true;
 		}
@@ -62,8 +74,8 @@ package org.tuio.gestures {
 		}
 		
 		internal function getFrameID(alias:String):uint {
-			if (alias.charAt(0) == "!") alias = alias.substr(1);
-			return uint(this.frameIDAliasMap[alias]);
+			if (alias.charAt(0) == "!") return 0;
+			else return uint(this.frameIDAliasMap[alias]);
 		}
 		
 		internal function addFrameID(alias:String, frameID:uint):void {
@@ -81,6 +93,14 @@ package org.tuio.gestures {
 		
 		internal function getFrameIDAlias(frameID:int):String {
 			return getKey(frameIDAliasMap, frameID);
+		}
+		
+		internal function storeValue(key:String, value:Object):void {
+			this.values[key] = value;
+		}
+		
+		internal function getValue(key:String):Object {
+			return this.values[key];
 		}
 		
 		private function getKey(a:Object, value:Object):String {
