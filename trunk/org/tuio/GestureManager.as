@@ -42,7 +42,8 @@ package org.tuio {
 		internal var stage:Stage;
 		
 		/**
-		 * Creates a new TuioManager instance which processes the Tuio tracking data received by the given TuioClient.
+		 * The <code>GestureManager</code> must not be instanciated directly. Use <code>GestureManager.init(...)</code> or <code>GestureManager.getInstance()<code> instead.
+		 * Creates a new GestureManager instance.
 		 * 
 		 * @param	stage The Stage object of the Flashmovie.
 		 * @param	tuioClient A TuioClient instance that receives Tuio tracking data from a tracker.
@@ -81,6 +82,15 @@ package org.tuio {
 			}
 		}
 		
+		/**
+		 * Intializes the <code>GesturManager</code> with the given TuioClient. 
+		 * If you have already initialized a <code>TuioManager</code> the given <code>stage</code> and <code>tuioClient</code> will be discarded and the ones specified for the <code>TuioManager</code> will be used instead.
+		 * This behaviour is a result of the <code>GestureManager</code> using the <code>TuioManager</code>'s events  
+		 * 
+		 * @param	stage
+		 * @param	tuioClient
+		 * @return
+		 */
 		public static function init(stage:Stage, tuioClient:TuioClient):GestureManager {
 			if(inst == null){
 				TuioManager.init(stage, tuioClient);
@@ -100,6 +110,13 @@ package org.tuio {
 			return inst;
 		}
 		
+		/**
+		 * Returns the instance of the <code>GestureManager</code>. 
+		 * Make sure you have called <code>GestureManager.init(...)</code> before calling this function.
+		 * Otherwise an Error will be thrown.
+		 * 
+		 * @return The <code>GestureManager</code> insance.
+		 */
 		public static function getInstance():GestureManager{
 			if(inst == null){
 				throw new Error("Please initialize with method GestureManager.init(...) first!");
@@ -107,6 +124,11 @@ package org.tuio {
 			return inst;
 		}
 		
+		/**
+		 * Use this function to add a predefined or custom gesture that shall be checked for.
+		 * 
+		 * @param	gesture A custom or predefined gesture.
+		 */
 		public static function addGesture(gesture:Gesture):void {
 			if(inst == null){
 				throw new Error("Please initialize with method GestureManager.init(...) first!");
@@ -115,8 +137,15 @@ package org.tuio {
 			}
 		}
 		
+		/**
+		 * Checks if the firstStep of any added <code>Gesture</code> matches the given event.
+		 * 
+		 * @param	event The event name that that shall be checked against.
+		 * @param	target The events target <code>DisplayObject</code>
+		 * @param	tuioContainer The tuioContainer that caused the event.
+		 */
 		private function initGestures(event:String, target:DisplayObject, tuioContainer:TuioContainer):void {
-			var gsg:GestureStepGroup;
+			var gsg:GestureStepSequence;
 			for each(var g:Gesture in gestures) {
 				if (g.firstStep.event == event) {
 					gsg = g.steps;
@@ -126,13 +155,21 @@ package org.tuio {
 			}
 		}
 		
+		/**
+		 * Progresses all active <code>GestureStepSequences</code> and discards them if a <code>GestureStep</code> fails/dies.
+		 * 
+		 * @param	event The event name that that shall be checked against.
+		 * @param	target The events target <code>DisplayObject</code>
+		 * @param	tuioContainer The tuioContainer that caused the event.
+		 * @return <code>true</code> if an active <code>GestureStepSequence</code> progressed.
+		 */
 		private function progressGestures(event:String, target:DisplayObject, tuioContainer:TuioContainer):Boolean {
 			var temp:Array = new Array();
 			var l:int = this.activeGestures.length;
 			var used:Boolean = false;
 			
 			for (var c:int = 0; c < l; c++ ) {
-				var m:GestureStepGroup = this.activeGestures.pop();
+				var m:GestureStepSequence = this.activeGestures.pop();
 				var r:uint = m.step(event, target, tuioContainer);
 				if (r == Gesture.PROGRESS) {
 					temp.push(m);
@@ -150,12 +187,22 @@ package org.tuio {
 			return used;
 		}
 		
+		/**
+		 * Handles an Tuio <code>TouchEvent</code>
+		 * 
+		 * @param	touchEvent The <code>TouchEvent</code> to be handled
+		 */
 		private function handleTouchEvent(touchEvent:TouchEvent):void {
 			if (!progressGestures(touchEvent.type, touchEvent.relatedObject as DisplayObject, touchEvent.tuioContainer)) {
 				initGestures(touchEvent.type, touchEvent.relatedObject as DisplayObject, touchEvent.tuioContainer);
 			}
 		}
 		
+		/**
+		 * Handles an <code>TuioEvent</code>
+		 * 
+		 * @param	touchEvent The <code>TuioEvent</code> to be handled
+		 */
 		private function handleTuioEvent(tuioEvent:TuioEvent):void {
 			var tuioContainer:TuioContainer = tuioEvent.tuioContainer;
 			var stagePos:Point = new Point(0,0);

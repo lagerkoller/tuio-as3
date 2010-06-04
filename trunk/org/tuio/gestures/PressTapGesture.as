@@ -15,7 +15,7 @@ package org.tuio.gestures {
 			this.addStep(new GestureStep(TouchEvent.TAP, {minDelay:500, goto:2} ));
 		}
 		
-		public override function dispatchGestureEvent(target:DisplayObject, gsg:GestureStepGroup):void {
+		public override function dispatchGestureEvent(target:DisplayObject, gsg:GestureStepSequence):void {
 			trace("press tap " + getTimer());
 		}
 		

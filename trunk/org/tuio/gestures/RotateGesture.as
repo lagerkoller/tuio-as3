@@ -15,7 +15,7 @@ package org.tuio.gestures {
 			this.addEventListener(GestureStepEvent.DEAD, handleDead);
 		}
 		
-		public override function dispatchGestureEvent(target:DisplayObject, gsg:GestureStepGroup):void {
+		public override function dispatchGestureEvent(target:DisplayObject, gsg:GestureStepSequence):void {
 			var center:Point = new Point((gsg.getTuioContainer("B").x + gsg.getTuioContainer("A").x)/2, (gsg.getTuioContainer("B").y + gsg.getTuioContainer("A").y)/2);
 			var vector:Point;
 			if (gsg.getTuioContainer("A").y > gsg.getTuioContainer("B").y) vector = new Point(gsg.getTuioContainer("A").x - gsg.getTuioContainer("B").x, gsg.getTuioContainer("A").y - gsg.getTuioContainer("B").y);

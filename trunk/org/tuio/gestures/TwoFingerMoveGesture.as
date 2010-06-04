@@ -19,7 +19,7 @@ package org.tuio.gestures {
 			this.addStep(new GestureStep(TuioEvent.NEW_FRAME, {goto:1} ));
 		}
 		
-		public override function dispatchGestureEvent(target:DisplayObject, gsg:GestureStepGroup):void {
+		public override function dispatchGestureEvent(target:DisplayObject, gsg:GestureStepSequence):void {
 			trace("two finger move" + getTimer());
 		}
 		

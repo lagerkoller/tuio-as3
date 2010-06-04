@@ -7,9 +7,9 @@ package org.tuio.gestures {
 		public static const DEAD:String = "dead";
 		
 		private var _step:uint;
-		private var _group:GestureStepGroup;
+		private var _group:GestureStepSequence;
 		
-		function GestureStepEvent(type:String, step:uint, group:GestureStepGroup) {
+		function GestureStepEvent(type:String, step:uint, group:GestureStepSequence) {
 			super(type, false, false);
 			this._step = step;
 			this._group = group;
@@ -19,7 +19,7 @@ package org.tuio.gestures {
 			return this._step;
 		}
 		
-		public function get group():GestureStepGroup {
+		public function get group():GestureStepSequence {
 			return this._group;
 		}
 		
