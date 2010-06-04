@@ -16,7 +16,7 @@ package org.tuio.gestures {
 		private var _prepareTime:int;
 		private var _goto:int;
 		
-		internal var group:GestureStepGroup;
+		internal var group:GestureStepSequence;
 		
 		public function GestureStep(event:String, properties:Object) {
 			this._event = event;

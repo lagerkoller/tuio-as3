@@ -9,7 +9,7 @@ package org.tuio.gestures {
 		
 		public function ScrollGesture() {}
 		
-		public override function dispatchGestureEvent(target:DisplayObject, gsg:GestureStepGroup):void {
+		public override function dispatchGestureEvent(target:DisplayObject, gsg:GestureStepSequence):void {
 			var diffX:Number = gsg.getTuioContainer("A").X - gsg.getTuioContainer("B").X;
 			var diffY:Number = gsg.getTuioContainer("A").Y - gsg.getTuioContainer("B").Y;
 			if (diffX < 0.01 || diffY < 0.01) {

@@ -7,14 +7,14 @@ package org.tuio.gestures {
 	
 	/**
 	 * This class is the heart of the <code>GestureManager</code>'s gesture system.
-	 * The <code>GestureStepGroup</code> stores a sequence of <code>GestureStep</code>s that determine the events needed
+	 * The <code>GestureStepSequence</code> stores a sequence of <code>GestureStep</code>s that determine the events needed
 	 * until a certain <code>GestureEvent</code> may be dispatched.
 	 * 
 	 * This class also provides the means to share targets, <code>TuioContainer</code>s, Tuio frameIDs and custom values between
 	 * the steps and with the final dispatching of the <code>GestureEvent</code>.
 	 * 
 	 */
-	public class GestureStepGroup {
+	public class GestureStepSequence {
 		
 		private var steps:Array;
 		private var stepPosition:uint;
@@ -25,7 +25,7 @@ package org.tuio.gestures {
 		private var _gesture:Gesture;
 		private var _active:Boolean;
 		
-		public function GestureStepGroup() {
+		public function GestureStepSequence() {
 			this.steps = new Array();
 			this.targetAliasMap = {};
 			this.tuioContainerAliasMap = {};
@@ -34,7 +34,10 @@ package org.tuio.gestures {
 			this.stepPosition = 0;
 			this._active = true;
 		}
-
+		
+		/**
+		 * @return A copy of the first <code>GestureStep</code> in the sequence.
+		 */
 		public function get firstStep():GestureStep {
 			var step:GestureStep;
 			for (var i:int = 0; i < steps.length; i++ ) {
@@ -44,6 +47,9 @@ package org.tuio.gestures {
 			return null;
 		}
 		
+		/**
+		 * The <code>Gesture</code> the <code>GestureStepSequence</code> belongs to.
+		 */
 		public function get gesture():Gesture {
 			return this._gesture;
 		}
@@ -166,8 +172,8 @@ package org.tuio.gestures {
 			}
 		}
 		
-		public function copy():GestureStepGroup {
-			var out:GestureStepGroup = new GestureStepGroup();
+		public function copy():GestureStepSequence {
+			var out:GestureStepSequence = new GestureStepSequence();
 			out.gesture = this.gesture;
 			var al:int = steps.length;
 			for (var c:int = 0; c < al; c++ ) {

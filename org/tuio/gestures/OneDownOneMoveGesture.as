@@ -9,7 +9,7 @@ package org.tuio.gestures {
 	public class OneDownOneMoveGesture extends Gesture {
 		
 		public function OneDownOneMoveGesture() {
-			this.addStep(new GestureStep(TouchEvent.TOUCH_DOWN, { tuioContainerAlias:"A" } ));
+			this.addStep(new GestureStep(TouchEvent.TOUCH_DOWN, { tuioContainerAlias:"A", targetAlias:"A" } ));
 			this.addStep(new GestureStep(TouchEvent.TOUCH_UP, { tuioContainerAlias:"A", die:true } ));
 			this.addStep(new GestureStep(TouchEvent.TOUCH_DOWN, {tuioContainerAlias:"B"} ));
 			this.addStep(new GestureStep(TouchEvent.TOUCH_MOVE, { tuioContainerAlias:"A", die:true } ));

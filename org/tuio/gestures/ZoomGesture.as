@@ -15,10 +15,10 @@ package org.tuio.gestures {
 			this.addEventListener(GestureStepEvent.DEAD, handleDead);
 		}
 		
-		public override function dispatchGestureEvent(target:DisplayObject, gsg:GestureStepGroup):void {
+		public override function dispatchGestureEvent(target:DisplayObject, gsg:GestureStepSequence):void {
 			var diffX:Number = gsg.getTuioContainer("A").X * gsg.getTuioContainer("B").X;
 			var diffY:Number = gsg.getTuioContainer("A").Y * gsg.getTuioContainer("B").Y;
-			if (diffX < 0 || diffY < 0) {                           
+			if (diffX <= 0 || diffY <= 0) {                           
 				var distance:Number = Math.sqrt(Math.pow(gsg.getTuioContainer("A").x - gsg.getTuioContainer("B").x, 2) + Math.pow(gsg.getTuioContainer("A").y - gsg.getTuioContainer("B").y, 2));
 				var scale:Number = 0;
 				lastDistance = Number(gsg.getValue("lD"));
