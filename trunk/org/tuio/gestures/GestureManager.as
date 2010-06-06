@@ -1,11 +1,11 @@
-package org.tuio {
+package org.tuio.gestures {
 	
 	import flash.display.DisplayObject;
 	import flash.display.InteractiveObject;
 	import flash.display.Stage;
 	import flash.events.EventDispatcher;
 	import flash.geom.Point;
-	import org.tuio.gestures.*;
+	import org.tuio.*;
 	import flash.utils.getTimer;
 	import flash.events.MouseEvent;
 	
