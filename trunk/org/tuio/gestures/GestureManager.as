@@ -9,6 +9,12 @@ package org.tuio.gestures {
 	import flash.utils.getTimer;
 	import flash.events.MouseEvent;
 	
+	import org.tuio.debug.ITuioDebugBlob;
+	import org.tuio.debug.ITuioDebugCursor;
+	import org.tuio.debug.ITuioDebugObject;
+	import org.tuio.debug.ITuioDebugTextSprite;
+	import org.tuio.fiducial.TuioFiducialDispatcher;
+	
 	/**
 	 * The GestureManager listens to the TuioManager and triggers
 	 * gesture events into Flash's event flow according to the called callback functions
@@ -167,7 +173,7 @@ package org.tuio.gestures {
 			var temp:Array = new Array();
 			var l:int = this.activeGestures.length;
 			var used:Boolean = false;
-			
+			trace(target);
 			for (var c:int = 0; c < l; c++ ) {
 				var m:GestureStepSequence = this.activeGestures.pop();
 				var r:uint = m.step(event, target, tuioContainer);
@@ -224,6 +230,10 @@ package org.tuio.gestures {
 			if(this.touchTargetDiscoveryMode == TOUCH_TARGET_DISCOVERY_MOUSE_ENABLED){
 				while(targets.length > 0) {
 					item = targets.pop() as DisplayObject;
+					//ignore debug cursor/object/blob and send object under debug cursor/object/blob
+					if((item is ITuioDebugCursor || item is ITuioDebugBlob || item is ITuioDebugObject || item is ITuioDebugTextSprite) && targets.length > 0){
+						continue;
+					}
 					if (item.parent != null && !(item is InteractiveObject)) item = item.parent;
 					if (item is InteractiveObject) {
 						if ((item as InteractiveObject).mouseEnabled) return item;
@@ -231,8 +241,12 @@ package org.tuio.gestures {
 				}
 				item = stage;
 			} else if (this.touchTargetDiscoveryMode == TOUCH_TARGET_DISCOVERY_IGNORELIST) {
-				while (targets.length > 0) {
+				while(targets.length > 0) {
 					item = targets.pop();
+					//ignore debug cursor/object/blob and send object under debug cursor/object/blob
+					if((item is ITuioDebugCursor || item is ITuioDebugBlob || item is ITuioDebugObject || item is ITuioDebugTextSprite) && targets.length > 0){
+						continue;
+					}
 					if (!bubbleListCheck(item)) return item;
 				}
 				item = stage;

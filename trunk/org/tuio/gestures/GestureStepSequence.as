@@ -4,7 +4,6 @@ package org.tuio.gestures {
 	import flash.display.DisplayObject;
 	import org.tuio.TuioContainer;
 	
-	
 	/**
 	 * This class is the heart of the <code>GestureManager</code>'s gesture system.
 	 * The <code>GestureStepSequence</code> stores a sequence of <code>GestureStep</code>s that determine the events needed

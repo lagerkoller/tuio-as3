@@ -402,7 +402,7 @@ package org.tuio {
 				while(targets.length > 0) {
 					item = targets.pop() as DisplayObject;
 					//ignore debug cursor/object/blob and send object under debug cursor/object/blob
-					if((item is ITuioDebugCursor || item is ITuioDebugBlob || item is ITuioDebugObject || item is ITuioDebugTextSprite) && targets.length > 1){
+					if((item is ITuioDebugCursor || item is ITuioDebugBlob || item is ITuioDebugObject || item is ITuioDebugTextSprite) && targets.length > 0){
 						continue;
 					}
 					if (item.parent != null && !(item is InteractiveObject)) item = item.parent;
@@ -415,7 +415,7 @@ package org.tuio {
 				while(targets.length > 0) {
 					item = targets.pop();
 					//ignore debug cursor/object/blob and send object under debug cursor/object/blob
-					if((item is ITuioDebugCursor || item is ITuioDebugBlob || item is ITuioDebugObject || item is ITuioDebugTextSprite) && targets.length > 1){
+					if((item is ITuioDebugCursor || item is ITuioDebugBlob || item is ITuioDebugObject || item is ITuioDebugTextSprite) && targets.length > 0){
 						continue;
 					}
 					if (!bubbleListCheck(item)) return item;
