@@ -18,7 +18,7 @@ package org.tuio.gestures {
 			this.addStep(new GestureStep(TouchEvent.TOUCH_MOVE, {tuioContainerAlias:"B", goto:4}));
 		}
 		
-		public override function dispatchGestureEvent(target:DisplayObject, gsg:GestureStepGroup):void {
+		public override function dispatchGestureEvent(target:DisplayObject, gsg:GestureStepSequence):void {
 			trace("one down one move " + getTimer());
 		}
 		
