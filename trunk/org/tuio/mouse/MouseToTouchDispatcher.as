@@ -12,15 +12,8 @@ package org.tuio.mouse
 	import flash.geom.Point;
 	import flash.utils.Dictionary;
 	
-	import org.tuio.TouchEvent;
-	import org.tuio.TuioContainer;
-	import org.tuio.TuioCursor;
-	import org.tuio.TuioManager;
-	import org.tuio.debug.ITuioDebugBlob;
-	import org.tuio.debug.ITuioDebugCursor;
-	import org.tuio.debug.ITuioDebugObject;
-	import org.tuio.debug.ITuioDebugTextSprite;
-	import org.tuio.debug.TuioDebug;
+	import org.tuio.*
+	import org.tuio.debug.*
 	import org.tuio.util.DisplayListHelper;
 
 	/**

@@ -30,44 +30,44 @@ package org.tuio.legacy{
 		 * will be executed everytime a fiducial to which this handler is applied is being
 		 * added on the table/simulator.
 		 */
-		function onAdd(evt:PropEvent);
+		function onAdd(evt:PropEvent):void;
 		
 		/**
 		 * will be executed everytime a fiducial to which this handler is applied is being
 		 * removed from the table/simulator.
 		 */
-		function onRemove(evt:PropEvent);
+		function onRemove(evt:PropEvent):void;
 		
 		/**
 		 * will be executed everytime a fiducial to which this handler is applied is being
 		 * moved on the table / in the simulator.
 		 */
-		function onMove(evt:PropEvent);
+		function onMove(evt:PropEvent):void;
 		
 		/**
 		 * will be executed everytime a fiducial to which this handler is applied is being
 		 * rotated on the table / in the simulator.
 		 */
-		function onRotate(evt:PropEvent);
+		function onRotate(evt:PropEvent):void;
 		
 		/**
 		 * represents a standard Tuio property, added for completeness. Not used so far.
 		 */
-		function onMoveVelocety(evt:PropEvent);
+		function onMoveVelocety(evt:PropEvent):void;
 		
 		/**
 		 * represents a standard Tuio property, added for completeness. Not used so far.
 		 */
-		function onRotateVelocety(evt:PropEvent);
+		function onRotateVelocety(evt:PropEvent):void;
 		
 		/**
 		 * represents a standard Tuio property, added for completeness. Not used so far.
 		 */
-		function onMoveAccel(evt:PropEvent);
+		function onMoveAccel(evt:PropEvent):void;
 		
 		/**
 		 * represents a standard Tuio property, added for completeness. Not used so far.
 		 */
-		function onRotateAccel(evt:PropEvent);
+		function onRotateAccel(evt:PropEvent):void;
 	}	
 }

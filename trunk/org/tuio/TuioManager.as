@@ -13,7 +13,7 @@ package org.tuio {
 	import org.tuio.debug.ITuioDebugCursor;
 	import org.tuio.debug.ITuioDebugObject;
 	import org.tuio.debug.ITuioDebugTextSprite;
-	import org.tuio.fiducial.TuioFiducialDispatcher;
+	import org.tuio.fiducial.*;
 	
 	/**@eventType org.tuio.TuioEvent.ADD*/
 	[Event(name = "org.tuio.TuioEvent.add", type = "org.tuio.TuioEvent")]
