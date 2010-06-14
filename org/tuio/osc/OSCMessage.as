@@ -19,48 +19,119 @@
 		 * 
 		 * @param	bytes A ByteArray containing an OSCMessage
 		 */
-		public function OSCMessage(bytes:ByteArray) {
+		public function OSCMessage(bytes:ByteArray = null) {
 			super(bytes);
 			
-			//read the OSCMessage head
-			this.addressPattern = this.readString();
-			
-			//read the parsing pattern for the following OSCMessage bytes
-			this.pattern = this.readString();
-			
-			this.argumentArray = new Array();
-			
-			//read the remaining bytes according to the parsing pattern
-			var innerArray:Array;
-			var openArray:Array = this.argumentArray;
-			var l:int = this.pattern.length;
-			try{
-				for(var c:int = 0; c < l; c++){
-					switch(this.pattern.charAt(c)){
-						case "s": openArray.push(this.readString()); break;
-						case "f": openArray.push(this.bytes.readFloat()); break;
-						case "i": openArray.push(this.bytes.readInt()); break;
-						case "b": openArray.push(this.readBlob()); break;
-						case "h": openArray.push(this.read64BInt()); break;
-						case "t": openArray.push(this.readTimetag()); break;
-						case "d": openArray.push(this.bytes.readDouble()); break;
-						case "S": openArray.push(this.readString()); break;
-						case "c": openArray.push(this.bytes.readMultiByte(4, "US-ASCII")); break;
-						case "r": openArray.push(this.bytes.readUnsignedInt()); break;
-						case "T": openArray.push(true); break;
-						case "F": openArray.push(false); break;
-						case "N": openArray.push(null); break;
-						case "I": openArray.push(Infinity); break;
-						case "[": innerArray = new Array(); openArray = innerArray; break;
-						case "]": this.argumentArray.push(innerArray.concat()); openArray = this.argumentArray; break;
-						default: break;
-					}
-				}
-			} catch (e:EOFError) {
-				trace("corrupt");
+			if(bytes != null){
+				//read the OSCMessage head
+				this.addressPattern = this.readString();
+				
+				//read the parsing pattern for the following OSCMessage bytes
+				this.pattern = this.readString();
+				
 				this.argumentArray = new Array();
-				this.argumentArray.push("Corrupted OSCMessage");
-				openArray = null;
+				
+				//read the remaining bytes according to the parsing pattern
+				var innerArray:Array;
+				var openArray:Array = this.argumentArray;
+				var l:int = this.pattern.length;
+				try{
+					for(var c:int = 0; c < l; c++){
+						switch(this.pattern.charAt(c)){
+							case "s": openArray.push(this.readString()); break;
+							case "f": openArray.push(this.bytes.readFloat()); break;
+							case "i": openArray.push(this.bytes.readInt()); break;
+							case "b": openArray.push(this.readBlob()); break;
+							case "h": openArray.push(this.read64BInt()); break;
+							case "t": openArray.push(this.readTimetag()); break;
+							case "d": openArray.push(this.bytes.readDouble()); break;
+							case "S": openArray.push(this.readString()); break;
+							case "c": openArray.push(this.bytes.readMultiByte(4, "US-ASCII")); break;
+							case "r": openArray.push(this.bytes.readUnsignedInt()); break;
+							case "T": openArray.push(true); break;
+							case "F": openArray.push(false); break;
+							case "N": openArray.push(null); break;
+							case "I": openArray.push(Infinity); break;
+							case "[": innerArray = new Array(); openArray = innerArray; break;
+							case "]": this.argumentArray.push(innerArray.concat()); openArray = this.argumentArray; break;
+							default: break;
+						}
+					}
+				} catch (e:EOFError) {
+					trace("corrupt");
+					this.argumentArray = new Array();
+					this.argumentArray.push("Corrupted OSCMessage");
+					openArray = null;
+				}
+			} else {
+				this.pattern = ",";
+				this.argumentArray = []; 
+			}
+		}
+		
+		/**
+		 * Adds a single argument value to the OSCMessage
+		 * For special oscTypes like booleans or infinity there is no value needed
+		 * 
+		 * @param	oscType The OSCType of the argument.
+		 * @param	value The value of the argument.
+		 */
+		public function addArgument(oscType:String, value:Object = null):void {
+			if (oscType.length == 1) {
+				if (oscType == "s" && value is String) {
+					this.pattern += oscType; 
+					this.argumentArray.push(value);
+				} else if (oscType == "f" && value is Number) {
+					this.pattern += oscType; 
+					this.argumentArray.push(value);
+				} else if (oscType == "i" && value is int) {
+					this.pattern += oscType; 
+					this.argumentArray.push(value);
+				} else if (oscType == "b" && value is ByteArray) {
+					this.pattern += oscType; 
+					this.argumentArray.push(value);
+				} else if (oscType == "h" && value is ByteArray) {
+					this.pattern += oscType; 
+					this.argumentArray.push(value);
+				} else if (oscType == "t" && value is OSCTimetag) {
+					this.pattern += oscType; 
+					this.argumentArray.push(value);
+				} else if (oscType == "d" && value is Number) {
+					this.pattern += oscType; 
+					this.argumentArray.push(value);
+				} else {
+					throw new Error("Invalid or unknown OSCType or invalid value for given OSCType: " + oscType);
+				}
+			} else {
+				throw new Error("The oscType has to be one character.");
+			}
+		}
+		
+		/**
+		 * Add multiple argument values to the OSCMessage at once.
+		 * 
+		 * @param	oscTypes The OSCTypes of the arguments
+		 * @param	values The values of the arguments
+		 */
+		public function addArguments(oscTypes:String, values:Array):void {
+			var l:int = oscTypes.length;
+			var oscType:String = "";
+			var vc:int = 0;
+			
+			for (var c:int = 0; c < l; c++) {
+				oscType = oscTypes.charAt(c);
+				if(oscType.charCodeAt(0) < 60){ //isn't a small letter
+					if (oscType == "[") {
+						this.pattern += oscType;
+					} else if (oscType== "]") {
+						this.pattern += oscType;
+					} else {
+						addArgument(oscType);
+					}
+				} else {
+					addArgument(oscType, values[vc]);
+					vc++;
+				}
 			}
 		}
 		
@@ -69,6 +140,13 @@
 		 */
 		public function get address():String {
 			return addressPattern;
+		}
+		
+		/**
+		 * Sets the address of the Message
+		 */
+		public function set address(address:String):void {
+			this.addressPattern = address;
 		}
 		
 		/**
