@@ -13,7 +13,6 @@ package org.tuio.gestures {
 	import org.tuio.debug.ITuioDebugCursor;
 	import org.tuio.debug.ITuioDebugObject;
 	import org.tuio.debug.ITuioDebugTextSprite;
-	import org.tuio.fiducial.TuioFiducialDispatcher;
 	
 	/**
 	 * The GestureManager listens to the TuioManager and triggers
@@ -48,7 +47,7 @@ package org.tuio.gestures {
 		internal var stage:Stage;
 		
 		/**
-		 * The <code>GestureManager</code> must not be instanciated directly. Use <code>GestureManager.init(...)</code> or <code>GestureManager.getInstance()<code> instead.
+		 * The <code>GestureManager</code> must not be instanciated directly. Use <code>GestureManager.init(...)</code> or <code>GestureManager.getInstance()</code> instead.
 		 * Creates a new GestureManager instance.
 		 * 
 		 * @param	stage The Stage object of the Flashmovie.

@@ -12,9 +12,7 @@ package org.tuio.fiducial
 	import org.tuio.TuioBlob;
 	import org.tuio.TuioCursor;
 	import org.tuio.TuioObject;
-	import org.tuio.debug.ITuioDebugBlob;
-	import org.tuio.debug.ITuioDebugCursor;
-	import org.tuio.debug.ITuioDebugObject;
+	import org.tuio.debug.*;
 	
 	/**
 	 * <p>The TuioFiducialDispatcher class offers an easy to use global listener concept for the use

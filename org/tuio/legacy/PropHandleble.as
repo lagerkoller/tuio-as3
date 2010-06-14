@@ -10,13 +10,13 @@ package org.tuio.legacy{
 	 * 
 	 */
 	public interface PropHandleble{
-		function onAdd(evt:PropEvent);
-		function onRemove(evt:PropEvent);
-		function onMove(evt:PropEvent);
-		function onRotate(evt:PropEvent);
-		function onMoveVelocety(evt:PropEvent);
-		function onRotateVelocety(evt:PropEvent);
-		function onMoveAccel(evt:PropEvent);
-		function onRotateAccel(evt:PropEvent);	
+		function onAdd(evt:PropEvent):void;
+		function onRemove(evt:PropEvent):void;
+		function onMove(evt:PropEvent):void;
+		function onRotate(evt:PropEvent):void;
+		function onMoveVelocety(evt:PropEvent):void;
+		function onRotateVelocety(evt:PropEvent):void;
+		function onMoveAccel(evt:PropEvent):void;
+		function onRotateAccel(evt:PropEvent):void;	
 	}
 }
