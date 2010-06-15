@@ -15,10 +15,11 @@ package org.tuio.connectors.udp
 		private var Buffer:ByteArray = new ByteArray();
 		private var PartialRecord:Boolean = false;
 		
-		public function OSCDatagramSocket(host:String = "127.0.0.1", port:int = 3333)
+		public function OSCDatagramSocket(host:String = "127.0.0.1", port:int = 3333, bind:Boolean = true)
 		{
 			configureListeners();
-			bind(port, host);
+			if(bind) this.bind(port, host);	
+			else this.connect(host, port);
 			receive();
 		}
 		
