@@ -55,13 +55,14 @@ package org.tuio.connectors
 		 * 
 		 * @param host ip of the tracker resp. tuio message producer.
 		 * @param port of the tracker resp. tuio message producer.
-		 * 
+		 * @param connect If true the <code>UDPConnector</code> will try to bind the given IP:port and to receive packets. If false the <code>UDPConnector</code> connect to the given IP:port and will wait for calls of <code>UDPConnector.sendOSCPacket()</code>
+		 *
 		 */
-		public function UDPConnector(host:String = "127.0.0.1", port:int = 3333)
+		public function UDPConnector(host:String = "127.0.0.1", port:int = 3333, bind:Boolean = true)
 		{
 			this.listeners = new Array();
 			
-			this.connection = new OSCDatagramSocket(host, port);
+			this.connection = new OSCDatagramSocket(host, port, bind);
 			this.connection.addEventListener(OSCEvent.OSC_DATA,receiveOscData);
 		}
 		
@@ -128,7 +129,8 @@ package org.tuio.connectors
 		 */
 		public function sendOSCPacket(oscPacket:OSCPacket):void
 		{
-			//not implemented
+			if (this.connection.connected) this.connection.send(oscPacket.getBytes());
+			else throw new Error("Can't send if not connected.");
 		}
 		
 	}
