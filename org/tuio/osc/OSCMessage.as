@@ -81,24 +81,30 @@
 				if (oscType == "s" && value is String) {
 					this.pattern += oscType; 
 					this.argumentArray.push(value);
+					this.writeString(value as String);
 				} else if (oscType == "f" && value is Number) {
 					this.pattern += oscType; 
 					this.argumentArray.push(value);
+					this.bytes.writeFloat(value as Number);
 				} else if (oscType == "i" && value is int) {
 					this.pattern += oscType; 
 					this.argumentArray.push(value);
+					this.bytes.writeInt(value as int);
 				} else if (oscType == "b" && value is ByteArray) {
 					this.pattern += oscType; 
 					this.argumentArray.push(value);
+					this.writeBlob(value as ByteArray);
 				} else if (oscType == "h" && value is ByteArray) {
 					this.pattern += oscType; 
 					this.argumentArray.push(value);
 				} else if (oscType == "t" && value is OSCTimetag) {
 					this.pattern += oscType; 
 					this.argumentArray.push(value);
+					this.writeTimetag(value as OSCTimetag);
 				} else if (oscType == "d" && value is Number) {
 					this.pattern += oscType; 
 					this.argumentArray.push(value);
+					this.bytes.writeDouble(value as Number);
 				} else {
 					throw new Error("Invalid or unknown OSCType or invalid value for given OSCType: " + oscType);
 				}
