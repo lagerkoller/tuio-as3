@@ -13,6 +13,8 @@
 		private var pattern:String;
 		private var action:String;
 		private var argumentArray:Array;
+		private var openArray:Array;
+		private var innerArray:Array;
 		
 		/**
 		 * Creates a OSCMessage from the given ByteArray containing a binarycoded OSCMessage
@@ -32,8 +34,7 @@
 				this.argumentArray = new Array();
 				
 				//read the remaining bytes according to the parsing pattern
-				var innerArray:Array;
-				var openArray:Array = this.argumentArray;
+				this.openArray = this.argumentArray;
 				var l:int = this.pattern.length;
 				try{
 					for(var c:int = 0; c < l; c++){
@@ -65,46 +66,68 @@
 				}
 			} else {
 				this.pattern = ",";
-				this.argumentArray = []; 
+				this.argumentArray = [];
+				this.openArray = this.argumentArray;
 			}
 		}
 		
 		/**
 		 * Adds a single argument value to the OSCMessage
 		 * For special oscTypes like booleans or infinity there is no value needed
+		 * If you want to add an OSCArray to the <code>OSCMessage</code> use <code>addArgmuents()</code>
 		 * 
 		 * @param	oscType The OSCType of the argument.
 		 * @param	value The value of the argument.
 		 */
 		public function addArgument(oscType:String, value:Object = null):void {
 			if (oscType.length == 1) {
-				if (oscType == "s" && value is String) {
+				if ((oscType == "s" || oscType == "S") && value is String) {
 					this.pattern += oscType; 
-					this.argumentArray.push(value);
+					this.openArray.push(value);
 					this.writeString(value as String);
 				} else if (oscType == "f" && value is Number) {
 					this.pattern += oscType; 
-					this.argumentArray.push(value);
+					this.openArray.push(value);
 					this.bytes.writeFloat(value as Number);
 				} else if (oscType == "i" && value is int) {
 					this.pattern += oscType; 
-					this.argumentArray.push(value);
+					this.openArray.push(value);
 					this.bytes.writeInt(value as int);
 				} else if (oscType == "b" && value is ByteArray) {
 					this.pattern += oscType; 
-					this.argumentArray.push(value);
+					this.openArray.push(value);
 					this.writeBlob(value as ByteArray);
 				} else if (oscType == "h" && value is ByteArray) {
 					this.pattern += oscType; 
-					this.argumentArray.push(value);
+					this.openArray.push(value);
 				} else if (oscType == "t" && value is OSCTimetag) {
 					this.pattern += oscType; 
-					this.argumentArray.push(value);
+					this.openArray.push(value);
 					this.writeTimetag(value as OSCTimetag);
 				} else if (oscType == "d" && value is Number) {
 					this.pattern += oscType; 
-					this.argumentArray.push(value);
+					this.openArray.push(value);
 					this.bytes.writeDouble(value as Number);
+				} else if (oscType == "c" && value is String && (value as String).length == 1) {
+					this.pattern += oscType; 
+					this.openArray.push(value);
+					this.bytes.writeMultiByte(value as String, "US-ASCII");
+				} else if (oscType == "r" && value is uint) {
+					this.pattern += oscType; 
+					this.openArray.push(value);
+					this.bytes.writeUnsignedInt(value as uint);
+				} else if (oscType == "T") {
+					this.pattern += oscType; 
+					this.openArray.push(true);
+				} else if (oscType == "F") {
+					this.pattern += oscType; 
+					this.openArray.push(false);
+				} else if (oscType == "N") {
+					this.pattern += oscType; 
+					this.openArray.push(null);
+				} else if (oscType == "I") {
+					this.pattern += oscType; 
+					this.openArray.push(Infinity);
 				} else {
 					throw new Error("Invalid or unknown OSCType or invalid value for given OSCType: " + oscType);
 				}
@@ -126,11 +149,16 @@
 			
 			for (var c:int = 0; c < l; c++) {
 				oscType = oscTypes.charAt(c);
-				if(oscType.charCodeAt(0) < 60){ //isn't a small letter
+				if (oscType.charCodeAt(0) < 97) { //isn't a small letter
 					if (oscType == "[") {
-						this.pattern += oscType;
-					} else if (oscType== "]") {
-						this.pattern += oscType;
+						innerArray = new Array(); 
+						openArray = innerArray;
+					} else if (oscType == "]") {
+						this.argumentArray.push(innerArray.concat()); 
+						openArray = this.argumentArray;
+					} else if (oscType == "S") {
+						addArgument(oscType, values[vc]);
+						vc++;
 					} else {
 						addArgument(oscType);
 					}
@@ -162,6 +190,15 @@
 			return argumentArray;
 		}
 		
+		public override function getBytes():ByteArray {
+			var out:ByteArray = new ByteArray();
+			this.writeString(this.address, out);
+			this.writeString(this.pattern, out);
+			out.writeBytes(this.bytes, 0, this.bytes.length);
+			out.position = 0;
+			return out;
+		}
+		
 		/**
 		 * Generates a String representation of this OSCMessage for debugging purposes
 		 * 
@@ -180,9 +217,11 @@
 		 */
 		public function argumentsToString():String{
 			var out:String = "arguments: ";
-			out += this.argumentArray[0].toString();
-			for(var c:int = 1; c < this.argumentArray.length; c++){
-				out += " | " + this.argumentArray[c].toString();
+			if(this.argumentArray.length > 0){
+				out += this.argumentArray[0].toString();
+				for(var c:int = 1; c < this.argumentArray.length; c++){
+					out += " | " + this.argumentArray[c].toString();
+				}
 			}
 			return out;
 		}
