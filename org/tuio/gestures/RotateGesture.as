@@ -12,7 +12,7 @@ package org.tuio.gestures {
 		private var lastAngle:Number;
 		
 		public function RotateGesture() {
-			this.addEventListener(GestureStepEvent.DEAD, handleDead);
+			super();
 		}
 		
 		public override function dispatchGestureEvent(target:DisplayObject, gsg:GestureStepSequence):void {
@@ -31,12 +31,6 @@ package org.tuio.gestures {
 			} 
 			gsg.storeValue("lA", angle);
 			gsg.getTarget("A").dispatchEvent(new TransformGestureEvent(TransformGestureEvent.GESTURE_ROTATE, true, false, null, 0, 0, 0, 0, rotation)); ;
-		}
-		
-		private function handleDead(e:GestureStepEvent):void {
-			if (e.step <= 5 && e.step != 3) {
-				e.group.storeValue("lA", NaN);
-			}
 		}
 		
 	}
