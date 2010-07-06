@@ -12,7 +12,7 @@ package org.tuio.gestures {
 		private var lastDistance:Number;
 		
 		public function ZoomGesture() {
-			this.addEventListener(GestureStepEvent.DEAD, handleDead);
+			super();
 		}
 		
 		public override function dispatchGestureEvent(target:DisplayObject, gsg:GestureStepSequence):void {
@@ -29,12 +29,6 @@ package org.tuio.gestures {
 				
 				gsg.getTarget("A").dispatchEvent(new TransformGestureEvent(TransformGestureEvent.GESTURE_ZOOM, true, false, null, 0, 0, scale, scale));
 				gsg.storeValue("lD", distance);
-			}
-		}
-		
-		private function handleDead(e:GestureStepEvent):void {
-			if (e.step <= 5 && e.step != 3) {
-				e.group.storeValue("lD", NaN);
 			}
 		}
 		

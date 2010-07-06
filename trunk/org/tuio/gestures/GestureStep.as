@@ -73,8 +73,8 @@ package org.tuio.gestures {
 						if (this._tuioContainerAlias == "*" || tc == tuioContainer || (!tc && !group.getTuioContainerAlias(tuioContainer))) {
 							dObj = group.getTarget(this._targetAlias);
 							if (this._targetAlias == "*" || dObj == target || (!dObj && !group.getTargetAlias(target))) {
-								if (!tc && this._tuioContainerAlias != "*") group.addTuioContainer(this._tuioContainerAlias, tuioContainer);
-								if (!dObj && this._targetAlias != "*") group.addTarget(this._targetAlias, target);
+								if ((!tc && this._tuioContainerAlias != "*") || this._tuioContainerAlias.charAt(0) == "!") group.addTuioContainer(this._tuioContainerAlias, tuioContainer);
+								if ((!dObj && this._targetAlias != "*") || this._targetAlias.charAt(0) == "!") group.addTarget(this._targetAlias, target);
 								if ((fID == 0 && this._frameIDAlias != "*") || this._frameIDAlias.charAt(0) == "!") group.addFrameID(this._frameIDAlias, tuioContainer.frameID);
 								this._prepareTime = 0;
 								return Gesture.SATURATED;

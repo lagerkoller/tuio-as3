@@ -12,7 +12,7 @@ package org.tuio.gestures {
 		private var lastPosition:Point;
 		
 		public function DragGesture() {
-			this.addEventListener(GestureStepEvent.DEAD, handleDead);
+			super();
 		}
 		
 		public override function dispatchGestureEvent(target:DisplayObject, gsg:GestureStepSequence):void {                         
@@ -27,10 +27,6 @@ package org.tuio.gestures {
 			
 			gsg.getTarget("A").dispatchEvent(new TransformGestureEvent(TransformGestureEvent.GESTURE_PAN, true, false, null, 0, 0, 1, 1, 0, diffX, diffY));
 			gsg.storeValue("lP", new Point(gsg.getTuioContainer("A").x * gsg.getTarget("A").stage.stageWidth, gsg.getTuioContainer("A").y * gsg.getTarget("A").stage.stageHeight) );
-		}
-		
-		private function handleDead(e:GestureStepEvent):void {
-			e.group.storeValue("lP", null);
 		}
 		
 	}

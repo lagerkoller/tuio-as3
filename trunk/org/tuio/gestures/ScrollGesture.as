@@ -7,7 +7,9 @@ package org.tuio.gestures {
 	
 	public class ScrollGesture extends TwoFingerMoveGesture {
 		
-		public function ScrollGesture() {}
+		public function ScrollGesture() {
+			super();
+		}
 		
 		public override function dispatchGestureEvent(target:DisplayObject, gsg:GestureStepSequence):void {
 			var diffX:Number = gsg.getTuioContainer("A").X - gsg.getTuioContainer("B").X;

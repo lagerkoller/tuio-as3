@@ -74,6 +74,7 @@ package org.tuio.gestures {
 		 * @return The target stored under the given alias.
 		 */
 		internal function getTarget(alias:String):DisplayObject {
+			if (alias.charAt(0) == "!") return null;
 			return this.targetAliasMap[alias] as DisplayObject;
 		}
 		
@@ -84,6 +85,7 @@ package org.tuio.gestures {
 		 * @param	target The target to be saved.
 		 */
 		internal function addTarget(alias:String, target:DisplayObject):void {
+			if (alias.charAt(0) == "!") alias = alias.substr(1);
 			this.targetAliasMap[alias] = target;
 		}
 		
@@ -94,6 +96,7 @@ package org.tuio.gestures {
 		 * @return The <code>TuioContainer</code> stored under the given alias.
 		 */
 		internal function getTuioContainer(alias:String):TuioContainer {
+			if (alias.charAt(0) == "!") return null;
 			return this.tuioContainerAliasMap[alias] as TuioContainer;
 		}
 		
@@ -104,6 +107,7 @@ package org.tuio.gestures {
 		 * @param	target The <code>TuioContainer</code> to be saved.
 		 */
 		internal function addTuioContainer(alias:String, tuioContainer:TuioContainer):void {
+			if (alias.charAt(0) == "!") alias = alias.substr(1);
 			this.tuioContainerAliasMap[alias] = tuioContainer;
 		}
 		
