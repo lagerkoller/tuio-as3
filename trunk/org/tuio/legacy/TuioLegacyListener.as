@@ -51,6 +51,9 @@ package org.tuio.legacy
 		private var stage:Stage;
 		private var tuioClient:TuioClient;
 		private var listenOnIdsArray:Array;
+		private var firstPos:Array;
+		private var lastPos:Array;
+		private var lastTarget:Array;
 		
 		private static var allowInst:Boolean;
 		private static var inst:TuioLegacyListener; 
@@ -66,6 +69,9 @@ package org.tuio.legacy
 				this.tuioClient = tuioClient;
 				this.tuioClient.addListener(this);
 				this.listenOnIdsArray = new Array();
+				this.firstPos = new Array();
+				this.lastPos = new Array();
+				this.lastTarget = new Array();
 			}
 			
 		}
@@ -102,34 +108,6 @@ package org.tuio.legacy
 		} 
 		
 		/**
-		 * <code>ITuioListener</code> callback method. Not implemented.
-		 *  
-		 * @param tuioCursor
-		 * 
-		 */
-		public function addTuioObject(tuioObject:TuioObject):void{
-			
-		}
-		
-		/**
-		 * <code>ITuioListener</code> callback method. Not implemented.
-		 *  
-		 * @param tuioCursor
-		 * 
-		 */
-		public function updateTuioObject(tuioObject:TuioObject):void{
-		}
-		
-		/**
-		 * <code>ITuioListener</code> callback method. Not implemented.
-		 *  
-		 * @param tuioCursor
-		 * 
-		 */
-		public function removeTuioObject(tuioObject:TuioObject):void{
-		}
-		
-		/**
 		 * dispatches TouchEvent.MOUSE_DOWN and TouchEvent.MOUSE_OVER events on the DisplayObject under the touch. 
 		 * Additionally, the same events are being dispatched on the stage object in order to provide the possibility 
 		 * to objects to listen on TouchEvents that are being dispatched on the stage (useful for the implementation of 
@@ -145,11 +123,14 @@ package org.tuio.legacy
 			
 			stagePoint = new Point((int)(stage.stageWidth*tuioCursor.x), (int)(stage.stageHeight*tuioCursor.y));					
 			displayObjArray = this.stage.getObjectsUnderPoint(stagePoint);
+			firstPos[tuioCursor.sessionID] = stagePoint;
+			lastPos[tuioCursor.sessionID] = stagePoint;
+			lastTarget[tuioCursor.sessionID] = stage;
 //			dobj = null;
-			
 			if(displayObjArray.length > 0){							
 //				dobj = displayObjArray[displayObjArray.length - 1];
 				dobj = getTopDisplayObjectUnderPoint(stagePoint);
+				lastTarget[tuioCursor.sessionID] = dobj;
 				var localPoint:Point = dobj.parent.globalToLocal(new Point(stagePoint.x, stagePoint.y));
 				dobj.dispatchEvent(new MouseEvent(MouseEvent.CLICK));
 				dobj.dispatchEvent(new TouchEvent(TouchEvent.MOUSE_DOWN, true, false, stagePoint.x, stagePoint.y, localPoint.x, localPoint.y, 0, 0, dobj, false,false,false, true, 0,"2Dcur", tuioCursor.sessionID, tuioCursor.sessionID, 0));									
@@ -170,10 +151,28 @@ package org.tuio.legacy
 		 */
 		public function updateTuioCursor(tuioCursor:TuioCursor):void{
 			var stagePoint:Point = new Point((int)(stage.stageWidth*tuioCursor.x), (int)(stage.stageHeight*tuioCursor.y));
+			var displayObjArray:Array = this.stage.getObjectsUnderPoint(stagePoint);
+			var dobj:DisplayObject;
+			var localPoint:Point;
+			
+			if(displayObjArray.length > 0){							
+				dobj = getTopDisplayObjectUnderPoint(stagePoint);
+				if(dobj && dobj.parent){                                                       
+					localPoint = dobj.parent.globalToLocal(stagePoint);                                                    
+					dobj.dispatchEvent(new TouchEvent(TouchEvent.MOUSE_MOVE, true, false, stagePoint.x, stagePoint.y, localPoint.x, localPoint.y, 0, 0, null, false,false,false, true, 0,"2Dcur", tuioCursor.sessionID, tuioCursor.sessionID, 0));
+				}
+				//the following was originally done by the TUIOObject
+				if (lastTarget[tuioCursor.sessionID] != dobj) {
+					dobj.dispatchEvent(new TouchEvent(TouchEvent.MOUSE_OVER, true, false, stagePoint.x, stagePoint.y, localPoint.x, localPoint.y, 0, 0, dobj, false,false,false, true, 0,"2Dcur", tuioCursor.sessionID, tuioCursor.sessionID, 0));
+					localPoint = (lastTarget[tuioCursor.sessionID] as DisplayObject).parent.globalToLocal(stagePoint); 
+					lastTarget[tuioCursor.sessionID].dispatchEvent(new TouchEvent(TouchEvent.MOUSE_OUT, true, false, stagePoint.x, stagePoint.y, localPoint.x, localPoint.y, 0, 0, dobj, false,false,false, true, 0,"2Dcur", tuioCursor.sessionID, tuioCursor.sessionID, 0));
+					lastTarget[tuioCursor.sessionID] = dobj;
+				}
+			}
+
 			stage.dispatchEvent(new TouchEvent(TouchEvent.MOUSE_MOVE, true, false, stagePoint.x, stagePoint.y, stagePoint.x, stagePoint.y, 0, 0, null, false,false,false, true, 0,"2Dcur", tuioCursor.sessionID, tuioCursor.sessionID, 0));
 			
 			//legacy listener concept: dispatch MOUSE_MOVE event on objects in listener array
-			var localPoint:Point;
 			for each(var listeningObject:Object in listenOnIdsArray){
 				if(listeningObject.id == tuioCursor.sessionID){
 					localPoint = listeningObject.receiver.parent.globalToLocal(new Point(stagePoint.x, stagePoint.y));			
@@ -199,6 +198,8 @@ package org.tuio.legacy
 			displayObjArray = this.stage.getObjectsUnderPoint(stagePoint);
 			dobj = null;
 			
+			var distance:Number = Point.distance(stagePoint, firstPos[tuioCursor.sessionID]);
+			
 			if(displayObjArray.length > 0){							
 				dobj = displayObjArray[displayObjArray.length - 1];
 				
@@ -207,11 +208,15 @@ package org.tuio.legacy
 					dobj = displayObjArray[displayObjArray.length - 2];
 				}
 				var localPoint2:Point = dobj.parent.globalToLocal(new Point(stagePoint.x, stagePoint.y));				
-				dobj.dispatchEvent(new TouchEvent(TouchEvent.MOUSE_UP, true, false, stagePoint.x, stagePoint.y, localPoint2.x, localPoint2.y, 0, 0, dobj, false,false,false, true, 0,"2Dcur", tuioCursor.sessionID, tuioCursor.sessionID, 0));									
+				dobj.dispatchEvent(new TouchEvent(TouchEvent.MOUSE_OUT, true, false, stagePoint.x, stagePoint.y, localPoint2.x, localPoint2.y, 0, 0, dobj, false,false,false, true, 0,"2Dcur", tuioCursor.sessionID, tuioCursor.sessionID, 0));									
+				dobj.dispatchEvent(new TouchEvent(TouchEvent.MOUSE_UP, true, false, stagePoint.x, stagePoint.y, localPoint2.x, localPoint2.y, 0, 0, dobj, false, false, false, true, 0, "2Dcur", tuioCursor.sessionID, tuioCursor.sessionID, 0));
+				if(distance > 20) dobj.dispatchEvent(new TouchEvent(TouchEvent.CLICK, true, false, stagePoint.x, stagePoint.y, localPoint2.x, localPoint2.y, 0, 0, dobj, false, false, false, true, 0, "2Dcur", tuioCursor.sessionID, tuioCursor.sessionID, 0));
 			}
 			
-			stagePoint = new Point((int)(stage.stageWidth*tuioCursor.x), (int)(stage.stageHeight*tuioCursor.y));
-			stage.dispatchEvent(new TouchEvent(TouchEvent.MOUSE_UP, true, false, stagePoint.x, stagePoint.y, stagePoint.x, stagePoint.y, 0, 0, null, false,false,false, true, 0,"2Dcur", tuioCursor.sessionID, tuioCursor.sessionID, 0));
+			stagePoint = new Point((int)(stage.stageWidth * tuioCursor.x), (int)(stage.stageHeight * tuioCursor.y));
+			stage.dispatchEvent(new TouchEvent(TouchEvent.MOUSE_OUT, true, false, stagePoint.x, stagePoint.y, stagePoint.x, stagePoint.y, 0, 0, null, false,false,false, true, 0,"2Dcur", tuioCursor.sessionID, tuioCursor.sessionID, 0));
+			stage.dispatchEvent(new TouchEvent(TouchEvent.MOUSE_UP, true, false, stagePoint.x, stagePoint.y, stagePoint.x, stagePoint.y, 0, 0, null, false, false, false, true, 0, "2Dcur", tuioCursor.sessionID, tuioCursor.sessionID, 0));
+			if(distance > 20) stage.dispatchEvent(new TouchEvent(TouchEvent.CLICK, true, false, stagePoint.x, stagePoint.y, stagePoint.x, stagePoint.y, 0, 0, null, false, false, false, true, 0, "2Dcur", tuioCursor.sessionID, tuioCursor.sessionID, 0));
 			
 			//legacy listener concept: dispatch MOUSE_UP event on objects in listener array
 			var localPoint:Point;
@@ -244,6 +249,34 @@ package org.tuio.legacy
 			}
 			
 			return topmostDisplayObject;
+		}
+		
+		/**
+		 * <code>ITuioListener</code> callback method. Not implemented.
+		 *  
+		 * @param tuioCursor
+		 * 
+		 */
+		public function addTuioObject(tuioObject:TuioObject):void{
+			
+		}
+		
+		/**
+		 * <code>ITuioListener</code> callback method. Not implemented.
+		 *  
+		 * @param tuioCursor
+		 * 
+		 */
+		public function updateTuioObject(tuioObject:TuioObject):void{
+		}
+		
+		/**
+		 * <code>ITuioListener</code> callback method. Not implemented.
+		 *  
+		 * @param tuioCursor
+		 * 
+		 */
+		public function removeTuioObject(tuioObject:TuioObject):void{
 		}
 		
 		/**
