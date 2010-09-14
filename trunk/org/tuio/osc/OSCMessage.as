@@ -190,6 +190,10 @@
 			return argumentArray;
 		}
 		
+		/* Returns the bytes of this <code>OSCMessage</code>
+		 * 
+		 * @return A <code>ByteArray</code> containing the bytes of this <code>OSCMessage</code>
+		 */
 		public override function getBytes():ByteArray {
 			var out:ByteArray = new ByteArray();
 			this.writeString(this.address, out);
