@@ -2,6 +2,7 @@
 	
 	import flash.errors.EOFError;
 	import flash.utils.ByteArray;
+	import org.tuio.connectors.tcp.OSCSocket;
 	
 	/**
 	 * An OSCMessage
@@ -249,6 +250,21 @@
 			} else {
 				return false;
 			}
+		}
+		
+		/**
+		 * This is comfort function for creating an OSCMessage with less code.
+		 * 
+		 * @param	address The OSCAddress of the <code>OSCMessage</code>.
+		 * @param	valueOSCTypes A <code>String</code> of OSCTypes describing the types of the <code>Objects</code> within the <code>values</code> <code>Array</code>. There has to be a type for every value in the <code>values</code> <code>Array</code>.
+		 * @param	values An <code>Array</code> containing the values that should be part of the <code>OSCMessage</code>.
+		 * @return	An <code>OSCMessage</code> containing the given values.
+		 */
+		public static function createOSCMessage(address:String, valueOSCTypes:String, values:Array):OSCMessage {
+			var msg:OSCMessage = new OSCMessage();
+			msg.addressPattern = address;
+			msg.addArguments(valueOSCTypes, values);
+			return msg;
 		}
 		
 	}
