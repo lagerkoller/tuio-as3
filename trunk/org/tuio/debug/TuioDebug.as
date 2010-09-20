@@ -2,6 +2,7 @@ package org.tuio.debug
 {
 	import flash.display.BitmapData;
 	import flash.display.DisplayObject;
+	import flash.display.DisplayObjectContainer;
 	import flash.display.Sprite;
 	import flash.display.Stage;
 	import flash.geom.Matrix;
@@ -17,6 +18,7 @@ package org.tuio.debug
 	import org.tuio.TuioClient;
 	import org.tuio.TuioCursor;
 	import org.tuio.TuioObject;
+	import org.tuio.fiducial.FiducialEvent;
 
 	/**
 	 * 
@@ -123,36 +125,6 @@ package org.tuio.debug
 		}
 		
 		/**
-		 * takes care to forward all TouchEvents that are being dispatched on top of 
-		 * cursor to the appropriate underneath lying display objects.
-		 *  
-		 * @param cursor
-		 * 
-		 */
-		private function addCursorEventListeners(cursor:TuioDebugCursor):void{
-			cursor.addEventListener(TouchEvent.TAP, propagateEvent);
-			cursor.addEventListener(TouchEvent.DOUBLE_TAP, propagateEvent);
-			cursor.addEventListener(TouchEvent.TOUCH_DOWN, propagateEvent);
-			cursor.addEventListener(TouchEvent.TOUCH_MOVE, propagateEvent);
-			cursor.addEventListener(TouchEvent.TOUCH_OUT, propagateEvent);
-			cursor.addEventListener(TouchEvent.TOUCH_OVER, propagateEvent);
-			cursor.addEventListener(TouchEvent.TOUCH_UP, propagateEvent);
-			cursor.addEventListener(TouchEvent.ROLL_OUT, propagateEvent);
-			cursor.addEventListener(TouchEvent.ROLL_OVER, propagateEvent);
-		}
-		
-		/**
-		 * forwards event from debug representation to actual display object underneath.
-		 * 
-		 * @param event
-		 * 
-		 */
-		private function propagateEvent(event:TouchEvent):void{
-			var targets:Array =  stage.getObjectsUnderPoint(new Point(event.stageX, event.stageY));
-			var target:DisplayObject = (targets.length > 1) ? targets[targets.length-2] : stage;
-		}
-
-		/**
 		 * Called if a new object was tracked.
 		 * @param	tuioObject the received /tuio/2Dobj.
 		 */
@@ -190,6 +162,7 @@ package org.tuio.debug
 				objectSprite.y = tuioObject.y*stage.stageHeight;
 				
 				objectSprite.rotation = tuioObject.a/Math.PI*180;
+				
 				objectObject.object = objectSprite;
 				objectObject.sessionID = tuioObject.sessionID;
 				objects.push(objectObject);
@@ -388,9 +361,6 @@ package org.tuio.debug
 			if(_showCursors){
 				cursorSprite.x = tuioCursor.x*stage.stageWidth;
 				cursorSprite.y = tuioCursor.y*stage.stageHeight;
-				if(_customCursorSprite == TuioDebugCursor){
-					addCursorEventListeners(cursorSprite as TuioDebugCursor);
-				}
 				cursorObject.cursor = cursorSprite;
 				cursorObject.sessionID = tuioCursor.sessionID;
 				cursors.push(cursorObject);
@@ -473,8 +443,6 @@ package org.tuio.debug
 	            
         	return format;
 		}
-		
-		
 		
 		/**
 		 * Called if a new blob was tracked.
