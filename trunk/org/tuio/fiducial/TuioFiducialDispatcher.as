@@ -12,7 +12,10 @@ package org.tuio.fiducial
 	import org.tuio.TuioBlob;
 	import org.tuio.TuioCursor;
 	import org.tuio.TuioObject;
-	import org.tuio.debug.*;
+	import org.tuio.debug.ITuioDebugBlob;
+	import org.tuio.debug.ITuioDebugCursor;
+	import org.tuio.debug.ITuioDebugObject;
+	import org.tuio.util.DisplayListHelper;
 	
 	/**
 	 * <p>The TuioFiducialDispatcher class offers an easy to use global listener concept for the use
@@ -43,6 +46,9 @@ package org.tuio.fiducial
 		private var _rotationShift:Number;
 		private var _invertRotation:Boolean;
 		
+		private var lastTarget:Array;
+		private var firstTarget:Array;
+		
 		/**
 		 * As TuioFiducialDispatcher has been implemented as a Singleton class this constructor cannot be 
 		 * called directly. Call <code>init(...)</code> instead. 
@@ -65,6 +71,8 @@ package org.tuio.fiducial
 				
 				receivers = new Array();
 				removalTimes = new Array();
+				this.lastTarget = new Array();
+				this.firstTarget = new Array();
 			}
 		}
 		
@@ -132,14 +140,29 @@ package org.tuio.fiducial
 				}
 			}
 			
-			//dispatch ADD event on DisplayObject under fiducial
 			var stagePos:Point = new Point(stage.stageWidth * tuioObject.x, stage.stageHeight * tuioObject.y);
-			getTopDisplayObjectUnderPoint(stagePos).dispatchEvent(createFiducialEvent(
+			var target:DisplayObject = DisplayListHelper.getTopDisplayObjectUnderPoint(stagePos, stage);
+			var local:Point = target.globalToLocal(new Point(stagePos.x, stagePos.y));
+			
+			firstTarget[tuioObject.sessionID] = target;
+			lastTarget[tuioObject.sessionID] = target;
+			
+			//dispatch ADD event on DisplayObject under fiducial
+			target.dispatchEvent(createFiducialEvent(
 				FiducialEvent.ADD, 
+				tuioObject));
+			
+			//dispatch OVER event on DisplayObject under fiducial
+			target.dispatchEvent(createFiducialEvent(
+				FiducialEvent.OVER, 
 				tuioObject));
 		}
 		
 		private function updateObject(tuioObject:TuioObject):void{
+			var stagePos:Point = new Point(stage.stageWidth * tuioObject.x, stage.stageHeight * tuioObject.y);
+			var target:DisplayObject = DisplayListHelper.getTopDisplayObjectUnderPoint(stagePos, stage);
+			var local:Point = target.globalToLocal(new Point(stagePos.x, stagePos.y));
+			
 			for each(var receiverObject:Object in receivers){
 				if(receiverObject.classID == tuioObject.classID){
 					//compare rotation, movement and so on and call according callback methods
@@ -147,6 +170,17 @@ package org.tuio.fiducial
 				}
 			}
 			dispatchUpdateEvents(tuioObject);
+			
+			if(target != lastTarget[tuioObject.sessionID]){
+				target.dispatchEvent(createFiducialEvent(
+					FiducialEvent.OVER, 
+					tuioObject));
+				
+				lastTarget[tuioObject.sessionID].dispatchEvent(createFiducialEvent(
+					FiducialEvent.OUT, 
+					tuioObject));
+			}
+			lastTarget[tuioObject.sessionID] = target;
 		}
 		
 		private function dispatchUpdateEvents(newTuioObject:TuioObject):void{
@@ -192,6 +226,10 @@ package org.tuio.fiducial
 		}
 		
 		private function removeObject(tuioObject:TuioObject):void{
+			var stagePos:Point = new Point(stage.stageWidth * tuioObject.x, stage.stageHeight * tuioObject.y);
+			var target:DisplayObject = DisplayListHelper.getTopDisplayObjectUnderPoint(stagePos, stage);
+			var local:Point = target.globalToLocal(new Point(stagePos.x, stagePos.y));
+			
 			for each(var receiverObject:Object in receivers){
 				if(receiverObject.classID == tuioObject.classID){
 					(receiverObject.receiver as ITuioFiducialReceiver).onNotifyRemoved(
@@ -208,9 +246,16 @@ package org.tuio.fiducial
 			}
 			
 			//dispatch REMOVED event on DisplayObject under fiducial
-			var stagePos:Point = new Point(stage.stageWidth * tuioObject.x, stage.stageHeight * tuioObject.y);
-			getTopDisplayObjectUnderPoint(stagePos).dispatchEvent(createFiducialEvent(
+			target.dispatchEvent(createFiducialEvent(
 				FiducialEvent.REMOVED, 
+				tuioObject));
+			if(target != lastTarget[tuioObject.sessionID]){
+				target.dispatchEvent(createFiducialEvent(
+					FiducialEvent.OUT, 
+					tuioObject));
+			}
+			lastTarget[tuioObject.sessionID].dispatchEvent(createFiducialEvent(
+				FiducialEvent.OUT, 
 				tuioObject));
 		}
 		
@@ -269,12 +314,12 @@ package org.tuio.fiducial
 			var local:Point = target.globalToLocal(new Point(stagePos.x, stagePos.y));
 			
 			var fiducialEvent:FiducialEvent = new FiducialEvent(type, 
-																local.x,
-																local.y,
-																stagePos.x,
-																stagePos.y,
-																target,
-																tuioObject);
+				local.x,
+				local.y,
+				stagePos.x,
+				stagePos.y,
+				target,
+				tuioObject);
 			
 			//calculate rotation
 			if(!_invertRotation){
