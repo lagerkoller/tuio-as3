@@ -17,6 +17,12 @@ package org.tuio.debug
 	 */
 	public interface ITuioDebugObject
 	{
-		
+		//necessary for mouse to tuio simulation
+		function get sessionId():uint;
+		function set sessionId(sessionId:uint):void;
+		function get fiducialId():uint;
+		function set fiducialId(fiducialId:uint):void;
+		function get objectRotation():Number;
+		function set objectRotation(rotation:Number):void;
 	}
 }
