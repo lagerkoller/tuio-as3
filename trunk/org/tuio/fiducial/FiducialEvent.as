@@ -1,9 +1,11 @@
 package org.tuio.fiducial
 {
+	import flash.display.DisplayObject;
 	import flash.events.Event;
 	
 	import mx.controls.Button;
 	
+	import org.tuio.TuioContainer;
 	import org.tuio.TuioObject;
 	
 	/**
@@ -19,6 +21,8 @@ package org.tuio.fiducial
 		public static var MOVE:String = "FIDUCIAL_MOVE";
 		public static var ROTATE:String = "FIDUCIAL_ROTATE";
 		public static var ADD:String = "FIDUCIAL_ADD";
+		public static var OVER:String = "FIDUCIAL_OVER";
+		public static var OUT:String = "FIDUCIAL_OUT";
 		public static var REMOVED:String = "FIDUCIAL_REMOVED";
 		public static var NOTIFY_REMOVED:String = "FIDUCIAL_NOTIFY_REMOVED";
 		public static var NOTIFY_RETURNED:String = "FIDUCIAL_NOTIFY_RETURNED";
@@ -32,9 +36,16 @@ package org.tuio.fiducial
 		private var _rotation:Number;
 		private var _tuioObject:TuioObject;
 		
-		public function FiducialEvent(type:String, bubbles:Boolean=false, cancelable:Boolean=false)
+		public function FiducialEvent(type:String, localX:Number, localY:Number, stageX:Number, stageY:Number, relatedObject:DisplayObject, tuioObject:TuioObject)
 		{
 			super(type, bubbles, cancelable);
+			this.fiducialId = tuioObject.classID;
+			this.localX = localX;
+			this.localY = localY;
+			this.x = stageX;
+			this.y = stageY;
+			this.rotation = tuioObject.m;
+			this.tuioObject = tuioObject;
 		}
 		
 		/**
