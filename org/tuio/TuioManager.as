@@ -199,7 +199,7 @@ package org.tuio {
 			}
 			
 			//mouse out/over
-			if (target != last) {
+			if (target != last && last != null) {
 				var lastLocal:Point = last.globalToLocal(new Point(stagePos.x, stagePos.y));
 				var lastAncestors:Array = createAncestorList(last);
 				var ancestors:Array = createAncestorList(target);
