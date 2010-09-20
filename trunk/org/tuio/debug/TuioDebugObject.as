@@ -22,6 +22,10 @@ package org.tuio.debug
 	 */
 	public class TuioDebugObject extends Sprite implements ITuioDebugObject
 	{
+		private var _sessionId:uint;
+		private var _fiducialId:uint;
+		private var _objectRotation:Number;
+		
 		/**
 		 * 
 		 * @param objectId fiducial id
@@ -34,13 +38,16 @@ package org.tuio.debug
 		 * @param lineAlpha alpha of the line around the square.
 		 * 
 		 */
-		public function TuioDebugObject(objectId:Number, width:Number, height:Number, color:Number, alpha:Number, lineThickness:Number, lineColor:Number, lineAlpha:Number){
+		public function TuioDebugObject(fiducialId:Number, sessionId:Number, objectRotation:Number, width:Number, height:Number, color:Number, alpha:Number, lineThickness:Number, lineColor:Number, lineAlpha:Number){
 			super();
-			adjustGraphics(objectId, width, height, color, alpha, lineThickness, lineColor, lineAlpha);
+			this.sessionId = sessionId;
+			this.fiducialId = fiducialId;
+			this.objectRotation = objectRotation;
+			adjustGraphics(fiducialId, width, height, color, alpha, lineThickness, lineColor, lineAlpha);
 		}
 		
 		/**
-		 * carries out the Graphics drawing.
+		 * draws the Graphics.
 		 * 
 		 * @param objectId fiducial id
 		 * @param width of the square
@@ -66,25 +73,25 @@ package org.tuio.debug
 			this.graphics.lineTo(0,-0.5*height+5);
 			
 			//draw objectid label
-			var objectIdLabel:TextField = new TextField();
-            objectIdLabel.autoSize = TextFieldAutoSize.LEFT;
-            objectIdLabel.background = false;
-            objectIdLabel.border = false;
-			objectIdLabel.text = ""+objectId;
-			objectIdLabel.width/2+5;
-            objectIdLabel.defaultTextFormat = objectIdTextFormat();
-            objectIdLabel.setTextFormat(objectIdTextFormat());
+			var fiducialIdLabel:TextField = new TextField();
+            fiducialIdLabel.autoSize = TextFieldAutoSize.LEFT;
+            fiducialIdLabel.background = false;
+            fiducialIdLabel.border = false;
+			fiducialIdLabel.text = ""+objectId;
+			fiducialIdLabel.width/2+5;
+            fiducialIdLabel.defaultTextFormat = fiducialIdTextFormat();
+            fiducialIdLabel.setTextFormat(fiducialIdTextFormat());
             
-            var translationX:Number = -0.5*width+0.5*objectIdLabel.width;
-            var translationY:Number = 0.5*height-0.5*objectIdLabel.height;
+            var translationX:Number = -0.5*width+0.5*fiducialIdLabel.width;
+            var translationY:Number = 0.5*height-0.5*fiducialIdLabel.height;
             //copy TextField into a bitmap
-			var typeTextBitmap : BitmapData = new BitmapData(objectIdLabel.width, 
-			                                objectIdLabel.height,true,0x00000000);
-			typeTextBitmap.draw(objectIdLabel);
+			var typeTextBitmap : BitmapData = new BitmapData(fiducialIdLabel.width, 
+			                                fiducialIdLabel.height,true,0x00000000);
+			typeTextBitmap.draw(fiducialIdLabel);
 			 
 			//calculate center of TextField
-			var typeTextTranslationX:Number = -0.5*objectIdLabel.width+translationX+5;
-			var typeTextTranslationY:Number = -0.5*objectIdLabel.height+translationY-5;
+			var typeTextTranslationX:Number = -0.5*fiducialIdLabel.width+translationX+5;
+			var typeTextTranslationY:Number = -0.5*fiducialIdLabel.height+translationY-5;
 			 
 			//create Matrix which moves the TextField to the center
 			var matrix:Matrix = new Matrix();
@@ -94,11 +101,11 @@ package org.tuio.debug
 			this.graphics.beginBitmapFill(typeTextBitmap,matrix,false,true);
 			this.graphics.lineStyle(0,0,0);
 			this.graphics.drawRect(typeTextTranslationX, typeTextTranslationY, 
-			                                objectIdLabel.width, objectIdLabel.height);
+			                                fiducialIdLabel.width, fiducialIdLabel.height);
 			this.graphics.endFill();
 		}
 		
-		private function objectIdTextFormat():TextFormat{
+		private function fiducialIdTextFormat():TextFormat{
 			var format:TextFormat = new TextFormat();
             format.font = "Arial";
             format.color = 0xffffff;
@@ -106,6 +113,29 @@ package org.tuio.debug
             format.underline = false;
 	            
         	return format;
+		}
+		
+		public function get sessionId():uint{
+			return this._sessionId;
+		}
+		public function set sessionId(sessionId:uint):void{
+			this._sessionId = sessionId;
+		}
+		public function get fiducialId():uint{
+			return _fiducialId;
+		}
+		public function set fiducialId(fiducialId:uint):void{
+			this._fiducialId = fiducialId;	
+		}
+		public override function set rotation(value:Number):void{
+			super.rotation = value;
+			this.objectRotation = value/180*Math.PI;
+		}
+		public function get objectRotation():Number{
+			return this._objectRotation; 
+		}
+		public function set objectRotation(objectRotation:Number):void{
+			this._objectRotation = objectRotation;	
 		}
 	}
 }
