@@ -264,11 +264,17 @@ package org.tuio.fiducial
 			
 		}
 		private function createFiducialEvent(type:String, tuioObject:TuioObject):FiducialEvent{
-			var fiducialEvent:FiducialEvent = new FiducialEvent(type, true, true);
-			fiducialEvent.x = tuioObject.x*stage.stageWidth;
-			fiducialEvent.y = tuioObject.y*stage.stageHeight;
-			fiducialEvent.fiducialId = tuioObject.classID;
-			fiducialEvent.tuioObject = tuioObject;
+			var stagePos:Point = new Point(stage.stageWidth * tuioObject.x, stage.stageHeight * tuioObject.y);
+			var target:DisplayObject = getTopDisplayObjectUnderPoint(stagePos);
+			var local:Point = target.globalToLocal(new Point(stagePos.x, stagePos.y));
+			
+			var fiducialEvent:FiducialEvent = new FiducialEvent(type, 
+																local.x,
+																local.y,
+																stagePos.x,
+																stagePos.y,
+																target,
+																tuioObject);
 			
 			//calculate rotation
 			if(!_invertRotation){
@@ -278,11 +284,6 @@ package org.tuio.fiducial
 				fiducialEvent.rotation = invertedValue * 180 / Math.PI+_rotationShift;
 			}
 			
-			//calculate local position
-			var stagePos:Point = new Point(fiducialEvent.x, fiducialEvent.y);
-			var localPos:Point = getTopDisplayObjectUnderPoint(stagePos).globalToLocal(stagePos);
-			fiducialEvent.localX = localPos.x;
-			fiducialEvent.localY = localPos.y;
 			return fiducialEvent;
 		}
 		
