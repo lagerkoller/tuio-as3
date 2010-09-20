@@ -84,10 +84,7 @@ package org.tuio.mouse
 		public function MouseToTouchDispatcher(stage:Stage, useTuioManager:Boolean = true, useTuioDebug:Boolean = true)
 		{
 			this.stage = stage; 
-			stage.addEventListener(MouseEvent.MOUSE_DOWN, handleMouseDown);
-			stage.addEventListener(KeyboardEvent.KEY_DOWN, keyDown);
-			stage.addEventListener(KeyboardEvent.KEY_UP, keyUp);
-			stage.addEventListener(MouseEvent.RIGHT_CLICK, contextMenuClick);
+			enableDispatcher();
 			
 			this.useTuioManager = useTuioManager; 
 			this.useTuioDebug = useTuioDebug;
@@ -107,6 +104,20 @@ package org.tuio.mouse
 			rotationMouseY = 0;
 			
 			createContextMenu();
+		}
+		
+		public function enableDispatcher():void{
+			stage.addEventListener(MouseEvent.MOUSE_DOWN, handleMouseDown);
+			stage.addEventListener(KeyboardEvent.KEY_DOWN, keyDown);
+			stage.addEventListener(KeyboardEvent.KEY_UP, keyUp);
+			stage.addEventListener(MouseEvent.RIGHT_CLICK, contextMenuClick);
+		}
+		
+		public function disableDispatcher():void{
+			stage.removeEventListener(MouseEvent.MOUSE_DOWN, handleMouseDown);
+			stage.removeEventListener(KeyboardEvent.KEY_DOWN, keyDown);
+			stage.removeEventListener(KeyboardEvent.KEY_UP, keyUp);
+			stage.removeEventListener(MouseEvent.RIGHT_CLICK, contextMenuClick);
 		}
 		
 		/**
