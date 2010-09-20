@@ -38,7 +38,7 @@ package org.tuio.fiducial
 		
 		public function FiducialEvent(type:String, localX:Number, localY:Number, stageX:Number, stageY:Number, relatedObject:DisplayObject, tuioObject:TuioObject)
 		{
-			super(type, bubbles, cancelable);
+			super(type, true, false);
 			this.fiducialId = tuioObject.classID;
 			this.localX = localX;
 			this.localY = localY;
