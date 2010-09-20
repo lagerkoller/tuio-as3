@@ -474,6 +474,57 @@ package org.tuio.debug
         	return format;
 		}
 		
+		
+		
+		/**
+		 * Called if a new blob was tracked.
+		 * @param	tuioBlob The values of the received /tuio/**Dblb.
+		 */
+		public function addTuioBlob(tuioBlob:TuioBlob):void{
+			trace(this, "addTuioBlob");
+			if(_showBlobs){
+				_showCursors = true;
+				addTuioCursor(new TuioCursor("2dcur", tuioBlob.sessionID, tuioBlob.x, tuioBlob.y, tuioBlob.z,tuioBlob.X, tuioBlob.Y, tuioBlob.Z, tuioBlob.m, tuioBlob.frameID));
+			}
+		}
+
+		/**
+		 * Called if a tracked blob was updated.
+		 * @param	tuioBlob The values of the received /tuio/**Dblb.
+		 */
+		public function updateTuioBlob(tuioBlob:TuioBlob):void{
+			if(_showBlobs){
+				_showCursors = true;
+				updateTuioCursor(new TuioCursor("2dcur", tuioBlob.sessionID, tuioBlob.x, tuioBlob.y, tuioBlob.z,tuioBlob.X, tuioBlob.Y, tuioBlob.Z, tuioBlob.m, tuioBlob.frameID));
+			}
+				
+		}
+		
+		/**
+		 * Called if a tracked blob was removed.
+		 * @param	tuioBlob The values of the received /tuio/**Dblb.
+		 */
+		public function removeTuioBlob(tuioBlob:TuioBlob):void{
+			if(_showBlobs){
+				_showCursors = true;
+				removeTuioCursor(new TuioCursor("2dcur", tuioBlob.sessionID, tuioBlob.x, tuioBlob.y, tuioBlob.z,tuioBlob.X, tuioBlob.Y, tuioBlob.Z, tuioBlob.m, tuioBlob.frameID));
+			}
+		}
+		
+		public function newFrame(id:uint):void {
+            // TODO
+        }
+		
+		private function generateObjectLabelText(xVal:Number, yVal:Number, objectId:Number, sessionId:Number, debugMode:Boolean=false):String{
+			var objectLabel:String;
+			if(!debugMode){
+				objectLabel = "x: " + xVal + "\ny: " + yVal + "\nfiducialId: " + objectId+ "\nsessionId: " + sessionId;
+			}else{
+				objectLabel = "x: " + xVal + "\ny: " + yVal + "\nfiducialId: " + objectId+ "\nsessionId: Debug";
+			}
+			return objectLabel;
+		}
+		
 		/**
 		 * radius of the debug cursor circle.
 		 *  
@@ -551,6 +602,10 @@ package org.tuio.debug
 			_showDebugText = showDebugText;
 		}
 		
+		public function get showDebugText():Boolean{
+			return _showDebugText;
+		}
+		
 		/**
 		 * sets base class for the Sprite that should be drawn on screen when a new
 		 * cursor is added via a Tuio message.
@@ -574,52 +629,29 @@ package org.tuio.debug
 		}
 		
 		/**
-		 * Called if a new blob was tracked.
-		 * @param	tuioBlob The values of the received /tuio/**Dblb.
+		 * controls whether debug information for objects is shown. 
+		 *   
+		 * @param showCursors 
+		 * 
 		 */
-		public function addTuioBlob(tuioBlob:TuioBlob):void{
-			trace(this, "addTuioBlob");
-			if(_showBlobs){
-				_showCursors = true;
-				addTuioCursor(new TuioCursor("2dcur", tuioBlob.sessionID, tuioBlob.x, tuioBlob.y, tuioBlob.z,tuioBlob.X, tuioBlob.Y, tuioBlob.Z, tuioBlob.m, tuioBlob.frameID));
-			}
+		public function set showCursors(showCursors:Boolean):void{
+			_showCursors = showCursors;
 		}
-
-		/**
-		 * Called if a tracked blob was updated.
-		 * @param	tuioBlob The values of the received /tuio/**Dblb.
-		 */
-		public function updateTuioBlob(tuioBlob:TuioBlob):void{
-			if(_showBlobs){
-				_showCursors = true;
-				updateTuioCursor(new TuioCursor("2dcur", tuioBlob.sessionID, tuioBlob.x, tuioBlob.y, tuioBlob.z,tuioBlob.X, tuioBlob.Y, tuioBlob.Z, tuioBlob.m, tuioBlob.frameID));
-			}
-				
+		public function get showCursors():Boolean{
+			return _showCursors;
 		}
 		
 		/**
-		 * Called if a tracked blob was removed.
-		 * @param	tuioBlob The values of the received /tuio/**Dblb.
+		 * controls whether debug information for objects is shown. 
+		 *   
+		 * @param showCursors 
+		 * 
 		 */
-		public function removeTuioBlob(tuioBlob:TuioBlob):void{
-			if(_showBlobs){
-				_showCursors = true;
-				removeTuioCursor(new TuioCursor("2dcur", tuioBlob.sessionID, tuioBlob.x, tuioBlob.y, tuioBlob.z,tuioBlob.X, tuioBlob.Y, tuioBlob.Z, tuioBlob.m, tuioBlob.frameID));
-			}
+		public function set showObjects(showObjects:Boolean):void{
+			_showObjects = showObjects;
 		}
-		
-		public function newFrame(id:uint):void {
-            // TODO
-        }
-		
-		private function generateObjectLabelText(xVal:Number, yVal:Number, objectId:Number, sessionId:Number, debugMode:Boolean=false):String{
-			var objectLabel:String;
-			if(!debugMode){
-				objectLabel = "x: " + xVal + "\ny: " + yVal + "\nfiducialId: " + objectId+ "\nsessionId: " + sessionId;
-			}else{
-				objectLabel = "x: " + xVal + "\ny: " + yVal + "\nfiducialId: " + objectId+ "\nsessionId: Debug";
-			}
-			return objectLabel;
+		public function get showObjects():Boolean{
+			return _showObjects;
 		}
 		
 	}
