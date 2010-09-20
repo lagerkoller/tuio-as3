@@ -6,11 +6,13 @@ package org.tuio.debug
 	import flash.display.Stage;
 	import flash.geom.Matrix;
 	import flash.geom.Point;
+	import flash.text.Font;
 	import flash.text.TextField;
 	import flash.text.TextFieldAutoSize;
 	import flash.text.TextFormat;
 	
 	import org.tuio.ITuioListener;
+	import org.tuio.TouchEvent;
 	import org.tuio.TuioBlob;
 	import org.tuio.TuioClient;
 	import org.tuio.TuioCursor;
@@ -35,6 +37,10 @@ package org.tuio.debug
 	 * 
 	 */
 	public class TuioDebug implements ITuioListener{
+		
+		[Embed(source="/org/tuio/assets/fonts.swf", fontName="Arial")]
+		private var Arial:Class;
+		private var arialFont:Font;
 		
 		private var stage:Stage;
 		private var tuioClient:TuioClient;
@@ -80,6 +86,8 @@ package org.tuio.debug
 				
 				_customObjectClass = TuioDebugObject;
 				_customCursorSprite = TuioDebugCursor;
+				
+				this.arialFont = new Arial(); 
 			}
 		}
 		
@@ -114,19 +122,32 @@ package org.tuio.debug
 			return inst;
 		}
 		
+		/**
+		 * takes care to forward all TouchEvents that are being dispatched on top of 
+		 * cursor to the appropriate underneath lying display objects.
+		 *  
+		 * @param cursor
+		 * 
+		 */
 		private function addCursorEventListeners(cursor:TuioDebugCursor):void{
-			cursor.addEventListener(org.tuio.TouchEvent.TAP, propagateEvent);
-			cursor.addEventListener(org.tuio.TouchEvent.DOUBLE_TAP, propagateEvent);
-			cursor.addEventListener(org.tuio.TouchEvent.TOUCH_DOWN, propagateEvent);
-			cursor.addEventListener(org.tuio.TouchEvent.TOUCH_MOVE, propagateEvent);
-			cursor.addEventListener(org.tuio.TouchEvent.TOUCH_OUT, propagateEvent);
-			cursor.addEventListener(org.tuio.TouchEvent.TOUCH_OVER, propagateEvent);
-			cursor.addEventListener(org.tuio.TouchEvent.TOUCH_UP, propagateEvent);
-			cursor.addEventListener(org.tuio.TouchEvent.ROLL_OUT, propagateEvent);
-			cursor.addEventListener(org.tuio.TouchEvent.ROLL_OVER, propagateEvent);
+			cursor.addEventListener(TouchEvent.TAP, propagateEvent);
+			cursor.addEventListener(TouchEvent.DOUBLE_TAP, propagateEvent);
+			cursor.addEventListener(TouchEvent.TOUCH_DOWN, propagateEvent);
+			cursor.addEventListener(TouchEvent.TOUCH_MOVE, propagateEvent);
+			cursor.addEventListener(TouchEvent.TOUCH_OUT, propagateEvent);
+			cursor.addEventListener(TouchEvent.TOUCH_OVER, propagateEvent);
+			cursor.addEventListener(TouchEvent.TOUCH_UP, propagateEvent);
+			cursor.addEventListener(TouchEvent.ROLL_OUT, propagateEvent);
+			cursor.addEventListener(TouchEvent.ROLL_OVER, propagateEvent);
 		}
 		
-		private function propagateEvent(event:org.tuio.TouchEvent):void{
+		/**
+		 * forwards event from debug representation to actual display object underneath.
+		 * 
+		 * @param event
+		 * 
+		 */
+		private function propagateEvent(event:TouchEvent):void{
 			var targets:Array =  stage.getObjectsUnderPoint(new Point(event.stageX, event.stageY));
 			var target:DisplayObject = (targets.length > 1) ? targets[targets.length-2] : stage;
 		}
@@ -136,10 +157,27 @@ package org.tuio.debug
 		 * @param	tuioObject the received /tuio/2Dobj.
 		 */
 		public function addTuioObject(tuioObject:TuioObject):void{
+			addTuioObjectWithDebugOption(tuioObject, false);
+		}
+		
+		/**
+		 * creates actual debug representation of TUIO object and shows it on screen 
+		 *  
+		 * @param tuioObject the current TUIO object
+		 * @param debugMode sets whether the TUIO id should be shown (debugMode == false) or 
+		 * whether only the hint 'Debug' should be shown (debugMode == true) as the debug TUIO session id 
+		 * starts  
+		 * with the highest possible unsigned integer value and decrements for each other TUIO debug
+		 * element in order to not interfere with regular TUIO session ids from a tracker or from
+		 * the TUIO debug application. Thus, the high session ids would be looking awkwardly and only
+		 * the 'Debug' string is being shown.
+		 * 
+		 */
+		public function addTuioObjectWithDebugOption(tuioObject:TuioObject, debugMode:Boolean):void{
 			var objectSprite:Sprite;
 			
 			if(_customObjectClass == TuioDebugObject){
-				objectSprite = new TuioDebugObject(tuioObject.classID, _objectWidth, _objectHeight, _objectColor, _objectAlpha,_objectLineThickness, _objectLineColor, _objectLineAlpha);
+				objectSprite = new TuioDebugObject(tuioObject.classID, tuioObject.sessionID, tuioObject.a, _objectWidth, _objectHeight, _objectColor, _objectAlpha,_objectLineThickness, _objectLineColor, _objectLineAlpha);
 			}else{
 				objectSprite = new _customObjectClass();
 				if(!(objectSprite is ITuioDebugObject)){
@@ -150,7 +188,7 @@ package org.tuio.debug
 			if(_showObjects){
 				objectSprite.x = tuioObject.x*stage.stageWidth;
 				objectSprite.y = tuioObject.y*stage.stageHeight;
-		        
+				
 				objectSprite.rotation = tuioObject.a/Math.PI*180;
 				objectObject.object = objectSprite;
 				objectObject.sessionID = tuioObject.sessionID;
@@ -159,38 +197,57 @@ package org.tuio.debug
 				
 				if(_showDebugText){
 					var label:TextField = new TextField();
-		            label.autoSize = TextFieldAutoSize.LEFT;
-		            label.background = false;
-		            label.border = false;
-					label.text = generateObjectLabelText(objectSprite.x, objectSprite.y, tuioObject.classID, tuioObject.sessionID);
-		
-		            label.defaultTextFormat = debugTextFormat();
-		            label.setTextFormat(debugTextFormat());
+					label.autoSize = TextFieldAutoSize.LEFT;
+					label.selectable = false;
+					label.background = false;
+					label.border = false;
+					label.text = generateObjectLabelText(objectSprite.x, objectSprite.y, tuioObject.classID, tuioObject.sessionID, debugMode);
+				
+					label.defaultTextFormat = debugTextFormat();
+					label.setTextFormat(debugTextFormat());
+					label.embedFonts = true;
 					
-					var textSprite:TuioDebugTextSprite = new TuioDebugTextSprite();
-					objectSprite.addChild(textSprite);
-					drawObjectString(label, textSprite);
-					textSprite.x  = _objectWidth;
-										
-		            objectObject.label = label;
-		            objectObject.textSprite = textSprite;
+					objectSprite.addChild(label);
+					label.x  = Math.round(_objectWidth/2);
+					label.y  = -Math.round(label.height/2);
+					
+					objectObject.label = label;
 				}
 			}
 		}
 		
 		/**
-		 * Called if a tracked object was updated.
-		 * @param	tuioObject The values of the received /tuio/2Dobj.
+		 * updates the display of the TUIO debug object
+		 * 
+		 * @param	tuioObject The received /tuio/2Dobj.
 		 */
 		public function updateTuioObject(tuioObject:TuioObject):void{
+			updateTuioObjectWithDebugOption(tuioObject, false);
+		}
+		
+		/**
+		 * updates the display of the TUIO debug object.
+		 *  
+		 * @param tuioObject The received /tuio/2Dobj.
+		 * @param debugMode sets whether the TUIO id should be shown (debugMode == false) or 
+		 * whether only the hint 'Debug' should be shown (debugMode == true) as the debug TUIO session id 
+		 * starts  
+		 * with the highest possible unsigned integer value and decrements for each other TUIO debug
+		 * element in order to not interfere with regular TUIO session ids from a tracker or from
+		 * the TUIO debug application. Thus, the high session ids would be looking awkwardly and only
+		 * the 'Debug' string is being shown.
+		 * 
+		 */
+		public function updateTuioObjectWithDebugOption(tuioObject:TuioObject, debugMode:Boolean):void{
 			for each(var object:Object in objects){
 				if(object.sessionID == tuioObject.sessionID){
-					object.object.x = tuioObject.x*stage.stageWidth;
-					object.object.y = tuioObject.y*stage.stageHeight;
-					object.object.rotation = tuioObject.a/Math.PI*180;
+					var debugObject:TuioDebugObject = object.object as TuioDebugObject; 
+					debugObject.x = tuioObject.x*stage.stageWidth;
+					debugObject.y = tuioObject.y*stage.stageHeight;
+					debugObject.rotation = tuioObject.a/Math.PI*180;
 					if(_showDebugText){
-						object.label.text = generateObjectLabelText(object.object.x, object.object.y, tuioObject.classID, tuioObject.sessionID);
-						drawObjectString(object.label, object.textSprite);
+						object.label.text = generateObjectLabelText(object.object.x, object.object.y, tuioObject.classID, tuioObject.sessionID, debugMode);
+						object.label.setTextFormat(debugTextFormat());
 					}
 					break;
 				}
@@ -310,6 +367,10 @@ package org.tuio.debug
 		 * @param	tuioObject The values of the received /tuio/**Dcur.
 		 */
 		public function addTuioCursor(tuioCursor:TuioCursor):void{
+			addTuioCursorWithDebugOption(tuioCursor, false);
+		}
+		
+		public function addTuioCursorWithDebugOption(tuioCursor:TuioCursor, debugMode:Boolean):void{
 			var cursorSprite:Sprite;
 			
 			if(_customCursorSprite == TuioDebugCursor){
@@ -337,22 +398,21 @@ package org.tuio.debug
 				
 				if(_showDebugText){
 					var label:TextField = new TextField();
-		            label.autoSize = TextFieldAutoSize.LEFT;
-		            label.background = false;
-		            label.border = false;
-					label.text = generateCursorLabelText(cursorSprite.x, cursorSprite.y, tuioCursor.sessionID);
-		
-		            label.defaultTextFormat = debugTextFormat();
-		            label.setTextFormat(debugTextFormat());
+					label.autoSize = TextFieldAutoSize.LEFT;
+					label.selectable = false;
+					label.background = false;
+					label.border = false;
+					label.text = generateCursorLabelText(cursorSprite.x, cursorSprite.y, tuioCursor.sessionID, debugMode);
 					
-					var textSprite:TuioDebugTextSprite = new TuioDebugTextSprite();
-					drawCursorString(label, textSprite);
-					cursorSprite.addChild(textSprite);
-					textSprite.x  = _cursorRadius;
-					textSprite.y  = 2*_cursorRadius;
+					label.defaultTextFormat = debugTextFormat();
+					label.setTextFormat(debugTextFormat());
+					label.embedFonts = true;
 					
-		            cursorObject.label = label;
-					cursorObject.textSprite = textSprite;
+					cursorSprite.addChild(label);
+					label.x = _cursorRadius+3;
+					label.y = -Math.round(label.height/2);
+					
+					cursorObject.label = label;
 				}
 			}
 		}
@@ -362,20 +422,22 @@ package org.tuio.debug
 		 * @param	tuioCursor The values of the received /tuio/2Dcur.
 		 */
 		public function updateTuioCursor(tuioCursor:TuioCursor):void{
+			updateTuioCursorWithDebugOption(tuioCursor, false);
+		}
+		
+		public function updateTuioCursorWithDebugOption(tuioCursor:TuioCursor, debugMode:Boolean):void{
 			for each(var cursor:Object in cursors){
 				if(cursor.sessionID == tuioCursor.sessionID){
 					cursor.cursor.x = tuioCursor.x*stage.stageWidth;
 					cursor.cursor.y = tuioCursor.y*stage.stageHeight;
 					
 					if(_showDebugText){
-						cursor.label.text = generateCursorLabelText(cursor.cursor.x, cursor.cursor.y, tuioCursor.sessionID);
-						drawCursorString(cursor.label, cursor.textSprite);
+						cursor.label.text = generateCursorLabelText(cursor.cursor.x, cursor.cursor.y, tuioCursor.sessionID, debugMode);
 					}
 					break;
 				}
 			}
 		}
-		
 		/**
 		 * Called if a tracked cursor was removed.
 		 * @param	tuioCursor The values of the received /tuio/2Dcur.
@@ -392,13 +454,19 @@ package org.tuio.debug
 			}
 		}
 		
-		private function generateCursorLabelText(xVal:Number, yVal:Number, id:Number):String{
-			return "x: " + xVal + "\ny: " + yVal + "\nid: " + id;
+		private function generateCursorLabelText(xVal:Number, yVal:Number, id:Number, debugMode:Boolean):String{
+			var cursorLabel:String;
+			if(!debugMode){
+				cursorLabel = "x: " + xVal + "\ny: " + yVal + "\nsessionId: " + id;
+			}else{
+				cursorLabel = "x: " + xVal + "\ny: " + yVal + "\nsessionId: Debug";
+			}
+			return cursorLabel;
 		}
 		
 		private function debugTextFormat():TextFormat{
 			var format:TextFormat = new TextFormat();
-	            format.font = "Arial";
+	            format.font = this.arialFont.fontName;
 	            format.color = 0x0;
 	            format.size = 11;
 	            format.underline = false;
@@ -544,44 +612,14 @@ package org.tuio.debug
             // TODO
         }
 		
-		private function drawObjectString(textField:TextField, dObj:Sprite):void{
-			var translationX:Number = -0.5*dObj.width+0.5*textField.width;
-			var translationY:Number = 0.5*dObj.height-0.5*textField.height;
-			drawString(textField, dObj, translationX, translationY);
-		}
-		
-		private function drawCursorString(textField:TextField, dObj:Sprite):void{
-			var translationX:Number = -0.5*_cursorRadius+0.5*textField.width+8;
-			var translationY:Number = -0.5*_cursorRadius-0.5*textField.height+8;
-			drawString(textField, dObj, translationX, translationY);
-		}
-		
-		private function drawString(textField:TextField, dObj:Sprite, translationX:Number, translationY:Number):void{
-			//copy TextField into a bitmap
-			var typeTextBitmap : BitmapData = new BitmapData(textField.width, 
-				textField.height,true,0x00000000);
-			
-			typeTextBitmap.draw(textField);
-			
-			//calculate center of TextField
-			var typeTextTranslationX:Number = -0.5*textField.width+translationX+5;
-			var typeTextTranslationY:Number = -0.5*textField.height+translationY-5;
-			
-			//create Matrix which moves the TextField to the center
-			var matrix:Matrix = new Matrix();
-			matrix.translate(typeTextTranslationX, typeTextTranslationY);
-			
-			//actually draw the text on the stage (with no-repeat and anti-aliasing)
-			dObj.graphics.clear();
-			dObj.graphics.beginBitmapFill(typeTextBitmap,matrix,false,true);
-			dObj.graphics.lineStyle(0,0,0);
-			dObj.graphics.drawRect(typeTextTranslationX, typeTextTranslationY, 
-				textField.width, textField.height);
-			dObj.graphics.endFill();
-		}
-		
-		private function generateObjectLabelText(xVal:Number, yVal:Number, objectId:Number, sessionId:Number):String{
-			return "x: " + xVal + "\ny: " + yVal + "\nobjectId: " + objectId+ "\nsessionId: " + sessionId;
+		private function generateObjectLabelText(xVal:Number, yVal:Number, objectId:Number, sessionId:Number, debugMode:Boolean=false):String{
+			var objectLabel:String;
+			if(!debugMode){
+				objectLabel = "x: " + xVal + "\ny: " + yVal + "\nfiducialId: " + objectId+ "\nsessionId: " + sessionId;
+			}else{
+				objectLabel = "x: " + xVal + "\ny: " + yVal + "\nfiducialId: " + objectId+ "\nsessionId: Debug";
+			}
+			return objectLabel;
 		}
 		
 	}
