@@ -15,7 +15,7 @@ package org.tuio.gestures {
 			this.addStep(new GestureStep(TouchEvent.TOUCH_UP, { die:true, tuioContainerAlias:"A" } ));
 			this.addStep(new GestureStep(TouchEvent.TOUCH_UP, { die:true, tuioContainerAlias:"B" } ));
 			this.addStep(new GestureStep(TouchEvent.TOUCH_MOVE, { tuioContainerAlias:"B", frameIDAlias:"A", targetAlias:"A" } ));
-			this.addStep(new GestureStep(TouchEvent.TOUCH_MOVE, { die:true } ));
+			this.addStep(new GestureStep(TouchEvent.TOUCH_MOVE, { die:true, targetAlias:"A" } ));
 			this.addStep(new GestureStep(TuioEvent.NEW_FRAME, {goto:1} ));
 		}
 		
