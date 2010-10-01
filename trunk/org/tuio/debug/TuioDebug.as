@@ -151,7 +151,7 @@ package org.tuio.debug
 			if(_customObjectClass == TuioDebugObject){
 				objectSprite = new TuioDebugObject(tuioObject.classID, tuioObject.sessionID, tuioObject.a, _objectWidth, _objectHeight, _objectColor, _objectAlpha,_objectLineThickness, _objectLineColor, _objectLineAlpha);
 			}else{
-				objectSprite = new _customObjectClass();
+				objectSprite = new _customObjectClass(tuioObject);
 				if(!(objectSprite is ITuioDebugObject)){
 					throw new Error("Custom Tuio Object class must implement ITuioDebugObject.");
 				}
@@ -214,7 +214,7 @@ package org.tuio.debug
 		public function updateTuioObjectWithDebugOption(tuioObject:TuioObject, debugMode:Boolean):void{
 			for each(var object:Object in objects){
 				if(object.sessionID == tuioObject.sessionID){
-					var debugObject:TuioDebugObject = object.object as TuioDebugObject; 
+					var debugObject:DisplayObjectContainer = object.object as DisplayObjectContainer; 
 					debugObject.x = tuioObject.x*stage.stageWidth;
 					debugObject.y = tuioObject.y*stage.stageHeight;
 					debugObject.rotation = tuioObject.a/Math.PI*180;
@@ -349,7 +349,7 @@ package org.tuio.debug
 			if(_customCursorSprite == TuioDebugCursor){
 				cursorSprite = new TuioDebugCursor(_cursorRadius,_cursorColor, _cursorAlpha, _cursorLineThickness, _cursorLineColor, _cursorLineAlpha);
 			}else{
-				cursorSprite = new _customCursorSprite();
+				cursorSprite = new _customCursorSprite(tuioCursor);
 				if(!(cursorSprite is ITuioDebugCursor)){
 					throw new Error("Custom Tuio Debug Cursor class must implement ITuioDebugCursor.");
 				}
