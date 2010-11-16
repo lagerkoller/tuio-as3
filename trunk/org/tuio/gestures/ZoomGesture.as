@@ -5,7 +5,7 @@ package org.tuio.gestures {
 	import flash.geom.Point;
 	import flash.utils.getTimer;
 	import org.tuio.TuioEvent;
-	import org.tuio.TouchEvent;
+	import org.tuio.TuioTouchEvent;
 	
 	public class ZoomGesture extends TwoFingerMoveGesture {
 		

@@ -37,7 +37,7 @@ package org.tuio.legacy
 	 * <b>Use only for the port of existing code to TUIO AS3.</b>
 	 * For the current Tuio event implementation see:
 	 * @see org.tuio.TuioManager
-	 * @see org.tuio.TouchEvent
+	 * @see org.tuio.TuioTouchEvent
 	 *  
 	 * For more information about this legacy Tuio implementation see: 
 	 * @see TouchEvent

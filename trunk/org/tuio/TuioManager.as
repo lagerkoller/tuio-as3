@@ -46,7 +46,7 @@ package org.tuio {
 	 * <p><b>Triggered events</b></p>
 	 * <ul>
 	 * 	<li>TuioEvent: Is triggered on the TuioManager itself.</li>
-	 * 	<li>TouchEvent: Is triggered on DisplayObjects under the tracked point according to the TuioManager's settings.</li>
+	 * 	<li>TuioTouchEvent: Is triggered on DisplayObjects under the tracked point according to the TuioManager's settings.</li>
 	 * </ul>
 	 * 
 	 * @author Immanuel Bauer
@@ -62,27 +62,27 @@ package org.tuio {
 		/**The time between a touch down event and a hold event in ms*/
 		public var holdTimeout:int = 500;
 		
-		/**If set true a TouchEvent is triggered if a TuioObject is received. The default is false.*/
+		/**If set true a TuioTouchEvent is triggered if a TuioObject is received. The default is false.*/
 		public var triggerTouchOnObject:Boolean = false;
 		
-		/**If set true a TouchEvent is triggered if a TuioBlob is received. The default is false.*/
+		/**If set true a TuioTouchEvent is triggered if a TuioBlob is received. The default is false.*/
 		public var triggerTouchOnBlob:Boolean = false;	
 		
-		/**Sets the method how to discover the TouchEvent's target object. The default is TOUCH_TARGET_DISCOVERY_MOUSE_ENABLED.*/
+		/**Sets the method how to discover the TuioTouchEvent's target object. The default is TOUCH_TARGET_DISCOVERY_MOUSE_ENABLED.*/
 		public var touchTargetDiscoveryMode:uint = TOUCH_TARGET_DISCOVERY_MOUSE_ENABLED;
 		
 		//the possible touch target discovery modes.
 		/**The events will be triggered on the top object under the tracked point. Fastest method. Works for DisplayObject and subclasses.*/
 		public static const TOUCH_TARGET_DISCOVERY_NONE:Number = 0;
-		/**The InteractiveObject's mouseEnabled parameter is used to determine whether a TouchEvent is triggered on an InteractiveObject under the tracked point. Works only for InteractiveObject and subclasses.*/
+		/**The InteractiveObject's mouseEnabled parameter is used to determine whether a TuioTouchEvent is triggered on an InteractiveObject under the tracked point. Works only for InteractiveObject and subclasses.*/
 		public static const TOUCH_TARGET_DISCOVERY_MOUSE_ENABLED:Number = 1;
-		/**An ignore list is used to determin whether a TouchEvent is triggered on an InteractiveObject under the tracked point. Works for DisplayObject and subclasses.*/
+		/**An ignore list is used to determin whether a TuioTouchEvent is triggered on an InteractiveObject under the tracked point. Works for DisplayObject and subclasses.*/
 		public static const TOUCH_TARGET_DISCOVERY_IGNORELIST:Number = 2;
 		
-		//if true MouseEvents are dispatched alongside the TouchEvents
+		//if true MouseEvents are dispatched alongside the TuioTouchEvents
 		private var _dispatchMouseEvents:Boolean = false;
 		
-		//if true native TouchEvents are dispatched alongside the org.tuio.TouchEvents
+		//if true native TouchEvents are dispatched alongside the org.tuio.TuioTouchEvents
 		private var _dispatchNativeTouchEvents:Boolean = false;
 		
 		private var _tuioClient:TuioClient;
@@ -157,10 +157,10 @@ package org.tuio {
 			lastTarget[tuioContainer.sessionID] = target;
 			hold[tuioContainer.sessionID] = getTimer();
 			
-			//target.dispatchEvent(new TouchEvent(TouchEvent.TOUCH_OVER, true, false, local.x, local.y, stagePos.x, stagePos.y, target, tuioContainer));
-			//target.dispatchEvent(new TouchEvent(TouchEvent.ROLL_OVER, false, false, local.x, local.y, stagePos.x, stagePos.y, target, tuioContainer));
-			target.dispatchEvent(new TouchEvent(TouchEvent.TOUCH_DOWN, true, false, local.x, local.y, stagePos.x, stagePos.y, target, tuioContainer));
-			this.dispatchEvent(new TouchEvent(TouchEvent.TOUCH_DOWN, true, false, local.x, local.y, stagePos.x, stagePos.y, target, tuioContainer));
+			//target.dispatchEvent(new TuioTouchEvent(TuioTouchEvent.TOUCH_OVER, true, false, local.x, local.y, stagePos.x, stagePos.y, target, tuioContainer));
+			//target.dispatchEvent(new TuioTouchEvent(TuioTouchEvent.ROLL_OVER, false, false, local.x, local.y, stagePos.x, stagePos.y, target, tuioContainer));
+			target.dispatchEvent(new TuioTouchEvent(TuioTouchEvent.TOUCH_DOWN, true, false, local.x, local.y, stagePos.x, stagePos.y, target, tuioContainer));
+			this.dispatchEvent(new TuioTouchEvent(TuioTouchEvent.TOUCH_DOWN, true, false, local.x, local.y, stagePos.x, stagePos.y, target, tuioContainer));
 			
 			if (_dispatchMouseEvents) {
 				//target.dispatchEvent(new MouseEvent(MouseEvent.MOUSE_OVER, true, false, local.x, local.y, (target as InteractiveObject), false, false, false, false, 0));
@@ -184,8 +184,8 @@ package org.tuio {
 			//mouse move or hold
 			if (Math.abs(tuioContainer.X) > 0.001 || Math.abs(tuioContainer.Y) > 0.001 || Math.abs(tuioContainer.Z) > 0.001) {
 				hold[tuioContainer.sessionID] = getTimer();
-				target.dispatchEvent(new TouchEvent(TouchEvent.TOUCH_MOVE, true, false, local.x, local.y, stagePos.x, stagePos.y, target, tuioContainer));
-				this.dispatchEvent(new TouchEvent(TouchEvent.TOUCH_MOVE, true, false, local.x, local.y, stagePos.x, stagePos.y, target, tuioContainer));
+				target.dispatchEvent(new TuioTouchEvent(TuioTouchEvent.TOUCH_MOVE, true, false, local.x, local.y, stagePos.x, stagePos.y, target, tuioContainer));
+				this.dispatchEvent(new TuioTouchEvent(TuioTouchEvent.TOUCH_MOVE, true, false, local.x, local.y, stagePos.x, stagePos.y, target, tuioContainer));
 				if (_dispatchMouseEvents) {
 					target.dispatchEvent(new MouseEvent(MouseEvent.MOUSE_MOVE, true, false, local.x, local.y, (target as InteractiveObject), false, false, false, false, 0));
 				}
@@ -194,8 +194,8 @@ package org.tuio {
 				}
 			} else if (hold[tuioContainer.sessionID] < getTimer() - holdTimeout) {
 				hold[tuioContainer.sessionID] = getTimer();
-				target.dispatchEvent(new TouchEvent(TouchEvent.HOLD, true, false, local.x, local.y, stagePos.x, stagePos.y, target, tuioContainer));
-				this.dispatchEvent(new TouchEvent(TouchEvent.HOLD, true, false, local.x, local.y, stagePos.x, stagePos.y, target, tuioContainer));
+				target.dispatchEvent(new TuioTouchEvent(TuioTouchEvent.HOLD, true, false, local.x, local.y, stagePos.x, stagePos.y, target, tuioContainer));
+				this.dispatchEvent(new TuioTouchEvent(TuioTouchEvent.HOLD, true, false, local.x, local.y, stagePos.x, stagePos.y, target, tuioContainer));
 			}
 			
 			//mouse out/over
@@ -229,15 +229,15 @@ package org.tuio {
 						last.dispatchEvent(new flash.events.TouchEvent(flash.events.TouchEvent.TOUCH_OUT, true, false, tuioContainer.sessionID, false, local.x, local.y, 0, 0, 0, last as InteractiveObject));
 						last.dispatchEvent(new flash.events.TouchEvent(flash.events.TouchEvent.TOUCH_ROLL_OUT, false, false, tuioContainer.sessionID, false, local.x, local.y, 0, 0, 0, last as InteractiveObject));
 					}
-					last.dispatchEvent(new TouchEvent(TouchEvent.TOUCH_OUT, true, false, lastLocal.x, lastLocal.y, stagePos.x, stagePos.y, last, tuioContainer));
-					last.dispatchEvent(new TouchEvent(TouchEvent.ROLL_OUT, false, false, local.x, local.y, stagePos.x, stagePos.y, last, tuioContainer));
-					this.dispatchEvent(new TouchEvent(TouchEvent.TOUCH_OUT, true, false, lastLocal.x, lastLocal.y, stagePos.x, stagePos.y, last, tuioContainer));
-					this.dispatchEvent(new TouchEvent(TouchEvent.ROLL_OUT, false, false, local.x, local.y, stagePos.x, stagePos.y, last, tuioContainer));
+					last.dispatchEvent(new TuioTouchEvent(TuioTouchEvent.TOUCH_OUT, true, false, lastLocal.x, lastLocal.y, stagePos.x, stagePos.y, last, tuioContainer));
+					last.dispatchEvent(new TuioTouchEvent(TuioTouchEvent.ROLL_OUT, false, false, local.x, local.y, stagePos.x, stagePos.y, last, tuioContainer));
+					this.dispatchEvent(new TuioTouchEvent(TuioTouchEvent.TOUCH_OUT, true, false, lastLocal.x, lastLocal.y, stagePos.x, stagePos.y, last, tuioContainer));
+					this.dispatchEvent(new TuioTouchEvent(TuioTouchEvent.ROLL_OUT, false, false, local.x, local.y, stagePos.x, stagePos.y, last, tuioContainer));
 					
 					for each(var a:InteractiveObject in lastAncestors) {
 						if(a != target){
-							a.dispatchEvent(new TouchEvent(TouchEvent.ROLL_OUT, false, false, lastAncestorLocal.x, lastAncestorLocal.y, stagePos.x, stagePos.y, a, tuioContainer));
-							this.dispatchEvent(new TouchEvent(TouchEvent.ROLL_OUT, false, false, lastAncestorLocal.x, lastAncestorLocal.y, stagePos.x, stagePos.y, a, tuioContainer));
+							a.dispatchEvent(new TuioTouchEvent(TuioTouchEvent.ROLL_OUT, false, false, lastAncestorLocal.x, lastAncestorLocal.y, stagePos.x, stagePos.y, a, tuioContainer));
+							this.dispatchEvent(new TuioTouchEvent(TuioTouchEvent.ROLL_OUT, false, false, lastAncestorLocal.x, lastAncestorLocal.y, stagePos.x, stagePos.y, a, tuioContainer));
 							if (_dispatchMouseEvents) {
 								a.dispatchEvent(new MouseEvent(MouseEvent.ROLL_OUT, false, false, lastAncestorLocal.x, lastAncestorLocal.y, a, false, false, false, false, 0));
 							}
@@ -257,11 +257,11 @@ package org.tuio {
 				}
 				
 				if (lastAncestors.indexOf(target) < 0) {
-					target.dispatchEvent(new TouchEvent(TouchEvent.TOUCH_OVER, true, false, local.x, local.y, stagePos.x, stagePos.y, target, tuioContainer));
-					target.dispatchEvent(new TouchEvent(TouchEvent.ROLL_OVER, false, false, local.x, local.y, stagePos.x, stagePos.y, target, tuioContainer));
+					target.dispatchEvent(new TuioTouchEvent(TuioTouchEvent.TOUCH_OVER, true, false, local.x, local.y, stagePos.x, stagePos.y, target, tuioContainer));
+					target.dispatchEvent(new TuioTouchEvent(TuioTouchEvent.ROLL_OVER, false, false, local.x, local.y, stagePos.x, stagePos.y, target, tuioContainer));
 					for each(var b:InteractiveObject in ancestors) {
-						b.dispatchEvent(new TouchEvent(TouchEvent.ROLL_OVER, false, false, ancestorLocal.x, ancestorLocal.y, stagePos.x, stagePos.y, b, tuioContainer));
-						this.dispatchEvent(new TouchEvent(TouchEvent.ROLL_OVER, false, false, ancestorLocal.x, ancestorLocal.y, stagePos.x, stagePos.y, b, tuioContainer));
+						b.dispatchEvent(new TuioTouchEvent(TuioTouchEvent.ROLL_OVER, false, false, ancestorLocal.x, ancestorLocal.y, stagePos.x, stagePos.y, b, tuioContainer));
+						this.dispatchEvent(new TuioTouchEvent(TuioTouchEvent.ROLL_OVER, false, false, ancestorLocal.x, ancestorLocal.y, stagePos.x, stagePos.y, b, tuioContainer));
 						if (_dispatchMouseEvents) {
 							b.dispatchEvent(new MouseEvent(MouseEvent.ROLL_OVER, false, false, ancestorLocal.x, ancestorLocal.y, b, false, false, false, false, 0));
 						}
@@ -279,7 +279,7 @@ package org.tuio {
 			//handle updates on receivers: call updateTouch from each receiver that listens on sessionID
 			if(this.touchReceiversDict[tuioContainer.sessionID]){
 				for each(var receiver:ITuioTouchReceiver in this.touchReceiversDict[tuioContainer.sessionID]){
-					receiver.updateTouch(new TouchEvent(TouchEvent.TOUCH_MOVE, true, false, local.x, local.y, stagePos.x, stagePos.y, target, tuioContainer));
+					receiver.updateTouch(new TuioTouchEvent(TuioTouchEvent.TOUCH_MOVE, true, false, local.x, local.y, stagePos.x, stagePos.y, target, tuioContainer));
 				}
 			}
 		}
@@ -335,8 +335,8 @@ package org.tuio {
 			var target:DisplayObject = getTopDisplayObjectUnderPoint(stagePos);
 			var local:Point = target.globalToLocal(new Point(stagePos.x, stagePos.y));
 			
-			target.dispatchEvent(new TouchEvent(TouchEvent.TOUCH_UP, true, false, local.x, local.y, stagePos.x, stagePos.y, target, tuioContainer));
-			this.dispatchEvent(new TouchEvent(TouchEvent.TOUCH_UP, true, false, local.x, local.y, stagePos.x, stagePos.y, target, tuioContainer));
+			target.dispatchEvent(new TuioTouchEvent(TuioTouchEvent.TOUCH_UP, true, false, local.x, local.y, stagePos.x, stagePos.y, target, tuioContainer));
+			this.dispatchEvent(new TuioTouchEvent(TuioTouchEvent.TOUCH_UP, true, false, local.x, local.y, stagePos.x, stagePos.y, target, tuioContainer));
 			if (_dispatchMouseEvents) {
 				target.dispatchEvent(new MouseEvent(MouseEvent.MOUSE_UP, true, false, local.x, local.y, (target as InteractiveObject), false, false, false, false, 0));
 			}
@@ -349,7 +349,7 @@ package org.tuio {
 			if(this.touchReceiversDict[tuioContainer.sessionID]){
 				//call removeTouch from each receiver that listens on sessionID
 				for each(var receiver:ITuioTouchReceiver in this.touchReceiversDict[tuioContainer.sessionID]){
-					receiver.removeTouch(new TouchEvent(TouchEvent.TOUCH_UP, true, false, local.x, local.y, stagePos.x, stagePos.y, target, tuioContainer));
+					receiver.removeTouch(new TuioTouchEvent(TuioTouchEvent.TOUCH_UP, true, false, local.x, local.y, stagePos.x, stagePos.y, target, tuioContainer));
 				}
 				
 				//delete receivers from dictionary
@@ -371,15 +371,15 @@ package org.tuio {
 				tapped = tmpArray.concat();
 				
 				if (double) {
-					target.dispatchEvent(new TouchEvent(TouchEvent.DOUBLE_TAP, true, false, local.x, local.y, stagePos.x, stagePos.y, target, tuioContainer));
-					this.dispatchEvent(new TouchEvent(TouchEvent.DOUBLE_TAP, true, false, local.x, local.y, stagePos.x, stagePos.y, target, tuioContainer));
+					target.dispatchEvent(new TuioTouchEvent(TuioTouchEvent.DOUBLE_TAP, true, false, local.x, local.y, stagePos.x, stagePos.y, target, tuioContainer));
+					this.dispatchEvent(new TuioTouchEvent(TuioTouchEvent.DOUBLE_TAP, true, false, local.x, local.y, stagePos.x, stagePos.y, target, tuioContainer));
 					if (_dispatchMouseEvents) {
 						target.dispatchEvent(new MouseEvent(MouseEvent.DOUBLE_CLICK, true, false, local.x, local.y, (target as InteractiveObject), false, false, false, false, 0));
 					}
 				} else {
 					tapped.push(new DoubleTapStore(target, getTimer(), stagePos.x, stagePos.y));
-					target.dispatchEvent(new TouchEvent(TouchEvent.TAP, true, false, local.x, local.y, stagePos.x, stagePos.y, target, tuioContainer));
-					this.dispatchEvent(new TouchEvent(TouchEvent.TAP, true, false, local.x, local.y, stagePos.x, stagePos.y, target, tuioContainer));
+					target.dispatchEvent(new TuioTouchEvent(TuioTouchEvent.TAP, true, false, local.x, local.y, stagePos.x, stagePos.y, target, tuioContainer));
+					this.dispatchEvent(new TuioTouchEvent(TuioTouchEvent.TAP, true, false, local.x, local.y, stagePos.x, stagePos.y, target, tuioContainer));
 					if (_dispatchMouseEvents) {
 						target.dispatchEvent(new MouseEvent(MouseEvent.CLICK, true, false, local.x, local.y, (target as InteractiveObject), false, false, false, false, 0));
 					}

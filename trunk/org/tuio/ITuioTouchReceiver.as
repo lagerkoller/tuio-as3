@@ -1,10 +1,10 @@
 package org.tuio
 {
-	import org.tuio.TouchEvent;
+	import org.tuio.TuioTouchEvent;
 
 	public interface ITuioTouchReceiver
 	{
-		function updateTouch(event:TouchEvent):void;
-		function removeTouch(event:TouchEvent):void;
+		function updateTouch(event:TuioTouchEvent):void;
+		function removeTouch(event:TuioTouchEvent):void;
 	}
 }
