@@ -24,7 +24,7 @@ package org.tuio.mouse
 	import org.tuio.util.DisplayListHelper;
 
 	/**
-	 * Listens on MouseEvents, "translates" them to the analog TouchEvents and FiducialEvents and dispatches
+	 * Listens on MouseEvents, "translates" them to the analog TuioTouchEvents and FiducialEvents and dispatches
 	 * them on <code>DisplayObject</code>s under the mouse pointer.
 	 * 
 	 * Additionally, it provides means to simulate multi-touch input with a single mouse.
@@ -43,7 +43,7 @@ package org.tuio.mouse
 	 * 
 	 * @author Johannes Luderschmidt
 	 * 
-	 * @see org.tuio.TouchEvent
+	 * @see org.tuio.TuioTouchEvent
 	 * 
 	 */
 	public class MouseToTouchDispatcher
@@ -77,7 +77,7 @@ package org.tuio.mouse
 		 * that listen on keyboard events to control certain actions like rotation of a touches group by holding 'r'.
 		 * 
 		 * @param stage 
-		 * @param useTuioManager call the add, move and remove functions of the TuioManager instead of simply dispatching TouchEvents. You have to initialize TuioManager before.
+		 * @param useTuioManager call the add, move and remove functions of the TuioManager instead of simply dispatching TuioTouchEvents. You have to initialize TuioManager before.
 		 * @param useTuioDebug show the touches as debug cursors. You have to initialize TuioDebug before.
 		 * 
 		 */
@@ -102,6 +102,10 @@ package org.tuio.mouse
 			rKey = false;
 			rotationMouseX = 0;
 			rotationMouseY = 0;
+			
+			if (useTuioManager) {
+				
+			}
 			
 			createContextMenu();
 		}
@@ -148,17 +152,17 @@ package org.tuio.mouse
 			}else{
 				//add new mouse pointer
 				var frameId:uint = this.frameId++;	
-				var tuioContainer:TuioContainer = createTuioContainer(TWO_D_CUR, event.stageX,event.stageY, this.tuioSessionId, frameId);
+				var tuioContainer:TuioContainer = createTuioContainer(TWO_D_CUR, event.stageX, event.stageY, 0, 0, this.tuioSessionId, frameId);
 				
 				//standard
-				if(this.useTuioManager){
+				if (this.useTuioManager) {
 					TuioManager.getInstance().handleAdd(tuioContainer);
 				}else{
 					var stagePos:Point = new Point(event.stageX, event.stageY);
 					var target:DisplayObject = DisplayListHelper.getTopDisplayObjectUnderPoint(stagePos, stage);
 					var local:Point = target.globalToLocal(new Point(stagePos.x, stagePos.y));
 					
-					target.dispatchEvent(new TouchEvent(TouchEvent.TOUCH_DOWN, true, false, local.x, local.y, stagePos.x, stagePos.y, target, tuioContainer));
+					target.dispatchEvent(new TuioTouchEvent(TuioTouchEvent.TOUCH_DOWN, true, false, local.x, local.y, stagePos.x, stagePos.y, target, tuioContainer));
 				}
 				if(this.useTuioDebug){
 					var cursor:TuioCursor = createTuioCursor(event.stageX, event.stageY, this.tuioSessionId, frameId);
@@ -324,12 +328,12 @@ package org.tuio.mouse
 		 * 
 		 */
 		private function dispatchTouchMove(event:MouseEvent):void{
+			var xDiff:Number =  stage.mouseX-this.lastX;
+			var yDiff:Number = stage.mouseY-this.lastY;
+			this.lastX = stage.mouseX;
+			this.lastY = stage.mouseY;
 			if(this.groups[this.touchMoveId] != null){
-				var xDiff:Number =  stage.mouseX-this.lastX;
-				var yDiff:Number = stage.mouseY-this.lastY;
-				
-				this.lastX = stage.mouseX;
-				this.lastY = stage.mouseY;
+			
 				var cursorObject:Object;
 				var cursor:DisplayObjectContainer
 				
@@ -342,7 +346,7 @@ package org.tuio.mouse
 						cursor = cursorObject.cursor as DisplayObjectContainer;
 						xPos = cursor.x + xDiff;
 						yPos = cursor.y + yDiff;
-						moveCursor(xPos, yPos, cursorObject.cursor.sessionId);
+						moveCursor(xPos, yPos, xDiff, yDiff, cursorObject.cursor.sessionId);
 					}
 				}else{
 					//rotate grouped touches if 'r' key is pressed
@@ -355,17 +359,17 @@ package org.tuio.mouse
 						cursorMatrix.translate(this.rotationMouseX, this.rotationMouseY);
 						xPos = cursorMatrix.tx;
 						yPos = cursorMatrix.ty;
-						moveCursor(xPos, yPos, cursorObject.cursor.sessionId);
+						moveCursor(xPos, yPos, xDiff, yDiff, cursorObject.cursor.sessionId);
 					}
 				}
-			}else{
+			}else {
 				//if no touch from group has been select simply move single touch
-				moveCursor(stage.mouseX, stage.mouseY, this.touchMoveId);				
+				moveCursor(stage.mouseX, stage.mouseY, xDiff, yDiff, this.touchMoveId);				
 			}
 		}
 		
 		/**
-		 * takes care of the touch movement by dispatching an appropriate TouchEvent or using the TuioManager and 
+		 * takes care of the touch movement by dispatching an appropriate TuioTouchEvent or using the TuioManager and 
 		 * adjusts the display of the touch in TuioDebug.
 		 *  
 		 * @param stageX the x coordinate of the touch 
@@ -373,9 +377,9 @@ package org.tuio.mouse
 		 * @param sessionId the session id of the touch 
 		 * 
 		 */
-		private function moveCursor(stageX:Number, stageY:Number, sessionId:uint):void{
+		private function moveCursor(stageX:Number, stageY:Number, diffX:Number, diffY:Number, sessionId:uint):void{
 			var frameId:uint = this.frameId++;
-			var tuioContainer:TuioContainer = createTuioContainer(TWO_D_CUR, stageX, stageY, sessionId, frameId);
+			var tuioContainer:TuioContainer = createTuioContainer(TWO_D_CUR, stageX, stageY, diffX, diffY, sessionId, frameId);
 			
 			if(this.useTuioManager){
 				TuioManager.getInstance().handleUpdate(tuioContainer);
@@ -384,7 +388,7 @@ package org.tuio.mouse
 				var target:DisplayObject = DisplayListHelper.getTopDisplayObjectUnderPoint(stagePos, stage);
 				var local:Point = target.globalToLocal(new Point(stagePos.x, stagePos.y));
 				
-				target.dispatchEvent(new TouchEvent(TouchEvent.TOUCH_MOVE, true, false, local.x, local.y, stagePos.x, stagePos.y, target, tuioContainer));
+				target.dispatchEvent(new TuioTouchEvent(TuioTouchEvent.TOUCH_MOVE, true, false, local.x, local.y, stagePos.x, stagePos.y, target, tuioContainer));
 			}
 			
 			if(this.useTuioDebug){
@@ -438,7 +442,7 @@ package org.tuio.mouse
 		}
 		
 		/**
-		 * removes a touch from stage by dispatching an appropriate TouchEvent or using the TuioManager and 
+		 * removes a touch from stage by dispatching an appropriate TuioTouchEvent or using the TuioManager and 
 		 * removes the display of the touch in TuioDebug.
 		 *  
 		 * @param event
@@ -448,13 +452,13 @@ package org.tuio.mouse
 		private function removeCursor(event:MouseEvent, sessionId:uint):void{
 			var frameId:uint = this.frameId++;
 			if(this.useTuioManager){
-				TuioManager.getInstance().handleRemove(createTuioContainer(TWO_D_CUR, event.stageX, event.stageY, sessionId, frameId));
+				TuioManager.getInstance().handleRemove(createTuioContainer(TWO_D_CUR, event.stageX, event.stageY, 0, 0, sessionId, frameId));
 			}else{
 				var stagePos:Point = new Point(event.stageX, event.stageY);
 				var target:DisplayObject = DisplayListHelper.getTopDisplayObjectUnderPoint(stagePos, stage);
 				var local:Point = target.globalToLocal(new Point(stagePos.x, stagePos.y));
 				
-				target.dispatchEvent(new TouchEvent(TouchEvent.TOUCH_UP, true, false, local.x, local.y, stagePos.x, stagePos.y, target, createTuioContainer(TWO_D_CUR, event.stageX, event.stageY, sessionId, frameId)));
+				target.dispatchEvent(new TuioTouchEvent(TuioTouchEvent.TOUCH_UP, true, false, local.x, local.y, stagePos.x, stagePos.y, target, createTuioContainer(TWO_D_CUR, event.stageX, event.stageY, 0, 0, sessionId, frameId)));
 			}
 			
 			if(this.useTuioDebug){
@@ -519,7 +523,7 @@ package org.tuio.mouse
 		 * @return the TuioCursor.
 		 * 
 		 */
-		private function createTuioCursor(stageX:Number, stageY:Number, sessionId:uint, frameId:uint):TuioCursor{
+		private function createTuioCursor(stageX:Number, stageY:Number, sessionId:uint, frameId:uint):TuioCursor {
 			return new TuioCursor(TWO_D_CUR,sessionId,stageX/stage.stageWidth, stageY/stage.stageHeight,0,0,0,0,0,frameId);
 		}
 		
@@ -533,8 +537,8 @@ package org.tuio.mouse
 		 * @return the TuioContainer.
 		 * 
 		 */
-		private function createTuioContainer(type:String, stageX:Number, stageY:Number, sessionId:uint, frameId:uint):TuioContainer{
-			return new TuioContainer(type,sessionId,stageX/stage.stageWidth, stageY/stage.stageHeight,0,0,0,0,0,frameId);
+		private function createTuioContainer(type:String, stageX:Number, stageY:Number, diffX:Number, diffY:Number, sessionId:uint, frameId:uint):TuioContainer{
+			return new TuioContainer(type,sessionId,stageX/stage.stageWidth, stageY/stage.stageHeight,0,diffX/stage.stageWidth,diffY/stage.stageHeight,0,0,frameId);
 		}
 		
 		

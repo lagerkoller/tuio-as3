@@ -23,15 +23,15 @@ package org.tuio.gestures {
 	 */
 	public class GestureManager extends EventDispatcher {
 				
-		/**Sets the method how to discover the TouchEvent's target object. The default is TOUCH_TARGET_DISCOVERY_MOUSE_ENABLED.*/
+		/**Sets the method how to discover the TuioTouchEvent's target object. The default is TOUCH_TARGET_DISCOVERY_MOUSE_ENABLED.*/
 		public var touchTargetDiscoveryMode:uint = TOUCH_TARGET_DISCOVERY_MOUSE_ENABLED;
 		
 		//the possible touch target discovery modes.
 		/**The events will be triggered on the top object under the tracked point. Fastest method. Works for DisplayObject and subclasses.*/
 		public static const TOUCH_TARGET_DISCOVERY_NONE:Number = 0;
-		/**The InteractiveObject's mouseEnabled parameter is used to determine whether a TouchEvent is triggered on an InteractiveObject under the tracked point. Works only for InteractiveObject and subclasses.*/
+		/**The InteractiveObject's mouseEnabled parameter is used to determine whether a TuioTouchEvent is triggered on an InteractiveObject under the tracked point. Works only for InteractiveObject and subclasses.*/
 		public static const TOUCH_TARGET_DISCOVERY_MOUSE_ENABLED:Number = 1;
-		/**An ignore list is used to determin whether a TouchEvent is triggered on an InteractiveObject under the tracked point. Works for DisplayObject and subclasses.*/
+		/**An ignore list is used to determin whether a TuioTouchEvent is triggered on an InteractiveObject under the tracked point. Works for DisplayObject and subclasses.*/
 		public static const TOUCH_TARGET_DISCOVERY_IGNORELIST:Number = 2;
 		
 		private var _tuioManager:TuioManager;
@@ -69,16 +69,16 @@ package org.tuio.gestures {
 				this._tuioManager.addEventListener(TuioEvent.REMOVE_OBJECT, handleTuioEvent);
 				this._tuioManager.addEventListener(TuioEvent.REMOVE_BLOB, handleTuioEvent);
 				this._tuioManager.addEventListener(TuioEvent.NEW_FRAME, handleTuioEvent);
-				this._tuioManager.addEventListener(TouchEvent.TAP, handleTouchEvent);
-				this._tuioManager.addEventListener(TouchEvent.DOUBLE_TAP, handleTouchEvent);
-				this._tuioManager.addEventListener(TouchEvent.HOLD, handleTouchEvent);
-				this._tuioManager.addEventListener(TouchEvent.ROLL_OVER, handleTouchEvent);
-				this._tuioManager.addEventListener(TouchEvent.ROLL_OUT, handleTouchEvent);
-				this._tuioManager.addEventListener(TouchEvent.TOUCH_DOWN, handleTouchEvent);
-				this._tuioManager.addEventListener(TouchEvent.TOUCH_UP, handleTouchEvent);
-				this._tuioManager.addEventListener(TouchEvent.TOUCH_MOVE, handleTouchEvent);
-				this._tuioManager.addEventListener(TouchEvent.TOUCH_OUT, handleTouchEvent);
-				this._tuioManager.addEventListener(TouchEvent.TOUCH_OVER, handleTouchEvent);
+				this._tuioManager.addEventListener(TuioTouchEvent.TAP, handleTouchEvent);
+				this._tuioManager.addEventListener(TuioTouchEvent.DOUBLE_TAP, handleTouchEvent);
+				this._tuioManager.addEventListener(TuioTouchEvent.HOLD, handleTouchEvent);
+				this._tuioManager.addEventListener(TuioTouchEvent.ROLL_OVER, handleTouchEvent);
+				this._tuioManager.addEventListener(TuioTouchEvent.ROLL_OUT, handleTouchEvent);
+				this._tuioManager.addEventListener(TuioTouchEvent.TOUCH_DOWN, handleTouchEvent);
+				this._tuioManager.addEventListener(TuioTouchEvent.TOUCH_UP, handleTouchEvent);
+				this._tuioManager.addEventListener(TuioTouchEvent.TOUCH_MOVE, handleTouchEvent);
+				this._tuioManager.addEventListener(TuioTouchEvent.TOUCH_OUT, handleTouchEvent);
+				this._tuioManager.addEventListener(TuioTouchEvent.TOUCH_OVER, handleTouchEvent);
 				this.ignoreList = new Array();
 				this.gestures = new Array();
 				this.activeGestures = new Array();
@@ -193,11 +193,11 @@ package org.tuio.gestures {
 		}
 		
 		/**
-		 * Handles an Tuio <code>TouchEvent</code>
+		 * Handles an Tuio <code>TuioTouchEvent</code>
 		 * 
-		 * @param	touchEvent The <code>TouchEvent</code> to be handled
+		 * @param	touchEvent The <code>TuioTouchEvent</code> to be handled
 		 */
-		private function handleTouchEvent(touchEvent:TouchEvent):void {
+		private function handleTouchEvent(touchEvent:TuioTouchEvent):void {
 			if (!progressGestures(touchEvent.type, touchEvent.relatedObject as DisplayObject, touchEvent.tuioContainer)) {
 				initGestures(touchEvent.type, touchEvent.relatedObject as DisplayObject, touchEvent.tuioContainer);
 			}
@@ -273,11 +273,11 @@ package org.tuio.gestures {
 		}
 		
 		/**
-		 * Adds the given DisplayObject to an internal list of DisplayObjects that won't receive TouchEvents.
-		 * If a DisplayobjectContainer is added to the list its children can still receive TouchEvents.
+		 * Adds the given DisplayObject to an internal list of DisplayObjects that won't receive TuioTouchEvents.
+		 * If a DisplayobjectContainer is added to the list its children can still receive TuioTouchEvents.
 		 * The touchTargetDiscoveryMode is automatically set to TOUCH_TARGET_DISCOVERY_IGNORELIST.
 		 * 
-		 * @param	item The DisplayObject that should be ignored by TouchEvents.
+		 * @param	item The DisplayObject that should be ignored by TuioTouchEvents.
 		 */
 		public function addToIgnoreList(item:DisplayObject):void {
 			this.touchTargetDiscoveryMode = TOUCH_TARGET_DISCOVERY_IGNORELIST;
@@ -285,9 +285,9 @@ package org.tuio.gestures {
 		}
 		
 		/**
-		 * Removes the given DisplayObject from the internal list of DisplayObjects that won't receive TouchEvents.
+		 * Removes the given DisplayObject from the internal list of DisplayObjects that won't receive TuioTouchEvents.
 		 * 
-		 * @param	item The DisplayObject that should be ignored by TouchEvents.
+		 * @param	item The DisplayObject that should be ignored by TuioTouchEvents.
 		 */
 		public function removeFromIgnoreList(item:DisplayObject):void {
 			var tmpList:Array = new Array();

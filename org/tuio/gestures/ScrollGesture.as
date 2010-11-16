@@ -3,7 +3,7 @@ package org.tuio.gestures {
 	import flash.display.DisplayObject;
 	import flash.utils.getTimer;
 	import org.tuio.TuioEvent;
-	import org.tuio.TouchEvent;
+	import org.tuio.TuioTouchEvent;
 	
 	public class ScrollGesture extends TwoFingerMoveGesture {
 		

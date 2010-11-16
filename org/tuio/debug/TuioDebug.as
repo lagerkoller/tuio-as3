@@ -13,7 +13,7 @@ package org.tuio.debug
 	import flash.text.TextFormat;
 	
 	import org.tuio.ITuioListener;
-	import org.tuio.TouchEvent;
+	import org.tuio.TuioTouchEvent;
 	import org.tuio.TuioBlob;
 	import org.tuio.TuioClient;
 	import org.tuio.TuioCursor;
