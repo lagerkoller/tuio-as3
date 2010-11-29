@@ -349,7 +349,11 @@ package org.tuio.debug
 			if(_customCursorSprite == TuioDebugCursor){
 				cursorSprite = new TuioDebugCursor(_cursorRadius,_cursorColor, _cursorAlpha, _cursorLineThickness, _cursorLineColor, _cursorLineAlpha);
 			}else{
-				cursorSprite = new _customCursorSprite(tuioCursor);
+				try{
+					cursorSprite = new _customCursorSprite(tuioCursor);
+				}catch(error:Error){
+					cursorSprite = new _customCursorSprite();
+				}
 				if(!(cursorSprite is ITuioDebugCursor)){
 					throw new Error("Custom Tuio Debug Cursor class must implement ITuioDebugCursor.");
 				}
