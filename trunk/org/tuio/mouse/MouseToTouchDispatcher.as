@@ -22,7 +22,7 @@ package org.tuio.mouse
 	import org.tuio.fiducial.FiducialEvent;
 	import org.tuio.fiducial.TuioFiducialDispatcher;
 	import org.tuio.util.DisplayListHelper;
-
+	
 	/**
 	 * Listens on MouseEvents, "translates" them to the analog TuioTouchEvents and FiducialEvents and dispatches
 	 * them on <code>DisplayObject</code>s under the mouse pointer.
@@ -63,8 +63,9 @@ package org.tuio.mouse
 		
 		private var spaceKey:Boolean;
 		private var rKey:Boolean;
-		private var rotationMouseX:Number;
-		private var rotationMouseY:Number;
+		private var sKey:Boolean;
+		private var centerOfGroupedTouchesX:Number;
+		private var centerOfGroupedTouchesY:Number;
 		
 		private var fiducialContextMenu:ContextMenu;
 		
@@ -103,12 +104,8 @@ package org.tuio.mouse
 			
 			spaceKey = false;
 			rKey = false;
-			rotationMouseX = 0;
-			rotationMouseY = 0;
-			
-			if (useTuioManager) {
-				
-			}
+			centerOfGroupedTouchesX = 0;
+			centerOfGroupedTouchesY = 0;
 			
 			createContextMenu();
 		}
@@ -321,11 +318,17 @@ package org.tuio.mouse
 		}
 		
 		/**
-		 * moves a touch. 
+		 * moves a touch or a group of touches (depending if dragged touch is member of a group). 
 		 * 
-		 * If the 'r' key is being pressed and a touch that is member of a group is being 
-		 * moved around the group will be rotated around its berycentric point. To rotate the touches, 
-		 * drag the mouse left and right.
+		 * If the 'r' key is pressed and a touch that is member of a group is 
+		 * moved around, the group will be rotated around its berycenter. To rotate the touches, 
+		 * drag the mouse up and down while 'r' is pressed.
+		 * 
+		 * If the 's' key is pressed and a touch that is member of a group is 
+		 * moved around, the group will be rotated around its berycenter. To scale the touches, 
+		 * drag the mouse left and right while 's' is pressed.
+		 * 
+		 * 'r' and 's' can be used in combination. 
 		 *  
 		 * @param event
 		 * 
@@ -333,20 +336,22 @@ package org.tuio.mouse
 		private function dispatchTouchMove(event:MouseEvent):void{
 			var xDiff:Number =  stage.mouseX-this.lastX;
 			var yDiff:Number = stage.mouseY-this.lastY;
-			this.lastX = stage.mouseX;
-			this.lastY = stage.mouseY;
-			if(this.groups[this.touchMoveId] != null){
 			
+			if(this.groups[this.touchMoveId] != null){
+				
+				this.lastX = stage.mouseX;
+				this.lastY = stage.mouseY;
 				var cursorObject:Object;
 				var cursor:DisplayObjectContainer
 				
 				var xPos:Number;
 				var yPos:Number;
+				var cursorMatrix:Matrix;
 				
 				TuioManager.getInstance().newFrame(frameId);
 				
-				//simply move grouped touches if 'r' key is not pressed
-				if (!this.rKey) {
+				//simply move grouped touches if neither 'r' nor 's' key is pressed
+				if(!this.rKey && !this.sKey){
 					for each(cursorObject in this.groups){
 						cursor = cursorObject.cursor as DisplayObjectContainer;
 						xPos = cursor.x + xDiff;
@@ -358,16 +363,36 @@ package org.tuio.mouse
 					for each(cursorObject in this.groups){
 						cursor = cursorObject.cursor as DisplayObjectContainer;
 						
-						var cursorMatrix:Matrix = cursor.transform.matrix;
-						cursorMatrix.translate(-this.rotationMouseX, -this.rotationMouseY);
-						cursorMatrix.rotate(0.01 * -yDiff);
-						cursorMatrix.translate(this.rotationMouseX, this.rotationMouseY);
+						cursorMatrix = cursor.transform.matrix;
+						cursorMatrix.translate(-this.centerOfGroupedTouchesX, -this.centerOfGroupedTouchesY);
+						if(this.rKey){
+							cursorMatrix.rotate(0.01 * yDiff);							
+						}
+						if(this.sKey){
+							var finalScaleFactor:Number = 1;
+							var scaleFactor:Number = 1;
+							var i:Number;
+							var scaleTimes:Number = 0;
+							if(xDiff > 0){
+								scaleFactor = 1.01;	
+								scaleTimes = xDiff;
+							}else if(xDiff < 0){
+								scaleFactor = 0.99;
+								scaleTimes = -xDiff;
+							}
+							//apply scaling as often as mouse have been moved in x direction since the last frame
+							for(i = 0; i < scaleTimes; i++){
+								finalScaleFactor = finalScaleFactor*scaleFactor;
+							}
+							cursorMatrix.scale(finalScaleFactor,finalScaleFactor);
+						}
+						cursorMatrix.translate(this.centerOfGroupedTouchesX, this.centerOfGroupedTouchesY);
 						xPos = cursorMatrix.tx;
 						yPos = cursorMatrix.ty;
 						moveCursor(xPos, yPos, xDiff, yDiff, cursorObject.cursor.sessionId);
 					}
 				}
-			}else {
+			}else{
 				//if no touch from group has been select simply move single touch
 				moveCursor(stage.mouseX, stage.mouseY, xDiff, yDiff, this.touchMoveId);				
 			}
@@ -521,7 +546,7 @@ package org.tuio.mouse
 			
 			return objectUnderPointer; 
 		}
-
+		
 		/**
 		 * created a TuioCursor instance from the submitted parameters.
 		 *  
@@ -536,10 +561,23 @@ package org.tuio.mouse
 			return new TuioCursor(TWO_D_CUR,sessionId,stageX/stage.stageWidth, stageY/stage.stageHeight,0,diffX/stage.stageWidth,diffY/stage.stageHeight,0,0,frameId);
 		}
 		
+		/**
+		 * created a TuioContainer instance from the submitted parameters.
+		 *  
+		 * @param stageX an x coordinate in global coordinates.
+		 * @param stageY a y coordinate in global coordinates.
+		 * @param touchId the session id of a touch.
+		 * 
+		 * @return the TuioContainer.
+		 * 
+		 */
+		/*private function createTuioContainer(type:String, stageX:Number, stageY:Number, sessionId:uint, frameId:uint):TuioContainer{
+		return new TuioContainer(type,sessionId,stageX/stage.stageWidth, stageY/stage.stageHeight,0,0,0,0,0,frameId);
+		}*/
+		
 		private function updateTuioCursor(tuioCursor:TuioCursor, stageX:Number, stageY:Number, diffX:Number, diffY:Number, sessionId:uint, frameId:uint):void {
 			tuioCursor.update(stageX/stage.stageWidth, stageY/stage.stageHeight,0,diffX/stage.stageWidth,diffY/stage.stageHeight,0,0,frameId);
 		}
-		
 		
 		//==========================================  FIDUCIAL STUFF ==========================================
 		
@@ -673,14 +711,28 @@ package org.tuio.mouse
 		 * 
 		 */
 		private function keyDown(event:KeyboardEvent):void{
+			//if space has been pressed, all touches will be released
 			if(event.keyCode == 32){//space
 				this.spaceKey = true;
 			}
-			if(event.keyCode == 82){//r
-				if(!this.rKey){
-					this.rKey = true;
+			
+			//if 's' or 'r' has been pressed while a grouped touch has been
+			//clicked, touches will be 's'caled or 'r'otated
+			if(event.keyCode == 82 || event.keyCode == 83){
+				if(event.keyCode == 82){//r
+					//caused by some very odd bug, an error appears when applying the rotation
+					//if this.rKey is set to true again if it has been already set to true (remove
+					//if statement and try it out to see what i mean)
+					if(!this.rKey){
+						this.rKey = true;
+					}
 				}
-				
+				if(event.keyCode == 83){//s
+					//the same mentioned above applies to this statement
+					if(!this.sKey){
+						this.sKey = true;
+					}
+				}
 				var cursorUnderPoint:ITuioDebugCursor = getCursorUnderPointer(stage.mouseX, stage.mouseY);
 				if(cursorUnderPoint != null && this.groups[cursorUnderPoint.sessionId] != null){
 					//rotate around barycenter of touches
@@ -707,8 +759,9 @@ package org.tuio.mouse
 						
 						touchAmount = touchAmount+1;
 					}
-					this.rotationMouseX = calcCenterPoint.x/touchAmount;
-					this.rotationMouseY = calcCenterPoint.y/touchAmount;
+					
+					this.centerOfGroupedTouchesX = calcCenterPoint.x/touchAmount;
+					this.centerOfGroupedTouchesY = calcCenterPoint.y/touchAmount;
 				}
 			}
 		}
@@ -725,8 +778,11 @@ package org.tuio.mouse
 			}
 			if(event.keyCode == 82){//r
 				this.rKey = false;
-				this.rotationMouseX = 0;
-				this.rotationMouseY = 0;
+				this.centerOfGroupedTouchesX = 0;
+				this.centerOfGroupedTouchesY = 0;
+			}
+			if(event.keyCode == 83){//s
+				this.sKey = false;			
 			}
 		}
 	}
