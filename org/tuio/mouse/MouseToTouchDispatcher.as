@@ -268,10 +268,13 @@ package org.tuio.mouse
 				}else{
 					//remove from group
 					(cursorObject.cursor as DisplayObjectContainer).removeChild(cursorObject.markerSprite);
-					//						delete this.groups[cursorUnderPoint.sessionId];
 					deleteFromGroup(cursorUnderPoint);
 				}
 			}else{
+				//take care that cursor is not removed after mouse up
+				if(this.groups[this.touchMoveId] == null){
+					this.shiftKey = true;
+				}
 				//move cursor
 				this.touchMoveId = cursorUnderPoint.sessionId;
 				
@@ -483,7 +486,7 @@ package org.tuio.mouse
 			var frameId:uint = this.frameId++;
 			
 			var tuioCursor:TuioCursor = tuioCursors[sessionId];
-			tuioCursors[sessionId] = null;
+			delete tuioCursors[sessionId]; 
 			
 			if(this.useTuioManager){
 				TuioManager.getInstance().handleRemove(tuioCursor);
