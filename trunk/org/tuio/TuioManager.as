@@ -85,7 +85,7 @@ package org.tuio {
 		//if true native TouchEvents are dispatched alongside the org.tuio.TuioTouchEvents
 		private var _dispatchNativeTouchEvents:Boolean = false;
 		
-		private var _tuioClient:TuioClient;
+//		private var _tuioClient:TuioClient;
 		private var lastTarget:Array;
 		private var firstTarget:Array;
 		private var tapped:Array;
@@ -106,12 +106,10 @@ package org.tuio {
 		 * @param	stage The Stage object of the Flashmovie.
 		 * @param	tuioClient A TuioClient instance that receives Tuio tracking data from a tracker.
 		 */
-		public function TuioManager(stage:Stage, tuioClient:TuioClient) {
+		public function TuioManager(stage:Stage) {
 			if (!allowInst) {
 				throw new Error("Error: Instantiation failed: Use TuioManager.getInstance() instead of new.");
 			}else{
-				this._tuioClient = tuioClient;
-				this._tuioClient.addListener(this);
 				this.stage = stage;
 				this.lastTarget = new Array();
 				this.firstTarget = new Array();
@@ -128,10 +126,10 @@ package org.tuio {
 		 * @param	stage The Stage object of the Flashmovie.
 		 * @param	tuioClient A TuioClient instance that receives Tuio tracking data from a tracker.
 		 */
-		public static function init(stage:Stage, tuioClient:TuioClient):TuioManager{
+		public static function init(stage:Stage):TuioManager{
 			if(inst == null){
 				allowInst = true;
-				inst = new TuioManager(stage, tuioClient);
+				inst = new TuioManager(stage);
 				allowInst = false;
 			}
 			
@@ -574,9 +572,9 @@ package org.tuio {
 			this.dispatchEvent(new TuioEvent(TuioEvent.NEW_FRAME, null));
 		}
 		
-		public function get tuioClient():TuioClient{
-			return _tuioClient;
-		}
+//		public function get tuioClient():TuioClient{
+//			return _tuioClient;
+//		}
 	}
 	
 }
