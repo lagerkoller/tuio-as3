@@ -1,5 +1,6 @@
 ﻿package org.tuio {
 	
+	import org.tuio.interactionClients.AbstractInteractionClient;
 	import org.tuio.osc.*;
 	
 	/**
@@ -8,17 +9,12 @@
 	 * 
 	 * @author Immanuel Bauer
 	 */
-	public class TuioClient implements IOSCListener{
+	public class TuioClient extends AbstractInteractionClient implements IOSCListener{
 			
-		private var listeners:Array;
 		private var oscManager:OSCManager;
 		
 		private var fseq:uint;
 		private var src:String;
-		
-		private var _tuioCursors:Array;
-		private var _tuioObjects:Array;
-		private var _tuioBlobs:Array;
 		
 		/**
 		 * Creates an instance of the TuioClient with the given IOSConnector.
@@ -26,12 +22,7 @@
 		 * @param	connector An instance that implements IOSConnector, establishes and handles an incoming connection. 
 		 */
 		public function TuioClient(connector:IOSCConnector) {
-			
-			this.listeners = new Array();
-			
-			this._tuioCursors = new Array();
-			this._tuioObjects = new Array();
-			this._tuioBlobs = new Array();
+			super(this);
 			
 			if (connector != null) {
 				this.oscManager = new OSCManager(connector);
@@ -280,30 +271,6 @@
 				
 			}
 		}
-		
-		/**
-		 * Adds a listener to the callback stack. The callback functions of the listener will be called on incoming TUIOEvents.
-		 * 
-		 * @param	listener Object of a class that implements the callback functions defined in the ITuioListener interface.
-		 */
-		public function addListener(listener:ITuioListener):void {
-			if (this.listeners.indexOf(listener) > -1) return;
-			this.listeners.push(listener);
-		}
-		
-		/**
-		 * Removes the given listener from the callback stack.
-		 * 
-		 * @param	listener
-		 */
-		public function removeListener(listener:ITuioListener):void {
-			var temp:Array = new Array();
-			for each(var l:ITuioListener in this.listeners) {
-				if (l != listener) temp.push(l);
-			}
-			this.listeners = temp.concat();
-		}
-		
 		/**
 		 * @return The last received fseq value by the tracker.
 		 */
@@ -318,136 +285,11 @@
 			return this.src;
 		}
 		
-		/**
-		 * @return A copy of the list of currently active tuioCursors
-		 */
-		public function get tuioCursors():Array {
-			return this._tuioCursors.concat();
-		}
-		
-		/**
-		 * @return A copy of the list of currently active tuioObjects
-		 */
-		public function get tuioObjects():Array {
-			return this._tuioObjects.concat();
-		}
-		
-		/**
-		 * @return A copy of the list of currently active tuioBlobs
-		 */
-		public function get tuioBlobs():Array {
-			return this._tuioBlobs.concat();
-		}
-		
-		/**
-		 * @param	sessionID The sessionID of the designated tuioCursor
-		 * @return The tuioCursor matching the given sessionID. Returns null if the tuioCursor doesn't exists
-		 */
-		public function getTuioCursor(sessionID:Number):TuioCursor {
-			var out:TuioCursor = null;
-			for each(var tc:TuioCursor in this._tuioCursors) {
-				if (tc.sessionID == sessionID) {
-					out = tc;
-					break;
-				}
-			}
-			return out;
-		}
-		
-		/**
-		 * @param	sessionID The sessionID of the designated tuioObject
-		 * @return The tuioObject matching the given sessionID. Returns null if the tuioObject doesn't exists
-		 */
-		public function getTuioObject(sessionID:Number):TuioObject {
-			var out:TuioObject = null;
-			for each(var to:TuioObject in this._tuioObjects) {
-				if (to.sessionID == sessionID) {
-					out = to;
-					break;
-				}
-			}
-			return out;
-		}
-		
-		/**
-		 * @param	sessionID The sessionID of the designated tuioBlob
-		 * @return The tuioBlob matching the given sessionID. Returns null if the tuioBlob doesn't exists
-		 */
-		public function getTuioBlob(sessionID:Number):TuioBlob {
-			var out:TuioBlob = null;
-			for each(var tb:TuioBlob in this._tuioBlobs) {
-				if (tb.sessionID == sessionID) {
-					out = tb;
-					break;
-				}
-			}
-			return out;
-		}
-		
-		/**
-		 * Helper functions for dispatching TUIOEvents to the ITuioListeners.
-		 */
-		
-		private function dispatchAddCursor(tuioCursor:TuioCursor):void {
-			for each(var l:ITuioListener in this.listeners) {
-				l.addTuioCursor(tuioCursor);
-			}
-		}
-		
-		private function dispatchUpdateCursor(tuioCursor:TuioCursor):void {
-			for each(var l:ITuioListener in this.listeners) {
-				l.updateTuioCursor(tuioCursor);
-			}
-		}
-		
-		private function dispatchRemoveCursor(tuioCursor:TuioCursor):void {
-			for each(var l:ITuioListener in this.listeners) {
-				l.removeTuioCursor(tuioCursor);
-			}
-		}
-		
-		private function dispatchAddObject(tuioObject:TuioObject):void {
-			for each(var l:ITuioListener in this.listeners) {
-				l.addTuioObject(tuioObject);
-			}
-		}
-		
-		private function dispatchUpdateObject(tuioObject:TuioObject):void {
-			for each(var l:ITuioListener in this.listeners) {
-				l.updateTuioObject(tuioObject);
-			}
-		}
-		
-		private function dispatchRemoveObject(tuioObject:TuioObject):void {
-			for each(var l:ITuioListener in this.listeners) {
-				l.removeTuioObject(tuioObject);
-			}
-		}
-		
-		private function dispatchAddBlob(tuioBlob:TuioBlob):void {
-			for each(var l:ITuioListener in this.listeners) {
-				l.addTuioBlob(tuioBlob);
-			}
-		}
-		
-		private function dispatchUpdateBlob(tuioBlob:TuioBlob):void {
-			for each(var l:ITuioListener in this.listeners) {
-				l.updateTuioBlob(tuioBlob);
-			}
-		}
-		
-		private function dispatchRemoveBlob(tuioBlob:TuioBlob):void {
-			for each(var l:ITuioListener in this.listeners) {
-				l.removeTuioBlob(tuioBlob);
-			}
-		}
-		
 		private function dispatchNewFseq():void {
 			for each(var l:ITuioListener in this.listeners) {
 				l.newFrame(this.fseq);
 			}
 		}
-
 	}
 	
 }
