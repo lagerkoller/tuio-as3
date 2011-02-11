@@ -14,6 +14,7 @@ package org.tuio.legacy
 	import org.tuio.debug.ITuioDebugBlob;
 	import org.tuio.debug.ITuioDebugCursor;
 	import org.tuio.debug.ITuioDebugObject;
+	import org.tuio.interactionClients.AbstractInteractionClient;
 
 	/**
 	 * Adopts function of <code>TUIO</code> class from Touchlib's Tuio AS3 framework. All functions of
@@ -49,7 +50,7 @@ package org.tuio.legacy
 	public class TuioLegacyListener extends EventDispatcher implements ITuioListener
 	{
 		private var stage:Stage;
-		private var tuioClient:TuioClient;
+		private var interactionClient:AbstractInteractionClient;
 		private var listenOnIdsArray:Array;
 		private var firstPos:Array;
 		private var lastPos:Array;
@@ -61,13 +62,13 @@ package org.tuio.legacy
 		public var connected:Boolean = true;
 		
 		
-		public function TuioLegacyListener(stage:Stage, tuioClient:TuioClient){
+		public function TuioLegacyListener(stage:Stage, interactionClient:AbstractInteractionClient){
 			if (!allowInst) {
 	            throw new Error("Error: Instantiation failed: Use TuioLegacyListener.getInstance() instead of new.");
 			}else{
 				this.stage = stage;
-				this.tuioClient = tuioClient;
-				this.tuioClient.addListener(this);
+				this.interactionClient = interactionClient;
+//				this.tuioClient.addListener(this);
 				this.listenOnIdsArray = new Array();
 				this.firstPos = new Array();
 				this.lastPos = new Array();
@@ -85,10 +86,10 @@ package org.tuio.legacy
 		 * @return singleton instance of <code>TuioLegacyListener</code>.
 		 * 
 		 */
-		public static function init(stage:Stage, tuioClient:TuioClient):TuioLegacyListener{
+		public static function init(stage:Stage, interactionClient:AbstractInteractionClient):TuioLegacyListener{
 			if(inst == null){
 				allowInst = true;
-				inst = new TuioLegacyListener(stage, tuioClient);
+				inst = new TuioLegacyListener(stage, interactionClient);
 				allowInst = false;
 			}
 			
@@ -352,14 +353,14 @@ package org.tuio.legacy
 		 * @return TUIOObject with the blob with the id id
 		 * 
 		 */
-		public function getObjectById(id:Number):TUIOObject {
+		public function getObjectById(id:uint):TUIOObject {
 			var tuioObject:TUIOObject;
 			//returns mouse cursor as blob
 			if(id == 0){
 				tuioObject = new TUIOObject("mouse", 0, stage.mouseX, stage.mouseY, 0, 0, 0, 0, 10, 10, null);
 			}else{
 				//look for blob/cursor in list
-				var objectArray:Array = tuioClient.tuioCursors;
+				var objectArray:Array = interactionClient.tuioCursors;
 				for(var i:int=0; i<objectArray.length; i++)  {
 					if(objectArray[i].sessionID == id){
 						var stagePoint:Point = new Point((int)(stage.stageWidth*objectArray[i].x), (int)(stage.stageHeight*objectArray[i].y));
@@ -383,7 +384,7 @@ package org.tuio.legacy
 		public function getObjects():Array {
 			var objects:Array = new Array();
 			
-			var objectArray:Array = tuioClient.tuioCursors;
+			var objectArray:Array = interactionClient.tuioCursors;
 			for(var i:int=0; i<objectArray.length; i++)  {
 				var tuioObject:TUIOObject;
 				var stagePoint:Point = new Point((int)(stage.stageWidth*objectArray[i].x), (int)(stage.stageHeight*objectArray[i].y));

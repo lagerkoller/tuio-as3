@@ -76,14 +76,14 @@ package org.tuio.legacy
 			tuioDebug.cursorLineColor = 0xcccccc;
 			tuioDebug.cursorLineAlpha = 1;
 			tuioDebug.cursorLineThickness = 5;
-			var fiducialLegacyListener:FiducialTuioAS3LegacyListener = FiducialTuioAS3LegacyListener.init(stage, tuio, this);
+			var fiducialLegacyListener:FiducialTuioAS3LegacyListener = FiducialTuioAS3LegacyListener.init(stage, this);
 			tuio.addListener(legacyListener);
 			tuio.addListener(tuioDebug);
 			tuio.addListener(fiducialLegacyListener);
 			tuio.addListener(TuioFiducialDispatcher.init(stage,1000));
 			
-			Application.application.stage.addEventListener(TouchEvent.MOUSE_DOWN, Touchhandler);
-			Application.application.stage.addEventListener(KeyboardEvent.KEY_DOWN, makeHotSpotImage);
+			stage.addEventListener(TouchEvent.MOUSE_DOWN, Touchhandler);
+			stage.addEventListener(KeyboardEvent.KEY_DOWN, makeHotSpotImage);
 			
 			removeEventListener(Event.ADDED_TO_STAGE, onStageAdd);
 		}

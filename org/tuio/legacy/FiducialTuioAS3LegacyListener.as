@@ -31,7 +31,6 @@ package org.tuio.legacy
 	 */
 	public class FiducialTuioAS3LegacyListener implements ITuioListener{
 		private var stage:Stage;
-		private var tuioClient:TuioClient;
 		private var tuioManager:TUIOManager;
 		public var evtDispatcher:EventDispatcher;
 		
@@ -49,12 +48,11 @@ package org.tuio.legacy
 		 * @see init
 		 * 
 		 */
-		public function FiducialTuioAS3LegacyListener(stage:Stage, tuioClient:TuioClient, tuioManager:TUIOManager){
+		public function FiducialTuioAS3LegacyListener(stage:Stage, tuioManager:TUIOManager){
 			if (!allowInst) {
 	            throw new Error("Error: Instantiation failed: Use FiducialTuioAS3LegacyListener.getInstance() instead of new.");
 			}else{
 				this.stage = stage;
-				this.tuioClient = tuioClient;
 				this.tuioManager = tuioManager;
 //				this.tuioClient.addListener(this);
 				evtDispatcher = new EventDispatcher();
@@ -71,10 +69,10 @@ package org.tuio.legacy
 		 * @return 
 		 * 
 		 */
-		public static function init(stage:Stage, tuioClient:TuioClient, tuioManager:TUIOManager):FiducialTuioAS3LegacyListener{
+		public static function init(stage:Stage, tuioManager:TUIOManager):FiducialTuioAS3LegacyListener{
 			if(inst == null){
 				allowInst = true;
-				inst = new FiducialTuioAS3LegacyListener(stage, tuioClient, tuioManager);
+				inst = new FiducialTuioAS3LegacyListener(stage, tuioManager);
 				allowInst = false;
 			}
 			
