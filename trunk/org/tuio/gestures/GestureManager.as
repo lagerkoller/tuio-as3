@@ -4,11 +4,11 @@ package org.tuio.gestures {
 	import flash.display.InteractiveObject;
 	import flash.display.Stage;
 	import flash.events.EventDispatcher;
-	import flash.geom.Point;
-	import org.tuio.*;
-	import flash.utils.getTimer;
 	import flash.events.MouseEvent;
+	import flash.geom.Point;
+	import flash.utils.getTimer;
 	
+	import org.tuio.*;
 	import org.tuio.debug.ITuioDebugBlob;
 	import org.tuio.debug.ITuioDebugCursor;
 	import org.tuio.debug.ITuioDebugObject;
@@ -96,20 +96,21 @@ package org.tuio.gestures {
 		 * @param	tuioClient
 		 * @return
 		 */
-		public static function init(stage:Stage, tuioClient:TuioClient):GestureManager {
+		public static function init(stage:Stage):GestureManager {
 			if(inst == null){
-				TuioManager.init(stage, tuioClient);
-				allowInst = true;
-				inst = new GestureManager();
-				inst.stage = stage;
-				allowInst = false;
-				
-				//this.addGesture(new ScrollGesture());
-				//this.addGesture(new OneDownOneMoveGesture());
-				//this.addGesture(new PressTapGesture());
-				GestureManager.addGesture(new ZoomGesture());
-				GestureManager.addGesture(new RotateGesture());
-				//this.addGesture(new ThreeFingerMoveGesture());
+				if(TuioManager.getInstance()){
+					allowInst = true;
+					inst = new GestureManager();
+					inst.stage = stage;
+					allowInst = false;
+					
+					//this.addGesture(new ScrollGesture());
+					//this.addGesture(new OneDownOneMoveGesture());
+					//this.addGesture(new PressTapGesture());
+					GestureManager.addGesture(new ZoomGesture());
+					GestureManager.addGesture(new RotateGesture());
+					//this.addGesture(new ThreeFingerMoveGesture());
+				}
 			}
 			
 			return inst;
