@@ -165,8 +165,13 @@ package org.tuio.legacy
 				//the following was originally done by the TUIOObject
 				if (lastTarget[tuioCursor.sessionID] != dobj) {
 					dobj.dispatchEvent(new TouchEvent(TouchEvent.MOUSE_OVER, true, false, stagePoint.x, stagePoint.y, localPoint.x, localPoint.y, 0, 0, dobj, false,false,false, true, 0,"2Dcur", tuioCursor.sessionID, tuioCursor.sessionID, 0));
-					localPoint = (lastTarget[tuioCursor.sessionID] as DisplayObject).parent.globalToLocal(stagePoint); 
-					lastTarget[tuioCursor.sessionID].dispatchEvent(new TouchEvent(TouchEvent.MOUSE_OUT, true, false, stagePoint.x, stagePoint.y, localPoint.x, localPoint.y, 0, 0, dobj, false,false,false, true, 0,"2Dcur", tuioCursor.sessionID, tuioCursor.sessionID, 0));
+					
+					//if lastTarget[tuioCursor.sessionID] == null the DisplayObject has been removed by Flash while
+					//the touch was on top of the object
+					if(lastTarget[tuioCursor.sessionID].stage != null){
+						localPoint = (lastTarget[tuioCursor.sessionID] as DisplayObject).parent.globalToLocal(stagePoint); 
+						lastTarget[tuioCursor.sessionID].dispatchEvent(new TouchEvent(TouchEvent.MOUSE_OUT, true, false, stagePoint.x, stagePoint.y, localPoint.x, localPoint.y, 0, 0, dobj, false,false,false, true, 0,"2Dcur", tuioCursor.sessionID, tuioCursor.sessionID, 0));
+					}
 					lastTarget[tuioCursor.sessionID] = dobj;
 				}
 			}
