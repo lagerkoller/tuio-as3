@@ -25,8 +25,6 @@ package org.tuio.interactionClients
 		public function Windows7InteractionClient(stage:Stage){
 			super(this);
 			this.stage = stage;
-//			this.useTuioManager = useTuioManager; 
-//			this.useTuioDebug = useTuioDebug;
 			
 			this.lastPos = new Array();
 			
@@ -51,20 +49,7 @@ package org.tuio.interactionClients
 			var tuioCursor:TuioCursor = createTuioCursor(event);
 			tuioCursors.push(tuioCursor);
 			dispatchAddCursor(tuioCursor);
-//			if(this.useTuioManager){
-//				TuioManager.getInstance().handleAdd(createTuioContainer(event));
-//			}else{
-//				var target:DisplayObject = DisplayListHelper.getTopDisplayObjectUnderPoint(stagePos, stage);
-//				var local:Point = target.globalToLocal(new Point(stagePos.x, stagePos.y));
-//				
-//				target.dispatchEvent(new org.tuio.TuioTouchEvent(org.tuio.TuioTouchEvent.TOUCH_DOWN, true, false, local.x, local.y, stagePos.x, stagePos.y, target, createTuioContainer(event)));
-//			}
-			
 			lastPos[event.touchPointID] = new Point(event.stageX, event.stageY);
-			
-//			if(this.useTuioDebug){
-//				TuioDebug.getInstance().addTuioCursor(createTuioCursor(event));
-//			}
 		}
 		
 		private function dispatchTouchMove(event:TouchEvent):void{
@@ -72,39 +57,14 @@ package org.tuio.interactionClients
 			var tuioCursor:TuioCursor = getTuioCursor(event.touchPointID); 
 			updateTuioCursor(tuioCursor, event);
 			dispatchUpdateCursor(tuioCursor);
-//			if(this.useTuioManager){
-//				TuioManager.getInstance().handleUpdate(createTuioContainer(event));
-//			}else{
-//				var target:DisplayObject = DisplayListHelper.getTopDisplayObjectUnderPoint(stagePos, stage);
-//				var local:Point = target.globalToLocal(new Point(stagePos.x, stagePos.y));
-//				
-//				target.dispatchEvent(new org.tuio.TuioTouchEvent(org.tuio.TuioTouchEvent.TOUCH_MOVE, true, false, local.x, local.y, stagePos.x, stagePos.y, target, createTuioContainer(event)));
-//			}
-			
 			lastPos[event.touchPointID] = new Point(event.stageX, event.stageY);
-			
-//			if(this.useTuioDebug){
-//				TuioDebug.getInstance().updateTuioCursor(createTuioCursor(event));
-//			}
 		}
 		
 		private function dispatchTouchUp(event:TouchEvent):void{
 			this.frameId = this.frameId + 1;
 			dispatchRemoveCursor(getTuioCursor(event.touchPointID));
-//			if(this.useTuioManager){
-//				TuioManager.getInstance().handleRemove(createTuioContainer(event));
-//			}else{
-//				var target:DisplayObject = DisplayListHelper.getTopDisplayObjectUnderPoint(stagePos, stage);
-//				var local:Point = target.globalToLocal(new Point(stagePos.x, stagePos.y));
-//				target.dispatchEvent(new org.tuio.TuioTouchEvent(org.tuio.TuioTouchEvent.TOUCH_UP, true, false, local.x, local.y, stagePos.x, stagePos.y, target, createTuioContainer(event)));
-//			}
-			
-//			var stagePos:Point = new Point(event.stageX, event.stageY);
 			lastPos[event.touchPointID] = null;
 			delete lastPos[event.touchPointID];
-//			if(this.useTuioDebug){
-//				TuioDebug.getInstance().removeTuioCursor(createTuioCursor(event));
-//			}
 		}
 		
 		private function createTuioContainer(event:TouchEvent):TuioContainer{
