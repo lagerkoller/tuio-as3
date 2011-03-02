@@ -2,6 +2,7 @@
 	
 	import flash.errors.EOFError;
 	import flash.utils.ByteArray;
+	
 	import org.tuio.connectors.tcp.OSCSocket;
 	
 	/**
@@ -16,6 +17,7 @@
 		private var argumentArray:Array;
 		private var openArray:Array;
 		private var innerArray:Array;
+		private var typesArray:Array;
 		
 		/**
 		 * Creates a OSCMessage from the given ByteArray containing a binarycoded OSCMessage
@@ -32,6 +34,8 @@
 				//read the parsing pattern for the following OSCMessage bytes
 				this.pattern = this.readString();
 				
+				this.typesArray = new Array();
+				
 				this.argumentArray = new Array();
 				
 				//read the remaining bytes according to the parsing pattern
@@ -40,22 +44,22 @@
 				try{
 					for(var c:int = 0; c < l; c++){
 						switch(this.pattern.charAt(c)){
-							case "s": openArray.push(this.readString()); break;
-							case "f": openArray.push(this.bytes.readFloat()); break;
-							case "i": openArray.push(this.bytes.readInt()); break;
-							case "b": openArray.push(this.readBlob()); break;
-							case "h": openArray.push(this.read64BInt()); break;
-							case "t": openArray.push(this.readTimetag()); break;
-							case "d": openArray.push(this.bytes.readDouble()); break;
-							case "S": openArray.push(this.readString()); break;
-							case "c": openArray.push(this.bytes.readMultiByte(4, "US-ASCII")); break;
-							case "r": openArray.push(this.bytes.readUnsignedInt()); break;
-							case "T": openArray.push(true); break;
-							case "F": openArray.push(false); break;
-							case "N": openArray.push(null); break;
-							case "I": openArray.push(Infinity); break;
-							case "[": innerArray = new Array(); openArray = innerArray; break;
-							case "]": this.argumentArray.push(innerArray.concat()); openArray = this.argumentArray; break;
+							case "s": openArray.push(this.readString()); this.typesArray.push("s"); break;
+							case "f": openArray.push(this.bytes.readFloat()); this.typesArray.push("f"); break;
+							case "i": openArray.push(this.bytes.readInt()); this.typesArray.push("i"); break;
+							case "b": openArray.push(this.readBlob()); this.typesArray.push("b"); break;
+							case "h": openArray.push(this.read64BInt()); this.typesArray.push("h"); break;
+							case "t": openArray.push(this.readTimetag()); this.typesArray.push("t"); break;
+							case "d": openArray.push(this.bytes.readDouble()); this.typesArray.push("d"); break;
+							case "S": openArray.push(this.readString()); this.typesArray.push("S"); break;
+							case "c": openArray.push(this.bytes.readMultiByte(4, "US-ASCII")); this.typesArray.push("c"); break;
+							case "r": openArray.push(this.bytes.readUnsignedInt()); this.typesArray.push("r"); break;
+							case "T": openArray.push(true); this.typesArray.push("T"); break;
+							case "F": openArray.push(false); this.typesArray.push("F"); break;
+							case "N": openArray.push(null); this.typesArray.push("N"); break;
+							case "I": openArray.push(Infinity); this.typesArray.push("I"); break;
+							case "[": innerArray = new Array(); openArray = innerArray; this.typesArray.push("["); break;
+							case "]": this.argumentArray.push(innerArray.concat()); openArray = this.argumentArray; this.typesArray.push("]"); break;
 							default: break;
 						}
 					}
@@ -267,6 +271,42 @@
 			return msg;
 		}
 		
+		
+		/**
+		 *  
+		 * @return string representation of an OSCMessage. 
+		 * 
+		 */
+		public function toString():String{
+			var toString:String = new String();
+			toString = toString + ("<name:");
+			toString = toString + ("",this.address);
+			toString = toString + (",");
+			
+			//types
+			toString = toString + (" [types: ");
+			for(var i:Number=0; i<this.typesArray.length;i++){
+				toString = toString + ("",this.typesArray[i]);
+				if( i < this.typesArray.length-1){
+					toString = toString + (", ");
+				}
+			}
+			toString = toString + ("],");
+			
+			//arguments
+			toString = toString + (" [arguments: ");
+			for(i=0; i<this.openArray.length;i++){
+				toString = toString + ("",this.openArray[i]);
+				if( i < this.openArray.length-1){
+					toString = toString + (", ");
+				}
+			}
+			toString = toString + ("]");
+			
+			toString = toString + (">");
+			
+			return toString;
+		} 
 	}
 	
 }
