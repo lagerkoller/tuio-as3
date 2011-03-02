@@ -1,4 +1,4 @@
-package org.tuio.interactionClients
+package org.tuio.adapters
 {
 	import flash.display.DisplayObject;
 	import flash.display.Stage;
@@ -14,7 +14,7 @@ package org.tuio.interactionClients
 	import org.tuio.debug.TuioDebug;
 	import org.tuio.util.DisplayListHelper;
 
-	public class Windows7InteractionClient extends AbstractInteractionClient{
+	public class NativeTuioAdapter extends AbstractTuioAdapter{
 		
 		private var stage:Stage;
 		private var useTuioManager:Boolean;
@@ -22,7 +22,7 @@ package org.tuio.interactionClients
 		private var lastPos:Array;
 		private var frameId:uint = 0;
 		
-		public function Windows7InteractionClient(stage:Stage){
+		public function NativeTuioAdapter(stage:Stage){
 			super(this);
 			this.stage = stage;
 			

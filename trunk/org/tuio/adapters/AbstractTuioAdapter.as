@@ -1,11 +1,11 @@
-package org.tuio.interactionClients
+package org.tuio.adapters
 {
 	import org.tuio.ITuioListener;
 	import org.tuio.TuioBlob;
 	import org.tuio.TuioCursor;
 	import org.tuio.TuioObject;
 
-	public class AbstractInteractionClient
+	public class AbstractTuioAdapter
 	{
 		protected var _tuioCursors:Array;
 		protected var _tuioObjects:Array;
@@ -13,7 +13,7 @@ package org.tuio.interactionClients
 		
 		protected var listeners:Array;
 		
-		public function AbstractInteractionClient(self:AbstractInteractionClient){
+		public function AbstractTuioAdapter(self:AbstractTuioAdapter){
 			if(self != this){
 				throw new Error("Do not initialize this abstract class directly. Instantiate from inheriting class instead.");
 			}
