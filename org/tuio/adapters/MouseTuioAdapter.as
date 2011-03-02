@@ -1,4 +1,4 @@
-package org.tuio.interactionClients
+package org.tuio.adapters
 {
 	import flash.display.DisplayObject;
 	import flash.display.DisplayObjectContainer;
@@ -46,7 +46,7 @@ package org.tuio.interactionClients
 	 * @see org.tuio.TuioTouchEvent
 	 * 
 	 */
-	public class MouseInteractionClient extends AbstractInteractionClient{
+	public class MouseTuioAdapter extends AbstractTuioAdapter{
 		private var stage:Stage;
 		private var tuioSessionId:uint;
 		private var touchMoveId:Number;
@@ -81,7 +81,7 @@ package org.tuio.interactionClients
 		 * @param useTuioDebug show the touches as debug cursors. You have to initialize TuioDebug before.
 		 * 
 		 */
-		public function MouseInteractionClient(stage:Stage){
+		public function MouseTuioAdapter(stage:Stage){
 			super(this);
 			this.stage = stage; 
 			enableDispatcher();

@@ -14,7 +14,7 @@ package org.tuio.legacy
 	import org.tuio.debug.ITuioDebugBlob;
 	import org.tuio.debug.ITuioDebugCursor;
 	import org.tuio.debug.ITuioDebugObject;
-	import org.tuio.interactionClients.AbstractInteractionClient;
+	import org.tuio.adapters.AbstractTuioAdapter;
 
 	/**
 	 * Adopts function of <code>TUIO</code> class from Touchlib's Tuio AS3 framework. All functions of
@@ -50,7 +50,7 @@ package org.tuio.legacy
 	public class TuioLegacyListener extends EventDispatcher implements ITuioListener
 	{
 		private var stage:Stage;
-		private var interactionClient:AbstractInteractionClient;
+		private var interactionClient:AbstractTuioAdapter;
 		private var listenOnIdsArray:Array;
 		private var firstPos:Array;
 		private var lastPos:Array;
@@ -62,7 +62,7 @@ package org.tuio.legacy
 		public var connected:Boolean = true;
 		
 		
-		public function TuioLegacyListener(stage:Stage, interactionClient:AbstractInteractionClient){
+		public function TuioLegacyListener(stage:Stage, interactionClient:AbstractTuioAdapter){
 			if (!allowInst) {
 	            throw new Error("Error: Instantiation failed: Use TuioLegacyListener.getInstance() instead of new.");
 			}else{
@@ -86,7 +86,7 @@ package org.tuio.legacy
 		 * @return singleton instance of <code>TuioLegacyListener</code>.
 		 * 
 		 */
-		public static function init(stage:Stage, interactionClient:AbstractInteractionClient):TuioLegacyListener{
+		public static function init(stage:Stage, interactionClient:AbstractTuioAdapter):TuioLegacyListener{
 			if(inst == null){
 				allowInst = true;
 				inst = new TuioLegacyListener(stage, interactionClient);

@@ -1,6 +1,6 @@
 ﻿package org.tuio {
 	
-	import org.tuio.interactionClients.AbstractInteractionClient;
+	import org.tuio.adapters.AbstractTuioAdapter;
 	import org.tuio.osc.*;
 	
 	/**
@@ -9,7 +9,7 @@
 	 * 
 	 * @author Immanuel Bauer
 	 */
-	public class TuioClient extends AbstractInteractionClient implements IOSCListener{
+	public class TuioClient extends AbstractTuioAdapter implements IOSCListener{
 			
 		private var oscManager:OSCManager;
 		
