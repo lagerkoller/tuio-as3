@@ -103,13 +103,6 @@ package org.tuio.gestures {
 					inst = new GestureManager();
 					inst.stage = stage;
 					allowInst = false;
-					
-					//this.addGesture(new ScrollGesture());
-					//this.addGesture(new OneDownOneMoveGesture());
-					//this.addGesture(new PressTapGesture());
-					GestureManager.addGesture(new ZoomGesture());
-					GestureManager.addGesture(new RotateGesture());
-					//this.addGesture(new ThreeFingerMoveGesture());
 				}
 			}
 			
@@ -173,7 +166,7 @@ package org.tuio.gestures {
 			var temp:Array = new Array();
 			var l:int = this.activeGestures.length;
 			var used:Boolean = false;
-			
+
 			for (var c:int = 0; c < l; c++ ) {
 				var m:GestureStepSequence = this.activeGestures.pop();
 				var r:uint = m.step(event, target, tuioContainer);

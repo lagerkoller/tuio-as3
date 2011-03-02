@@ -4,8 +4,7 @@ package org.tuio.gestures {
 	import flash.events.TransformGestureEvent;
 	import flash.geom.Point;
 	import flash.utils.getTimer;
-	import org.tuio.TuioEvent;
-	import org.tuio.TuioTouchEvent;
+	import org.tuio.*
 	
 	public class RotateGesture extends TwoFingerMoveGesture {
 		
@@ -16,10 +15,12 @@ package org.tuio.gestures {
 		}
 		
 		public override function dispatchGestureEvent(target:DisplayObject, gsg:GestureStepSequence):void {
-			var center:Point = new Point((gsg.getTuioContainer("B").x + gsg.getTuioContainer("A").x)/2, (gsg.getTuioContainer("B").y + gsg.getTuioContainer("A").y)/2);
+			var a:TuioContainer = gsg.getTuioContainer("A");
+			var b:TuioContainer = gsg.getTuioContainer("B");
+			var center:Point = new Point((b.x + a.x)/2, (b.y + a.y)/2);
 			var vector:Point;
-			if (gsg.getTuioContainer("A").y > gsg.getTuioContainer("B").y) vector = new Point(gsg.getTuioContainer("A").x - gsg.getTuioContainer("B").x, gsg.getTuioContainer("A").y - gsg.getTuioContainer("B").y);
-			else vector = new Point(gsg.getTuioContainer("B").x - gsg.getTuioContainer("A").x, gsg.getTuioContainer("B").y - gsg.getTuioContainer("A").y);
+			if (a.y > b.y) vector = new Point(a.x - b.x, a.y - b.y);
+			else vector = new Point(b.x - a.x, b.y - a.y);
 			var length:Number = Math.sqrt(Math.pow(vector.x, 2) + Math.pow(vector.y, 2));
 			var angle:Number = Math.acos( vector.x / length);
 			lastAngle = Number(gsg.getValue("lA"));
@@ -34,9 +35,11 @@ package org.tuio.gestures {
 					rotation = rotation + 180;
 				}
 			} 
+			
 			gsg.storeValue("lA", angle);
-			var localPos:Point = gsg.getTarget("A").globalToLocal(new Point(center.x * gsg.getTarget("A").stage.stageWidth, center.y * gsg.getTarget("A").stage.stageHeight));
-			gsg.getTarget("A").dispatchEvent(new TransformGestureEvent(TransformGestureEvent.GESTURE_ROTATE, true, false, null, localPos.x, localPos.y, 0, 0, rotation)); ;
+			var target:DisplayObject = gsg.getTarget("A");
+			var localPos:Point = target.globalToLocal(new Point(center.x * target.stage.stageWidth, center.y * target.stage.stageHeight));
+			target.dispatchEvent(new TransformGestureEvent(TransformGestureEvent.GESTURE_ROTATE, true, false, null, localPos.x, localPos.y, 0, 0, rotation)); ;
 		}
 		
 	}
