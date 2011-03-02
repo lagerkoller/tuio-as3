@@ -1,5 +1,6 @@
 package org.tuio.gestures {
 	
+	import examples.gestures.GestureManagerExample;
 	import flash.display.DisplayObject;
 	import flash.utils.getTimer;
 	import org.tuio.TuioContainer;
@@ -13,27 +14,21 @@ package org.tuio.gestures {
 	public class TwoFingerMoveGesture extends Gesture {
 		
 		public function TwoFingerMoveGesture() {
-				//if there is a touch move go to the next step
 			this.addStep(new GestureStep(TuioTouchEvent.TOUCH_MOVE, { tuioContainerAlias:"A", frameIDAlias:"!A", targetAlias:"A" } ));
-				//if there is another touch move in the same tuio frame with another session id go to the next step
 			this.addStep(new GestureStep(TuioTouchEvent.TOUCH_MOVE, { tuioContainerAlias:"B", frameIDAlias:"A", targetAlias:"A" } ));
-				//if either of the two earlier touches ends die else skip if next non dying step is saturated
+			this.addStep(new GestureStep(TuioTouchEvent.TOUCH_MOVE, { die:true, tuioContainerAlias:"!C", frameIDAlias:"A", targetAlias:"A"} ));
+			this.addStep(new GestureStep(TuioEvent.NEW_FRAME, {} ));
 			this.addStep(new GestureStep(TuioTouchEvent.TOUCH_UP, { die:true, tuioContainerAlias:"A" } ));
 			this.addStep(new GestureStep(TuioTouchEvent.TOUCH_UP, { die:true, tuioContainerAlias:"B" } ));
-				//if there is any other touch move by another touch die else skip if next non dying step is saturated
 			this.addStep(new GestureStep(TuioTouchEvent.TOUCH_MOVE, { die:true, tuioContainerAlias:"!C", targetAlias:"A" } ));
-				//if there is a new touch move by the same finger registered earlier go to the next step
-			this.addStep(new GestureStep(TuioTouchEvent.TOUCH_MOVE, { tuioContainerAlias:"A", frameIDAlias:"!A", targetAlias:"A" } ));
-				//if either of the two earlier touches ends die else skip if next non dying step is saturated
-			this.addStep(new GestureStep(TuioTouchEvent.TOUCH_UP, { die:true, tuioContainerAlias:"A" } ));
+			this.addStep(new GestureStep(TuioTouchEvent.TOUCH_MOVE, { optional:true, tuioContainerAlias:"B", goto:4 } ));
+			this.addStep(new GestureStep(TuioTouchEvent.TOUCH_MOVE, { tuioContainerAlias:"A"} ));
+			this.addStep(new GestureStep(TuioEvent.NEW_FRAME, { optional:true, goto:5 } ));
 			this.addStep(new GestureStep(TuioTouchEvent.TOUCH_UP, { die:true, tuioContainerAlias:"B" } ));
-				//if there is any other touch move by another touch die else skip if next non dying step is saturated
+			this.addStep(new GestureStep(TuioTouchEvent.TOUCH_MOVE, { die:true, tuioContainerAlias:"!C", targetAlias:"A" } ));	
+			this.addStep(new GestureStep(TuioTouchEvent.TOUCH_MOVE, { tuioContainerAlias:"B" } ));
 			this.addStep(new GestureStep(TuioTouchEvent.TOUCH_MOVE, { die:true, tuioContainerAlias:"!C", targetAlias:"A" } ));
-				//if there is a new touch move by the same finger registered earlier in the same frame as the earlier move go to the next step
-			this.addStep(new GestureStep(TuioTouchEvent.TOUCH_MOVE, { tuioContainerAlias:"B", frameIDAlias:"A", targetAlias:"A" } ));
-			this.addStep(new GestureStep(TuioTouchEvent.TOUCH_MOVE, { die:true, tuioContainerAlias:"!C", targetAlias:"A" } ));
-				//if there is a new tuio frame go to step 3 
-			this.addStep(new GestureStep(TuioEvent.NEW_FRAME, {goto:3} ));
+			this.addStep(new GestureStep(TuioEvent.NEW_FRAME, { goto:5 } ));
 		}
 		
 		public override function dispatchGestureEvent(target:DisplayObject, gsg:GestureStepSequence):void {

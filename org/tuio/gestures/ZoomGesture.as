@@ -4,6 +4,7 @@ package org.tuio.gestures {
 	import flash.events.TransformGestureEvent;
 	import flash.geom.Point;
 	import flash.utils.getTimer;
+	import org.tuio.TuioContainer;
 	import org.tuio.TuioEvent;
 	import org.tuio.TuioTouchEvent;
 	
@@ -16,10 +17,12 @@ package org.tuio.gestures {
 		}
 		
 		public override function dispatchGestureEvent(target:DisplayObject, gsg:GestureStepSequence):void {
-			var diffX:Number = gsg.getTuioContainer("A").X * gsg.getTuioContainer("B").X;
-			var diffY:Number = gsg.getTuioContainer("A").Y * gsg.getTuioContainer("B").Y;
+			var a:TuioContainer = gsg.getTuioContainer("A");
+			var b:TuioContainer = gsg.getTuioContainer("B");
+			var diffX:Number = a.X * b.X;
+			var diffY:Number = a.Y * b.Y;
 			if (diffX <= 0 || diffY <= 0) {                           
-				var distance:Number = Math.sqrt(Math.pow(gsg.getTuioContainer("A").x - gsg.getTuioContainer("B").x, 2) + Math.pow(gsg.getTuioContainer("A").y - gsg.getTuioContainer("B").y, 2));
+				var distance:Number = Math.sqrt(Math.pow(a.x - b.x, 2) + Math.pow(a.y - b.y, 2));
 				var scale:Number = 1;
 				lastDistance = Number(gsg.getValue("lD"));
 				
@@ -27,10 +30,11 @@ package org.tuio.gestures {
 					scale = distance / lastDistance;
 				}
 				
-				var center:Point = new Point((gsg.getTuioContainer("B").x + gsg.getTuioContainer("A").x)/2, (gsg.getTuioContainer("B").y + gsg.getTuioContainer("A").y)/2);
-				var localPos:Point = gsg.getTarget("A").globalToLocal(new Point(center.x * gsg.getTarget("A").stage.stageWidth, center.y * gsg.getTarget("A").stage.stageHeight));
-				gsg.getTarget("A").dispatchEvent(new TransformGestureEvent(TransformGestureEvent.GESTURE_ZOOM, true, false, null, localPos.x, localPos.y, scale, scale));
 				gsg.storeValue("lD", distance);
+				var center:Point = new Point((b.x + a.x)/2, (b.y + a.y)/2);
+				var target:DisplayObject = gsg.getTarget("A");
+				var localPos:Point = target.globalToLocal(new Point(center.x * target.stage.stageWidth, center.y * target.stage.stageHeight));
+				target.dispatchEvent(new TransformGestureEvent(TransformGestureEvent.GESTURE_ZOOM, true, false, null, localPos.x, localPos.y, scale, scale));
 			}
 		}
 		

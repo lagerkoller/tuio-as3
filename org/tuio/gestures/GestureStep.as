@@ -13,6 +13,7 @@ package org.tuio.gestures {
 		private var _minDelay:uint;
 		private var _maxDelay:uint;
 		private var _die:Boolean;
+		private var _optional:Boolean;
 		private var _prepareTime:int;
 		private var _goto:int;
 		
@@ -28,6 +29,7 @@ package org.tuio.gestures {
 		 *	<li><b>minDelay</b> Sets the minimum delay in ms for the specified event. After this delay an incoming event is accepted.</li>
 		 *	<li><b>maxDelay</b> Sets the maximum allowed delay in ms for the specified event. After this the gesture fails.</li>
 		 *	<li><b>die</b> If set true the gesture fails if the <code>GestureStep</code> is saturated. <code>GestureStep</code>s that have die set true are optional and if the next <code>GestureStep</code> with die set false is saturated will be skipped.</li>
+		 *	<li><b>optional</b> If set true the <code>GestureStep</code> will be skipped if it doesn't saturate or dies and the next <code>GestureStep</code> is saturated. If an optional <code>GestureStep</code> dies this won't cause the whole gesture to die.
 		 *	<li><b>goto</b> If set to a value between [1-n° of steps] the next check will occur on the specified <code>GestureStep</code>. This is basically for creating loops e.g. jump to an earlier step after reaching the final step.</li>
 		 * </ul>
 		 * 
@@ -42,6 +44,7 @@ package org.tuio.gestures {
 			this._minDelay = (properties.minDelay)?(properties.minDelay as uint):0;
 			this._maxDelay = (properties.maxDelay)?(properties.maxDelay as uint):0;
 			this._die = (properties.die)?(properties.die as Boolean):false;
+			this._optional = (properties.optional)?(properties.optional as Boolean):false;
 			this._goto = (properties.goto)?(properties.goto as int):0;
 		}
 		
@@ -109,7 +112,8 @@ package org.tuio.gestures {
 				minDelay:this._minDelay,
 				maxDelay:this._maxDelay,
 				goto:this._goto,
-				die:this._die 
+				die:this._die,
+				optional:this._optional
 			});
 		}
 		
@@ -118,6 +122,13 @@ package org.tuio.gestures {
 		 */
 		public function get dies():Boolean {
 			return this._die;
+		}
+		
+		/**
+		 * <code>true</code> if the <code>GestureStep</code> is optional and can be skipped
+		 */
+		public function get optional():Boolean {
+			return this._optional;
 		}
 		
 		/**

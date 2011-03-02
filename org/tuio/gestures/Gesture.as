@@ -58,9 +58,9 @@ package org.tuio.gestures {
 		 * Is called if the last step of the gesture's step sequence is saturated.
 		 * 
 		 * @param	target The target <code>InteractiveObject</code>
-		 * @param	gsg The <code>GestureStepSequence</code> object storing the aliases and values that have been stored according to the <code>GestureStep</code>'s definitions. 
+		 * @param	gss The <code>GestureStepSequence</code> object storing the aliases and values that have been stored according to the <code>GestureStep</code>'s definitions. 
 		 */
-		public function dispatchGestureEvent(target:DisplayObject, gsg:GestureStepSequence):void {
+		public function dispatchGestureEvent(target:DisplayObject, gss:GestureStepSequence):void {
 			trace("dispatching");
 		}
 		

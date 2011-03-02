@@ -214,12 +214,14 @@ package org.tuio.gestures {
 			var result:uint = step.step(event, target, tuioContainer);
 			var dieOffset:int = 0;
 			var goto:int;
-			
+
 			while (true) {
 				if (result == Gesture.SATURATED && !step.dies) {
 					stepPosition++;
 					this.gesture.dispatchEvent(new GestureStepEvent(GestureStepEvent.SATURATED, stepPosition, this));
 					if (stepPosition < steps.length) {
+						goto = step.goto;
+						if (goto > 0 && goto <= steps.length) stepPosition = goto - 1;
 						prepareNext();
 						return Gesture.PROGRESS;
 					} else {
@@ -232,8 +234,8 @@ package org.tuio.gestures {
 						}
 						return Gesture.SATURATED;
 					}
-				} else if (result == Gesture.ALIVE || (result == Gesture.DEAD && step.dies)) {
-					if (step.dies) {
+				} else if (result == Gesture.ALIVE || (result == Gesture.DEAD && (step.dies || step.optional))) {
+					if (step.dies || step.optional) {
 						stepPosition++;
 						dieOffset++;
 						step = this.steps[stepPosition] as GestureStep;
