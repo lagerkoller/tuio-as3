@@ -3,17 +3,21 @@ package org.tuio {
 	import flash.display.DisplayObject;
 	import flash.display.InteractiveObject;
 	import flash.display.Stage;
+	import flash.events.Event;
 	import flash.events.EventDispatcher;
 	import flash.events.MouseEvent;
 	import flash.geom.Point;
 	import flash.utils.Dictionary;
+	import flash.utils.clearTimeout;
 	import flash.utils.getTimer;
+	import flash.utils.setTimeout;
 	
 	import org.tuio.debug.ITuioDebugBlob;
 	import org.tuio.debug.ITuioDebugCursor;
 	import org.tuio.debug.ITuioDebugObject;
 	import org.tuio.debug.ITuioDebugTextSprite;
 	import org.tuio.fiducial.*;
+	import org.tuio.util.DisplayListHelper;
 	
 	/**@eventType org.tuio.TuioEvent.ADD*/
 	[Event(name = "org.tuio.TuioEvent.add", type = "org.tuio.TuioEvent")]
@@ -85,7 +89,6 @@ package org.tuio {
 		//if true native TouchEvents are dispatched alongside the org.tuio.TuioTouchEvents
 		private var _dispatchNativeTouchEvents:Boolean = false;
 		
-//		private var _tuioClient:TuioClient;
 		private var lastTarget:Array;
 		private var firstTarget:Array;
 		private var tapped:Array;
@@ -99,6 +102,25 @@ package org.tuio {
 		
 		private static var allowInst:Boolean;
 		private static var inst:TuioManager;
+		
+		
+		/////////////////////fiducial properties///////////////////////
+		private var receivers:Array;
+		private var removalTimes:Array;
+		
+		private const ROTATION_MINIMUM:Number = 0.05;
+		private const MOVEMENT_MINIMUM:Number = 3;
+		private const ROTATION_SHIFT_DEFAULT:Number = 0;
+		private const TIMEOUT_TIME_DEFAULT:Number = 1000;
+		
+		private var _timeoutTime:Number;
+		private var _rotationShift:Number;
+		private var _invertRotation:Boolean;
+		
+		private var lastFiducialTarget:Array;
+		private var firstFiducialTarget:Array;
+		
+		////////////////////////////////////////////////////////
 		
 		/**
 		 * Creates a new TuioManager instance which processes the Tuio tracking data received by the given TuioClient.
@@ -117,6 +139,16 @@ package org.tuio {
 				this.hold = new Array();
 				this.ignoreList = new Array();
 				this.touchReceiversDict = new Dictionary();
+				
+				/////////////////////fiducial stuff///////////////////////
+				this._rotationShift = ROTATION_SHIFT_DEFAULT;
+				this._timeoutTime = TIMEOUT_TIME_DEFAULT;
+				
+				receivers = new Array();
+				removalTimes = new Array();
+				this.lastFiducialTarget = new Array();
+				this.firstFiducialTarget = new Array();
+				////////////////////////////////////////////////////////
 			}
 		}
 		
@@ -518,18 +550,127 @@ package org.tuio {
 			this.dispatchEvent(new TuioEvent(TuioEvent.ADD_OBJECT, tuioObject));
 			this.dispatchEvent(new TuioEvent(TuioEvent.ADD, tuioObject));
 			if(triggerTouchOnObject) this.handleAdd(tuioObject);
+			
+			/////////////////////added from fiducial dispatcher///////////////////////
+			for each(var receiverObject:Object in receivers){
+				if(receiverObject.classID == tuioObject.classID){
+					if(receiverObject.tuioObject != null){
+						//object is still existing because it had been lost while tracking
+						//update object and stop timer
+						(receiverObject.receiver as ITuioFiducialReceiver).onNotifyReturned(createFiducialEvent(
+							TuioFiducialEvent.NOTIFY_RETURNED, 
+							tuioObject)
+						);
+						//stop return timeout for this fiducial
+						for(var i:Number = 0; i <  removalTimes.length; i++){
+							var removalTimeObject:Object = removalTimes[i]; 
+							if(removalTimeObject.receiverObject.classId == receiverObject.classId){
+								clearTimeout(removalTimeObject.timeoutId);
+								removalTimes.splice(i,1);
+							}
+						}
+						callUpdateMethods(receiverObject, receiverObject.tuioObject, tuioObject);
+					}else{
+						//object does not exist yet. call add, move and rotation method callbacks.
+						receiverObject.tuioObject = tuioObject.clone();
+						(receiverObject.receiver as ITuioFiducialReceiver).onAdd(createFiducialEvent(
+							TuioFiducialEvent.ADD, 
+							tuioObject)
+						);
+						receiverObject.receiver.onMove(createFiducialEvent(TuioFiducialEvent.MOVE, tuioObject));
+						receiverObject.receiver.onRotate(createFiducialEvent(TuioFiducialEvent.ROTATE,tuioObject));
+					}
+				}
+			}
+			
+			var stagePos:Point = new Point(stage.stageWidth * tuioObject.x, stage.stageHeight * tuioObject.y);
+			var target:DisplayObject = DisplayListHelper.getTopDisplayObjectUnderPoint(stagePos, stage);
+			var local:Point = target.globalToLocal(new Point(stagePos.x, stagePos.y));
+			
+			firstFiducialTarget[tuioObject.sessionID] = target;
+			lastFiducialTarget[tuioObject.sessionID] = target;
+			
+			//dispatch ADD event on DisplayObject under fiducial
+			target.dispatchEvent(createFiducialEvent(
+				TuioFiducialEvent.ADD, 
+				tuioObject));
+			
+			//dispatch OVER event on DisplayObject under fiducial
+			target.dispatchEvent(createFiducialEvent(
+				TuioFiducialEvent.OVER, 
+				tuioObject));
+			////////////////////////////////////////////
 		}
 		
 		public function updateTuioObject(tuioObject:TuioObject):void {
 			this.dispatchEvent(new TuioEvent(TuioEvent.UPDATE_OBJECT, tuioObject));
 			this.dispatchEvent(new TuioEvent(TuioEvent.UPDATE, tuioObject));
 			if(triggerTouchOnObject) this.handleUpdate(tuioObject);
+			
+			/////////////////////added from fiducial dispatcher///////////////////////
+			var stagePos:Point = new Point(stage.stageWidth * tuioObject.x, stage.stageHeight * tuioObject.y);
+			var target:DisplayObject = DisplayListHelper.getTopDisplayObjectUnderPoint(stagePos, stage);
+			var local:Point = target.globalToLocal(new Point(stagePos.x, stagePos.y));
+			
+			for each(var receiverObject:Object in receivers){
+				if(receiverObject.classID == tuioObject.classID){
+					//compare rotation, movement and so on and call according callback methods
+					callUpdateMethods(receiverObject, receiverObject.tuioObject, tuioObject);
+				}
+			}
+			dispatchUpdateEvents(tuioObject);
+			
+			if(target != lastFiducialTarget[tuioObject.sessionID]){
+				target.dispatchEvent(createFiducialEvent(
+					TuioFiducialEvent.OVER, 
+					tuioObject));
+				
+				lastFiducialTarget[tuioObject.sessionID].dispatchEvent(createFiducialEvent(
+					TuioFiducialEvent.OUT, 
+					tuioObject));
+			}
+			lastFiducialTarget[tuioObject.sessionID] = target;
+			////////////////////////////////////////////
 		}
 		
 		public function removeTuioObject(tuioObject:TuioObject):void {
 			this.dispatchEvent(new TuioEvent(TuioEvent.REMOVE_OBJECT, tuioObject));
 			this.dispatchEvent(new TuioEvent(TuioEvent.REMOVE, tuioObject));
 			if(triggerTouchOnObject) this.handleRemove(tuioObject);
+			
+			/////////////////////added from fiducial dispatcher///////////////////////
+			var stagePos:Point = new Point(stage.stageWidth * tuioObject.x, stage.stageHeight * tuioObject.y);
+			var target:DisplayObject = DisplayListHelper.getTopDisplayObjectUnderPoint(stagePos, stage);
+			var local:Point = target.globalToLocal(new Point(stagePos.x, stagePos.y));
+			
+			for each(var receiverObject:Object in receivers){
+				if(receiverObject.classID == tuioObject.classID){
+					(receiverObject.receiver as ITuioFiducialReceiver).onNotifyRemoved(
+						createFiducialEvent(TuioFiducialEvent.NOTIFY_REMOVED, tuioObject), 
+						_timeoutTime);
+					var timeoutId:Number = setTimeout(checkTimeouts, _timeoutTime);
+					var removalObject:Object = new Object();
+					removalObject.timeout = getTimer()+_timeoutTime;
+					removalObject.receiverObject = receiverObject;
+					removalObject.timeoutId = timeoutId;
+					removalTimes.push(removalObject);
+					break;
+				}
+			}
+			
+			//dispatch REMOVED event on DisplayObject under fiducial
+			target.dispatchEvent(createFiducialEvent(
+				TuioFiducialEvent.REMOVED, 
+				tuioObject));
+			if(target != lastFiducialTarget[tuioObject.sessionID]){
+				target.dispatchEvent(createFiducialEvent(
+					TuioFiducialEvent.OUT, 
+					tuioObject));
+			}
+			lastFiducialTarget[tuioObject.sessionID].dispatchEvent(createFiducialEvent(
+				TuioFiducialEvent.OUT, 
+				tuioObject));
+			////////////////////////////////////////////
 		}
 
 		public function addTuioCursor(tuioCursor:TuioCursor):void {
@@ -572,9 +713,194 @@ package org.tuio {
 			this.dispatchEvent(new TuioEvent(TuioEvent.NEW_FRAME, null));
 		}
 		
-//		public function get tuioClient():TuioClient{
-//			return _tuioClient;
+		/////////////////////fiducial functions///////////////////////
+		private function dispatchUpdateEvents(newTuioObject:TuioObject):void{
+			//dispatch MOVE event on DisplayObject under fiducial
+			var stagePos:Point = new Point(stage.stageWidth * newTuioObject.x, stage.stageHeight * newTuioObject.y);
+			getTopDisplayObjectUnderPoint(stagePos).dispatchEvent(createFiducialEvent(
+				TuioFiducialEvent.MOVE, 
+				newTuioObject));
+			//dispatch ROTATE event on DisplayObject under fiducial
+			getTopDisplayObjectUnderPoint(stagePos).dispatchEvent(createFiducialEvent(
+				TuioFiducialEvent.ROTATE, 
+				newTuioObject));
+		}
+		
+		private function callUpdateMethods(receiverObject:Object, oldTuioObject:TuioObject, newTuioObject:TuioObject):void{
+			if(oldTuioObject){
+				//check for movement and rotation
+				var distX:Number = oldTuioObject.x*stage.stageWidth-newTuioObject.x*stage.stageWidth;
+				var distY:Number = oldTuioObject.y*stage.stageHeight-newTuioObject.y*stage.stageHeight;
+				var dist:Number = Math.sqrt(distX*distX+distY*distY);
+				var angleDist:Number = Math.abs(oldTuioObject.a - newTuioObject.a);
+				
+				//to prevent flickering of fiducial graphics updates are 
+				//only triggered if movement or rotation exceed threshold
+				if(dist > MOVEMENT_MINIMUM || angleDist > ROTATION_MINIMUM){
+					if(dist > 0){
+						receiverObject.receiver.onMove(createFiducialEvent(TuioFiducialEvent.MOVE, newTuioObject));
+					}
+					if(angleDist > 0){
+						receiverObject.receiver.onRotate(createFiducialEvent(TuioFiducialEvent.ROTATE, newTuioObject));
+					}
+					receiverObject.tuioObject = newTuioObject.clone();
+				}
+			}else{
+				//call move callback function
+				receiverObject.receiver.onMove(createFiducialEvent(TuioFiducialEvent.MOVE, newTuioObject));
+				//call rotate callback function
+				receiverObject.receiver.onRotate(createFiducialEvent(TuioFiducialEvent.ROTATE, newTuioObject));
+				//update tuioObject to be able to check for movement and rotation
+				receiverObject.tuioObject = newTuioObject.clone();
+			}
+			
+		}
+		
+		private function checkTimeouts():void{
+			var firstTimeout:Number = removalTimes[0].timeout;
+			
+			if(firstTimeout <= getTimer()){
+				var removalTimeObject:Object = removalTimes.shift(); 
+				(removalTimeObject.receiverObject.receiver as ITuioFiducialReceiver).onRemove(null);
+				for(var i:Number = 0; i < receivers.length; i++){
+					if(removalTimeObject.receiverObject.classID == receivers[i].classID){
+						receivers[i].tuioObject = null;
+					}
+				}
+			}
+			if(removalTimes.length == 0){
+				removeEventListener(Event.ENTER_FRAME, checkTimeouts);
+			}
+		}
+		
+		/**
+		 * adds a callback object to TuioFiducialDispatcher.
+		 * 
+		 * @param receiver object that should be notified if a fiducial with the id fiducialId is changed.
+		 * @param fiducialId fiducial id on which TuioFiducialDispatcher should listen
+		 * 
+		 */
+		public function registerFiducialReceiver(receiver:ITuioFiducialReceiver, fiducialId:Number):void{
+			var receiverObject:Object = new Object();
+			receiverObject.receiver = receiver;
+			receiverObject.classID = fiducialId;
+			receivers.push(receiverObject);
+		}
+		
+		/**
+		 * removes a callback object from TuioFiducialDispatcher.
+		 * 
+		 * @param receiver object that should be notified if a fiducial with the id fiducialId is changed.
+		 * @param fiducialId fiducial id on which TuioFiducialDispatcher should listen.
+		 * 
+		 */
+		public function removeFiducialReceiver(receiver:ITuioFiducialReceiver, fiducialId:Number):void{
+			var i:Number = 0;
+			for each(var receiverObject:Object in receivers){
+				if(receiverObject.receiver == receiver && receiverObject.classID == fiducialId){
+					receivers.splice(i,1);
+					break;
+				}
+				i = i+1;
+			}
+			
+		}
+		private function createFiducialEvent(type:String, tuioObject:TuioObject):TuioFiducialEvent{
+			var stagePos:Point = new Point(stage.stageWidth * tuioObject.x, stage.stageHeight * tuioObject.y);
+			var target:DisplayObject = getTopDisplayObjectUnderPoint(stagePos);
+			var local:Point = target.globalToLocal(new Point(stagePos.x, stagePos.y));
+			
+			var fiducialEvent:TuioFiducialEvent = new TuioFiducialEvent(type, 
+				local.x,
+				local.y,
+				stagePos.x,
+				stagePos.y,
+				target,
+				tuioObject);
+			
+			//calculate rotation
+			if(!_invertRotation){
+				fiducialEvent.rotation = tuioObject.a * 180 / Math.PI+_rotationShift;
+			}else{
+				var invertedValue:Number = 2*Math.PI - tuioObject.a; 
+				fiducialEvent.rotation = invertedValue * 180 / Math.PI+_rotationShift;
+			}
+			
+			return fiducialEvent;
+		}
+		
+//		private function getTopDisplayObjectUnderPoint(point:Point):DisplayObject {
+//			var targets:Array =  stage.getObjectsUnderPoint(point);
+//			var item:DisplayObject = (targets.length > 0) ? targets[targets.length - 1] : stage;
+//			
+//			var topmostDisplayObject:DisplayObject;
+//			
+//			while(targets.length > 0) {
+//				item = targets.pop();
+//				//ignore debug cursor/object/blob and send object under debug cursor/object/blob
+//				if((item is ITuioDebugCursor || item is ITuioDebugBlob || item is ITuioDebugObject) && targets.length > 1){
+//					continue;
+//				}
+//				topmostDisplayObject = item;
+//				break;
+//			}
+//			if(topmostDisplayObject == null){
+//				topmostDisplayObject = stage;
+//			}
+//			
+//			return topmostDisplayObject;
 //		}
+		
+		
+		/**
+		 * time, which TuioFiducialDispatcher should wait until it calls the onRemove callback function
+		 * of a receiver object after a tuio object has been removed from stage.
+		 * 
+		 * @return timeout time
+		 * 
+		 * @see ITuioFiducialReceiver
+		 * 
+		 */
+		public function get timeoutTime():Number{
+			return _timeoutTime;
+		}
+		public function set timeoutTime(timeoutTime:Number):void{
+			_timeoutTime = timeoutTime;
+		}
+		
+		
+		/**
+		 * Fixed degree value, which is added to the rotation value. Trackers behave differently in how they calculate
+		 * the rotation of a fiducial on their surface. Thus, rotationShift can be set according to a 
+		 * tracker's properties. The simulator does not need any shift.
+		 * 
+		 * @return rotationShift as degree value.
+		 * 
+		 */
+		public function get rotationShift():Number{
+			return _timeoutTime;
+		}
+		public function set rotationShift(rotationShift:Number):void{
+			_rotationShift = rotationShift;
+		}
+		
+		/**
+		 * Some trackers invert the rotation of a fiducial. Thus, by setting invertRotation true
+		 * the rotation of a fiducial will be inverted.
+		 *  
+		 * @return invertRotation
+		 * 
+		 */
+		public function get invertRotation():Boolean{
+			return _invertRotation;
+		}
+		public function set invertRotation(invertRotation:Boolean):void{
+			_invertRotation = invertRotation;
+		}
+		
+		
+		////////////////////////////////////////////////////////
+		
 	}
 	
 }
