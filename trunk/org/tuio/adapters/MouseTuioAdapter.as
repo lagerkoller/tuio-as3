@@ -27,17 +27,16 @@ package org.tuio.adapters
 	 * them on <code>DisplayObject</code>s under the mouse pointer.
 	 * 
 	 * Additionally, it provides means to simulate multi-touch input with a single mouse.
-	 * By pressing the 'Shift' key a touch can be added permanently. By pressing the 'Ctrl'
-	 * in Windows or the 'Command' key in Mac OS X a touch will be added to a group. Furthermore,
-	 * object interaction can be simulated by choosing a fiducial id from the context menu and
+	 * By pressing the 'Shift' key a touch can be added permanently. Pressing the 'Ctrl' key
+	 * in Windows or the 'Command' key in Mac OS X while clicking a touch, will add the touch to a group. 
+	 * Furthermore, object interaction can be simulated by choosing a fiducial id from the context menu and
 	 * manipulating the debug representation of the fiducial subsequently. It can be dragged around
 	 * or if 'r' is pressed it can be rotated. If 'Shift' is pressed a fiducial will be removed.
 	 * 
-	 * A group of touches will be moved around together. To rotate a group of touches, press
-	 * the 'r' key, while dragging. To make a group disappear after dragging hold the 'Space'
-	 * key while dragging. This is very handy, if you want to test physical properties of an
-	 * object like inertia around an angle. This is not possible e.g. with the Tuio Simulator
-	 * or SimTouch. 
+	 * A group of touches will be moved around together. To rotate a group of touches, hold
+	 * the 'r' key, while dragging. To move the touches apart from or towards each other (e.g., to perform pinch/scale
+	 * gestures) hold the 's' key while dragging. To make a group disappear after dragging hold the 'Space'
+	 * key while dragging. The latter is handy if you want to test physical properties like inertia of a group of objects.  
 	 * 
 	 * 
 	 * @author Johannes Luderschmidt

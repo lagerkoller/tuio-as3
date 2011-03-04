@@ -47,13 +47,25 @@ package org.tuio {
 	/**
 	 * The TuioManager class implements the ITuioListener interface and triggers events 
 	 * into Flash's event flow according to the called callback functions.
+	 * 
 	 * <p><b>Triggered events</b></p>
 	 * <ul>
 	 * 	<li>TuioEvent: Is triggered on the TuioManager itself.</li>
 	 * 	<li>TuioTouchEvent: Is triggered on DisplayObjects under the tracked point according to the TuioManager's settings.</li>
+	 * 	<li>TuioFiducialEvent: Is triggered on DisplayObjects under the tracked point according to the TuioManager's settings.</li>
+	 * </ul>
+	 * 
+	 <p><b>Callback system</b></p>
+	 * <ul>
+	 * 	<li>Touches: Callbacks can register themselves in order to receive callbacks for a certain session id. 
+	 * 	A touch callback class must implement <code>ITuioTouchReceiver</code>.</li>
+	 * 	<li>Fiducials: Callbacks can register themselves in order to receive callbacks for a certain fiducial id. 
+	 * 	A fiducial callback class must implement <code>ITuioFiducialReceiver</code>.</li>
 	 * </ul>
 	 * 
 	 * @author Immanuel Bauer
+	 * @author Johannes Luderschmidt
+	 * 
 	 */
 	public class TuioManager extends EventDispatcher implements ITuioListener {
 		
@@ -104,7 +116,7 @@ package org.tuio {
 		private static var inst:TuioManager;
 		
 		
-		/////////////////////fiducial properties///////////////////////
+		/////////////////////properties integrated from TuioFiducialDispatcher///////////////////////
 		private var receivers:Array;
 		private var removalTimes:Array;
 		
@@ -119,7 +131,6 @@ package org.tuio {
 		
 		private var lastFiducialTarget:Array;
 		private var firstFiducialTarget:Array;
-		
 		////////////////////////////////////////////////////////
 		
 		/**
@@ -140,7 +151,7 @@ package org.tuio {
 				this.ignoreList = new Array();
 				this.touchReceiversDict = new Dictionary();
 				
-				/////////////////////fiducial stuff///////////////////////
+				/////////////////////constructor integrated from TuioFiducialDispatcher///////////////////////
 				this._rotationShift = ROTATION_SHIFT_DEFAULT;
 				this._timeoutTime = TIMEOUT_TIME_DEFAULT;
 				
@@ -315,20 +326,30 @@ package org.tuio {
 		}
 		
 		/**
-		 * adds a touch callback class to TuioManager that listens on a certain sessionId.
+		 * adds a touch callback class that is called when a TUIO 2dcur or 2dblb with a certain sessionId
+		 * is added, updated or removed.
 		 * 
 		 * @param receiver callback class.
 		 * @param sessionId of the cursor/blob to listen to.
 		 * 
 		 */
-		public function registerReceiver(receiver:ITuioTouchReceiver, sessionId:Number):void{
+		public function registerTouchReceiver(receiver:ITuioTouchReceiver, sessionId:Number):void{
 			if(!this.touchReceiversDict[sessionId]){
 				this.touchReceiversDict[sessionId] = new Array();
 			}
 			this.touchReceiversDict[sessionId].push(receiver);	
 		}
 		
-		public function removeReceiver(receiver:ITuioTouchReceiver, sessionId:Number):void{
+		/**
+		 * removes a touch callback.
+		 * 
+		 * @param receiver callback class.
+		 * @param sessionId of the cursor/blob to listen to.
+		 * 
+		 */
+		public function removeTouchReceiver(receiver:ITuioTouchReceiver, sessionId:Number):void{
+			// TODO: Implement removeReceiver
+			
 //			var i:Number = 0;
 //			for each(var receiverObject:Object in receivers){
 //				if(receiverObject.receiver == receiver && receiverObject.classID == fiducialId){
@@ -352,6 +373,7 @@ package org.tuio {
 			
 			return diffArray;
 		}
+		
 		private function createDict(objectsUnderPoint:Array):Dictionary{
 			var objectsDict:Dictionary = new Dictionary();
 			for each(var displayObject:DisplayObject in objectsUnderPoint){
@@ -551,7 +573,7 @@ package org.tuio {
 			this.dispatchEvent(new TuioEvent(TuioEvent.ADD, tuioObject));
 			if(triggerTouchOnObject) this.handleAdd(tuioObject);
 			
-			/////////////////////added from fiducial dispatcher///////////////////////
+			/////////////////////added from TuioFiducialDispatcher///////////////////////
 			for each(var receiverObject:Object in receivers){
 				if(receiverObject.classID == tuioObject.classID){
 					if(receiverObject.tuioObject != null){
@@ -828,29 +850,6 @@ package org.tuio {
 			
 			return fiducialEvent;
 		}
-		
-//		private function getTopDisplayObjectUnderPoint(point:Point):DisplayObject {
-//			var targets:Array =  stage.getObjectsUnderPoint(point);
-//			var item:DisplayObject = (targets.length > 0) ? targets[targets.length - 1] : stage;
-//			
-//			var topmostDisplayObject:DisplayObject;
-//			
-//			while(targets.length > 0) {
-//				item = targets.pop();
-//				//ignore debug cursor/object/blob and send object under debug cursor/object/blob
-//				if((item is ITuioDebugCursor || item is ITuioDebugBlob || item is ITuioDebugObject) && targets.length > 1){
-//					continue;
-//				}
-//				topmostDisplayObject = item;
-//				break;
-//			}
-//			if(topmostDisplayObject == null){
-//				topmostDisplayObject = stage;
-//			}
-//			
-//			return topmostDisplayObject;
-//		}
-		
 		
 		/**
 		 * time, which TuioFiducialDispatcher should wait until it calls the onRemove callback function
