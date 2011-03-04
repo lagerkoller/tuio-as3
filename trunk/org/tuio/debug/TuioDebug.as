@@ -18,7 +18,7 @@ package org.tuio.debug
 	import org.tuio.TuioClient;
 	import org.tuio.TuioCursor;
 	import org.tuio.TuioObject;
-	import org.tuio.fiducial.FiducialEvent;
+	import org.tuio.TuioFiducialEvent;
 
 	/**
 	 * 
