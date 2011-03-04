@@ -19,12 +19,11 @@ package org.tuio.adapters
 	
 	import org.tuio.*;
 	import org.tuio.debug.*;
-	import org.tuio.fiducial.FiducialEvent;
-	import org.tuio.fiducial.TuioFiducialDispatcher;
+	import org.tuio.TuioFiducialEvent;
 	import org.tuio.util.DisplayListHelper;
 	
 	/**
-	 * Listens on MouseEvents, "translates" them to the analog TuioTouchEvents and FiducialEvents and dispatches
+	 * Listens on MouseEvents, "translates" them to the analog TuioTouchEvents and TuioFiducialEvents and dispatches
 	 * them on <code>DisplayObject</code>s under the mouse pointer.
 	 * 
 	 * Additionally, it provides means to simulate multi-touch input with a single mouse.
@@ -44,6 +43,7 @@ package org.tuio.adapters
 	 * @author Johannes Luderschmidt
 	 * 
 	 * @see org.tuio.TuioTouchEvent
+	 * @see org.tuio.TuioFiducialEvent
 	 * 
 	 */
 	public class MouseTuioAdapter extends AbstractTuioAdapter{
