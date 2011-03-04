@@ -5,6 +5,17 @@ package org.tuio.adapters
 	import org.tuio.TuioCursor;
 	import org.tuio.TuioObject;
 
+	/**
+	 * Provides basic functionality for a Tuio adapter. This can either be a real Tuio adapter like <code>TuioClient</code>
+	 * or an adapter that simulates Tuio functionality like <code>MouseTuioAdapter</code> or <code>NativeTuioAdapter</code>.
+	 * 
+	 * @author Johannes Luderschmidt
+	 * 
+	 * @see org.tuio.TuioClient
+	 * @see org.tuio.adapters.MouseTuioAdapter
+	 * @see org.tuio.adapters.NativeTuioAdapter
+	 * 
+	 */
 	public class AbstractTuioAdapter
 	{
 		protected var _tuioCursors:Array;

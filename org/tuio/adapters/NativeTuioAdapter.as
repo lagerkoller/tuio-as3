@@ -14,6 +14,14 @@ package org.tuio.adapters
 	import org.tuio.debug.TuioDebug;
 	import org.tuio.util.DisplayListHelper;
 
+	/**
+	 * Listens on <em>native</em> TouchEvents (currently only supported on touch enabled hardware running with
+	 * Windows 7) and translates them into <code>TuioTouchEvent</code>s. Hence, applications created with TUIO
+	 * AS 3 that use this adapter can be used with native (currently Windows 7 only) touch hardware.  
+	 * 
+	 * @author Johannes Luderschmidt
+	 * 
+	 */
 	public class NativeTuioAdapter extends AbstractTuioAdapter{
 		
 		private var stage:Stage;
