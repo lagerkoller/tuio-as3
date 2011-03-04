@@ -117,8 +117,8 @@ package org.tuio {
 		
 		
 		/////////////////////properties integrated from TuioFiducialDispatcher///////////////////////
-		private var receivers:Array;
-		private var removalTimes:Array;
+		private var fiducialReceivers:Array;
+		private var fiducialRemovalTimes:Array;
 		
 		private const ROTATION_MINIMUM:Number = 0.05;
 		private const MOVEMENT_MINIMUM:Number = 3;
@@ -155,8 +155,8 @@ package org.tuio {
 				this._rotationShift = ROTATION_SHIFT_DEFAULT;
 				this._timeoutTime = TIMEOUT_TIME_DEFAULT;
 				
-				receivers = new Array();
-				removalTimes = new Array();
+				fiducialReceivers = new Array();
+				fiducialRemovalTimes = new Array();
 				this.lastFiducialTarget = new Array();
 				this.firstFiducialTarget = new Array();
 				////////////////////////////////////////////////////////
@@ -348,17 +348,7 @@ package org.tuio {
 		 * 
 		 */
 		public function removeTouchReceiver(receiver:ITuioTouchReceiver, sessionId:Number):void{
-			// TODO: Implement removeReceiver
-			
-//			var i:Number = 0;
-//			for each(var receiverObject:Object in receivers){
-//				if(receiverObject.receiver == receiver && receiverObject.classID == fiducialId){
-//					receivers.splice(i,1);
-//					break;
-//				}
-//				i = i+1;
-//			}
-			
+			delete this.touchReceiversDict[sessionId];
 		}
 		
 		private function subtractDicts(dict1:Dictionary, dict2:Dictionary):Array{
@@ -574,7 +564,7 @@ package org.tuio {
 			if(triggerTouchOnObject) this.handleAdd(tuioObject);
 			
 			/////////////////////added from TuioFiducialDispatcher///////////////////////
-			for each(var receiverObject:Object in receivers){
+			for each(var receiverObject:Object in fiducialReceivers){
 				if(receiverObject.classID == tuioObject.classID){
 					if(receiverObject.tuioObject != null){
 						//object is still existing because it had been lost while tracking
@@ -584,11 +574,11 @@ package org.tuio {
 							tuioObject)
 						);
 						//stop return timeout for this fiducial
-						for(var i:Number = 0; i <  removalTimes.length; i++){
-							var removalTimeObject:Object = removalTimes[i]; 
+						for(var i:Number = 0; i <  fiducialRemovalTimes.length; i++){
+							var removalTimeObject:Object = fiducialRemovalTimes[i]; 
 							if(removalTimeObject.receiverObject.classId == receiverObject.classId){
 								clearTimeout(removalTimeObject.timeoutId);
-								removalTimes.splice(i,1);
+								fiducialRemovalTimes.splice(i,1);
 							}
 						}
 						callUpdateMethods(receiverObject, receiverObject.tuioObject, tuioObject);
@@ -634,7 +624,7 @@ package org.tuio {
 			var target:DisplayObject = DisplayListHelper.getTopDisplayObjectUnderPoint(stagePos, stage);
 			var local:Point = target.globalToLocal(new Point(stagePos.x, stagePos.y));
 			
-			for each(var receiverObject:Object in receivers){
+			for each(var receiverObject:Object in fiducialReceivers){
 				if(receiverObject.classID == tuioObject.classID){
 					//compare rotation, movement and so on and call according callback methods
 					callUpdateMethods(receiverObject, receiverObject.tuioObject, tuioObject);
@@ -665,7 +655,7 @@ package org.tuio {
 			var target:DisplayObject = DisplayListHelper.getTopDisplayObjectUnderPoint(stagePos, stage);
 			var local:Point = target.globalToLocal(new Point(stagePos.x, stagePos.y));
 			
-			for each(var receiverObject:Object in receivers){
+			for each(var receiverObject:Object in fiducialReceivers){
 				if(receiverObject.classID == tuioObject.classID){
 					(receiverObject.receiver as ITuioFiducialReceiver).onNotifyRemoved(
 						createFiducialEvent(TuioFiducialEvent.NOTIFY_REMOVED, tuioObject), 
@@ -675,7 +665,7 @@ package org.tuio {
 					removalObject.timeout = getTimer()+_timeoutTime;
 					removalObject.receiverObject = receiverObject;
 					removalObject.timeoutId = timeoutId;
-					removalTimes.push(removalObject);
+					fiducialRemovalTimes.push(removalObject);
 					break;
 				}
 			}
@@ -779,18 +769,18 @@ package org.tuio {
 		}
 		
 		private function checkTimeouts():void{
-			var firstTimeout:Number = removalTimes[0].timeout;
+			var firstTimeout:Number = fiducialRemovalTimes[0].timeout;
 			
 			if(firstTimeout <= getTimer()){
-				var removalTimeObject:Object = removalTimes.shift(); 
+				var removalTimeObject:Object = fiducialRemovalTimes.shift(); 
 				(removalTimeObject.receiverObject.receiver as ITuioFiducialReceiver).onRemove(null);
-				for(var i:Number = 0; i < receivers.length; i++){
-					if(removalTimeObject.receiverObject.classID == receivers[i].classID){
-						receivers[i].tuioObject = null;
+				for(var i:Number = 0; i < fiducialReceivers.length; i++){
+					if(removalTimeObject.receiverObject.classID == fiducialReceivers[i].classID){
+						fiducialReceivers[i].tuioObject = null;
 					}
 				}
 			}
-			if(removalTimes.length == 0){
+			if(fiducialRemovalTimes.length == 0){
 				removeEventListener(Event.ENTER_FRAME, checkTimeouts);
 			}
 		}
@@ -806,7 +796,7 @@ package org.tuio {
 			var receiverObject:Object = new Object();
 			receiverObject.receiver = receiver;
 			receiverObject.classID = fiducialId;
-			receivers.push(receiverObject);
+			fiducialReceivers.push(receiverObject);
 		}
 		
 		/**
@@ -818,9 +808,9 @@ package org.tuio {
 		 */
 		public function removeFiducialReceiver(receiver:ITuioFiducialReceiver, fiducialId:Number):void{
 			var i:Number = 0;
-			for each(var receiverObject:Object in receivers){
+			for each(var receiverObject:Object in fiducialReceivers){
 				if(receiverObject.receiver == receiver && receiverObject.classID == fiducialId){
-					receivers.splice(i,1);
+					fiducialReceivers.splice(i,1);
 					break;
 				}
 				i = i+1;
