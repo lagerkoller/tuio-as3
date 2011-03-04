@@ -13,7 +13,6 @@ package org.tuio.legacy
 	import org.tuio.TuioClient;
 	import org.tuio.connectors.UDPConnector;
 	import org.tuio.debug.TuioDebug;
-	import org.tuio.fiducial.TuioFiducialDispatcher;
 	
 	/**
 	 * Legacy TUIOManager from fiducialtuioas3 (http://code.google.com/p/fiducialtuioas3/).
@@ -80,7 +79,7 @@ package org.tuio.legacy
 			tuio.addListener(legacyListener);
 			tuio.addListener(tuioDebug);
 			tuio.addListener(fiducialLegacyListener);
-			tuio.addListener(TuioFiducialDispatcher.init(stage,1000));
+//			tuio.addListener(TuioFiducialDispatcher.init(stage,1000));
 			
 			stage.addEventListener(TouchEvent.MOUSE_DOWN, Touchhandler);
 			stage.addEventListener(KeyboardEvent.KEY_DOWN, makeHotSpotImage);
