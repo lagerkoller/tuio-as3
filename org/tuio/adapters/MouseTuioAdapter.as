@@ -99,14 +99,23 @@ package org.tuio.adapters
 			centerOfGroupedTouchesX = 0;
 			centerOfGroupedTouchesY = 0;
 			
-			createContextMenu();
+			//TODO find workaround for Flash as
+			//Flash does not have MouseEvent.RIGHT_CLICK
+			if(MouseEvent.RIGHT_CLICK){
+				createContextMenu();
+			}
 		}
 		
 		public function enableDispatcher():void{
 			stage.addEventListener(MouseEvent.MOUSE_DOWN, handleMouseDown);
 			stage.addEventListener(KeyboardEvent.KEY_DOWN, keyDown);
 			stage.addEventListener(KeyboardEvent.KEY_UP, keyUp);
-			stage.addEventListener(MouseEvent.RIGHT_CLICK, contextMenuClick);
+			
+			//TODO find workaround for Flash as
+			//Flash does not have MouseEvent.RIGHT_CLICK
+			if(MouseEvent.RIGHT_CLICK){
+				stage.addEventListener(MouseEvent.RIGHT_CLICK, contextMenuClick);
+			}
 		}
 		
 		public function disableDispatcher():void{
