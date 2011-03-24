@@ -17,8 +17,8 @@ package org.tuio {
 		private var _C:Number;
 		private var _r:Number;
 		
-		public function TuioObject(type:String, sID:Number, i:Number, x:Number, y:Number, z:Number, a:Number, b:Number, c:Number, X:Number, Y:Number, Z:Number, A:Number, B:Number, C:Number, m:Number, r:Number, frameID:uint):void {
-			super(type, sID, x, y, z, X, Y, Z, m, frameID);
+		public function TuioObject(type:String, sID:Number, i:Number, x:Number, y:Number, z:Number, a:Number, b:Number, c:Number, X:Number, Y:Number, Z:Number, A:Number, B:Number, C:Number, m:Number, r:Number, frameID:uint, source:String):void {
+			super(type, sID, x, y, z, X, Y, Z, m, frameID, source);
 			
 			this._id = i;
 			this._a = a;
@@ -110,7 +110,7 @@ package org.tuio {
 		}
 		
 		public function clone():TuioObject{
-			return new TuioObject(_type,_sessionID, _id, _x, _y, _z, _a, _b, _c, _X, _Y, _Z, _A, _B, _C, _m, _r, _frameID);
+			return new TuioObject(_type,_sessionID, _id, _x, _y, _z, _a, _b, _c, _X, _Y, _Z, _A, _B, _C, _m, _r, _frameID, _source);
 		}
 	}
 	

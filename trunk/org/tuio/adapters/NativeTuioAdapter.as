@@ -81,7 +81,7 @@ package org.tuio.adapters
 				diffX = (event.stageX - lastPos[event.touchPointID].x)/stage.stageWidth;
 				diffY = (event.stageY - lastPos[event.touchPointID].y)/stage.stageHeight;
 			}
-			return new TuioContainer("2Dcur",event.touchPointID,event.stageX/stage.stageWidth, event.stageY/stage.stageHeight,0,diffX,diffY,0,0,0);
+			return new TuioContainer("2Dcur",event.touchPointID,event.stageX/stage.stageWidth, event.stageY/stage.stageHeight,0,diffX,diffY,0,0,0,'NativeTuioAdapter');
 		}
 		private function createTuioCursor(event:TouchEvent):TuioCursor{
 			var diffX:Number = 0, diffY:Number = 0;
@@ -89,7 +89,7 @@ package org.tuio.adapters
 				diffX = (event.stageX - lastPos[event.touchPointID].x)/stage.stageWidth;
 				diffY = (event.stageY - lastPos[event.touchPointID].y)/stage.stageHeight;
 			}
-			return new TuioCursor("2Dcur",event.touchPointID,event.stageX/stage.stageWidth, event.stageY/stage.stageHeight,0,diffX,diffY,0,0,0);
+			return new TuioCursor("2Dcur",event.touchPointID,event.stageX/stage.stageWidth, event.stageY/stage.stageHeight,0,diffX,diffY,0,0,0,'NativeTuioAdapter');
 		}
 		private function updateTuioCursor(tuioCursor:TuioCursor, event:TouchEvent):void{
 			var diffX:Number = 0, diffY:Number = 0;

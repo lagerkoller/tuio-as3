@@ -456,7 +456,7 @@ package org.tuio.debug
 			trace(this, "addTuioBlob");
 			if(_showBlobs){
 				_showCursors = true;
-				addTuioCursor(new TuioCursor("2dcur", tuioBlob.sessionID, tuioBlob.x, tuioBlob.y, tuioBlob.z,tuioBlob.X, tuioBlob.Y, tuioBlob.Z, tuioBlob.m, tuioBlob.frameID));
+				addTuioCursor(new TuioCursor("2dcur", tuioBlob.sessionID, tuioBlob.x, tuioBlob.y, tuioBlob.z,tuioBlob.X, tuioBlob.Y, tuioBlob.Z, tuioBlob.m, tuioBlob.frameID, "TuioDebug"));
 			}
 		}
 
@@ -467,7 +467,7 @@ package org.tuio.debug
 		public function updateTuioBlob(tuioBlob:TuioBlob):void{
 			if(_showBlobs){
 				_showCursors = true;
-				updateTuioCursor(new TuioCursor("2dcur", tuioBlob.sessionID, tuioBlob.x, tuioBlob.y, tuioBlob.z,tuioBlob.X, tuioBlob.Y, tuioBlob.Z, tuioBlob.m, tuioBlob.frameID));
+				updateTuioCursor(new TuioCursor("2dcur", tuioBlob.sessionID, tuioBlob.x, tuioBlob.y, tuioBlob.z,tuioBlob.X, tuioBlob.Y, tuioBlob.Z, tuioBlob.m, tuioBlob.frameID, "TuioDebug"));
 			}
 				
 		}
@@ -479,7 +479,7 @@ package org.tuio.debug
 		public function removeTuioBlob(tuioBlob:TuioBlob):void{
 			if(_showBlobs){
 				_showCursors = true;
-				removeTuioCursor(new TuioCursor("2dcur", tuioBlob.sessionID, tuioBlob.x, tuioBlob.y, tuioBlob.z,tuioBlob.X, tuioBlob.Y, tuioBlob.Z, tuioBlob.m, tuioBlob.frameID));
+				removeTuioCursor(new TuioCursor("2dcur", tuioBlob.sessionID, tuioBlob.x, tuioBlob.y, tuioBlob.z,tuioBlob.X, tuioBlob.Y, tuioBlob.Z, tuioBlob.m, tuioBlob.frameID, "TuioDebug"));
 			}
 		}
 		

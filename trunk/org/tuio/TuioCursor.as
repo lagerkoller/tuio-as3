@@ -7,8 +7,8 @@ package org.tuio {
 	 */
 	public class TuioCursor extends TuioContainer {
 		
-		public function TuioCursor(type:String, sID:Number, x:Number, y:Number, z:Number, X:Number, Y:Number, Z:Number, m:Number, frameID:uint ) {
-			super(type, sID, x, y, z, X, Y, Z, m, frameID);
+		public function TuioCursor(type:String, sID:Number, x:Number, y:Number, z:Number, X:Number, Y:Number, Z:Number, m:Number, frameID:uint, source:String ) {
+			super(type, sID, x, y, z, X, Y, Z, m, frameID, source);
 		}
 	
 		/* Updates the values of the TuioCursor */

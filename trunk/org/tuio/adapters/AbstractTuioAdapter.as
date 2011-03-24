@@ -10,6 +10,7 @@ package org.tuio.adapters
 	 * or an adapter that simulates Tuio functionality like <code>MouseTuioAdapter</code> or <code>NativeTuioAdapter</code>.
 	 * 
 	 * @author Johannes Luderschmidt
+	 * @author Immanuel Bauer
 	 * 
 	 * @see org.tuio.TuioClient
 	 * @see org.tuio.adapters.MouseTuioAdapter
@@ -18,11 +19,13 @@ package org.tuio.adapters
 	 */
 	public class AbstractTuioAdapter
 	{
-		protected var _tuioCursors:Array;
-		protected var _tuioObjects:Array;
-		protected var _tuioBlobs:Array;
+		protected var _tuioCursors:Object;
+		protected var _tuioObjects:Object;
+		protected var _tuioBlobs:Object;
 		
 		protected var listeners:Array;
+		
+		public static const DEFAULT_SOURCE:String = "_no_source_";
 		
 		public function AbstractTuioAdapter(self:AbstractTuioAdapter){
 			if(self != this){
@@ -30,9 +33,9 @@ package org.tuio.adapters
 			}
 			this.listeners = new Array();
 			
-			this._tuioCursors = new Array();
-			this._tuioObjects = new Array();
-			this._tuioBlobs = new Array();
+			this._tuioCursors = {};
+			this._tuioObjects = {};
+			this._tuioBlobs = {};
 		}
 		
 		/**
@@ -61,31 +64,31 @@ package org.tuio.adapters
 		/**
 		 * @return A copy of the list of currently active tuioCursors
 		 */
-		public function get tuioCursors():Array {
-			return this._tuioCursors;
+		public function getTuioCursors(source:String = DEFAULT_SOURCE):Array {
+			return this._tuioCursors[source];
 		}
 		
 		/**
 		 * @return A copy of the list of currently active tuioObjects
 		 */
-		public function get tuioObjects():Array {
-			return this._tuioObjects;
+		public function getTuioObjects(source:String = DEFAULT_SOURCE):Array {
+			return this._tuioObjects[source];
 		}
 		
 		/**
 		 * @return A copy of the list of currently active tuioBlobs
 		 */
-		public function get tuioBlobs():Array {
-			return this._tuioBlobs;
+		public function getTuioBlobs(source:String = DEFAULT_SOURCE):Array {
+			return this._tuioBlobs[source];
 		}
 		
 		/**
 		 * @param	sessionID The sessionID of the designated tuioCursor
 		 * @return The tuioCursor matching the given sessionID. Returns null if the tuioCursor doesn't exists
 		 */
-		public function getTuioCursor(sessionID:Number):TuioCursor {
+		public function getTuioCursor(sessionID:Number, source:String = DEFAULT_SOURCE):TuioCursor {
 			var out:TuioCursor = null;
-			for each(var tc:TuioCursor in this._tuioCursors) {
+			for each(var tc:TuioCursor in this._tuioCursors[source]) {
 				if (tc.sessionID == sessionID) {
 					out = tc;
 					break;
@@ -98,9 +101,9 @@ package org.tuio.adapters
 		 * @param	sessionID The sessionID of the designated tuioObject
 		 * @return The tuioObject matching the given sessionID. Returns null if the tuioObject doesn't exists
 		 */
-		public function getTuioObject(sessionID:Number):TuioObject {
+		public function getTuioObject(sessionID:Number, source:String = DEFAULT_SOURCE):TuioObject {
 			var out:TuioObject = null;
-			for each(var to:TuioObject in this._tuioObjects) {
+			for each(var to:TuioObject in this._tuioObjects[source]) {
 				if (to.sessionID == sessionID) {
 					out = to;
 					break;
@@ -113,9 +116,9 @@ package org.tuio.adapters
 		 * @param	sessionID The sessionID of the designated tuioBlob
 		 * @return The tuioBlob matching the given sessionID. Returns null if the tuioBlob doesn't exists
 		 */
-		public function getTuioBlob(sessionID:Number):TuioBlob {
+		public function getTuioBlob(sessionID:Number, source:String = DEFAULT_SOURCE):TuioBlob {
 			var out:TuioBlob = null;
-			for each(var tb:TuioBlob in this._tuioBlobs) {
+		for each(var tb:TuioBlob in this._tuioBlobs[source]) {
 				if (tb.sessionID == sessionID) {
 					out = tb;
 					break;

@@ -512,7 +512,7 @@ package org.tuio.adapters
 		 * 
 		 */
 		private function createTuioCursor(stageX:Number, stageY:Number, diffX:Number, diffY:Number, sessionId:uint, frameId:uint):TuioCursor {
-			return new TuioCursor(TWO_D_CUR,sessionId,stageX/stage.stageWidth, stageY/stage.stageHeight,0,diffX/stage.stageWidth,diffY/stage.stageHeight,0,0,frameId);
+			return new TuioCursor(TWO_D_CUR,sessionId,stageX/stage.stageWidth, stageY/stage.stageHeight,0,diffX/stage.stageWidth,diffY/stage.stageHeight,0,0,frameId,'MouseTuioAdapter');
 		}
 		
 		/**
@@ -621,7 +621,7 @@ package org.tuio.adapters
 		}
 		
 		private function createTuioObject(fiducialId:Number, stageX:Number, stageY:Number, sessionId:uint, rotation:Number, frameId:uint):TuioObject{
-			return new TuioObject(TWO_D_OBJ,sessionId,fiducialId, stageX/stage.stageWidth, stageY/stage.stageHeight,0,rotation,0,0,0,0,0,0,0,0,0,0,frameId);
+			return new TuioObject(TWO_D_OBJ,sessionId,fiducialId, stageX/stage.stageWidth, stageY/stage.stageHeight,0,rotation,0,0,0,0,0,0,0,0,0,0,frameId,'MouseTuioAdapter');
 		}
 		
 		//==========================================  KEYBOARD STUFF ==========================================
