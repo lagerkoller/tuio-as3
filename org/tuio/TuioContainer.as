@@ -17,10 +17,11 @@ package org.tuio {
 		internal var _m:Number;
 		internal var _type:String;
 		internal var _frameID:uint;
+		internal var _source:String;
 		
 		public var isAlive:Boolean;
 		
-		public function TuioContainer(type:String, sID:Number, x:Number, y:Number, z:Number, X:Number, Y:Number, Z:Number, m:Number, frameID:uint) {
+		public function TuioContainer(type:String, sID:Number, x:Number, y:Number, z:Number, X:Number, Y:Number, Z:Number, m:Number, frameID:uint, source:String) {
 			this._type = type;
 			this._sessionID = sID;
 			this._x = x;
@@ -31,6 +32,7 @@ package org.tuio {
 			this._Z = Z;
 			this._m = m;
 			this._frameID = frameID;
+			this._source = source;
 			this.isAlive = true;
 		}
 		
@@ -72,6 +74,10 @@ package org.tuio {
 		
 		public function get frameID():uint {
 			return this._frameID;
+		}
+		
+		public function get source():String {
+			return this._source;
 		}
 	}
 	

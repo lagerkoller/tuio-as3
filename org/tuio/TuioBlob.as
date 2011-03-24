@@ -20,8 +20,8 @@ package org.tuio {
 		private var _C:Number;
 		private var _r:Number;
 		
-		public function TuioBlob(type:String, sID:Number, x:Number, y:Number, z:Number, a:Number, b:Number, c:Number, w:Number, h:Number, d:Number, f:Number, v:Number, X:Number, Y:Number, Z:Number, A:Number, B:Number, C:Number, m:Number, r:Number, frameID:uint) {
-			super(type, sID, x, y, z, X, Y, Z, m, frameID);
+		public function TuioBlob(type:String, sID:Number, x:Number, y:Number, z:Number, a:Number, b:Number, c:Number, w:Number, h:Number, d:Number, f:Number, v:Number, X:Number, Y:Number, Z:Number, A:Number, B:Number, C:Number, m:Number, r:Number, frameID:uint, source:String) {
+			super(type, sID, x, y, z, X, Y, Z, m, frameID, source);
 			
 			this._a = a;
 			this._b = b;
