@@ -100,10 +100,10 @@ package org.tuio {
 		//if true native TouchEvents are dispatched alongside the org.tuio.TuioTouchEvents
 		private var _dispatchNativeTouchEvents:Boolean = false;
 		
-		private var lastTarget:Array;
-		private var firstTarget:Array;
+		private var lastTarget:Dictionary;
+		private var firstTarget:Dictionary;
 		private var tapped:Array;
-		private var hold:Array;
+		private var hold:Dictionary;
 		
 		private var ignoreList:Array;
 		
@@ -143,10 +143,10 @@ package org.tuio {
 				throw new Error("Error: Instantiation failed: Use TuioManager.getInstance() instead of new.");
 			}else{
 				this.stage = stage;
-				this.lastTarget = new Array();
-				this.firstTarget = new Array();
+				this.lastTarget = new Dictionary();
+				this.firstTarget = new Dictionary();
 				this.tapped = new Array();
-				this.hold = new Array();
+				this.hold = new Dictionary();
 				this.ignoreList = new Array();
 				this.touchReceiversDict = new Dictionary();
 				
@@ -193,9 +193,9 @@ package org.tuio {
 			var target:DisplayObject = getTopDisplayObjectUnderPoint(stagePos);
 			var local:Point = target.globalToLocal(new Point(stagePos.x, stagePos.y));
 			
-			firstTarget[tuioContainer.sessionID] = target;
-			lastTarget[tuioContainer.sessionID] = target;
-			hold[tuioContainer.sessionID] = getTimer();
+			firstTarget[tuioContainer] = target;
+			lastTarget[tuioContainer] = target;
+			hold[tuioContainer] = getTimer();
 			
 			//target.dispatchEvent(new TuioTouchEvent(TuioTouchEvent.TOUCH_OVER, true, false, local.x, local.y, stagePos.x, stagePos.y, target, tuioContainer));
 			//target.dispatchEvent(new TuioTouchEvent(TuioTouchEvent.ROLL_OVER, false, false, local.x, local.y, stagePos.x, stagePos.y, target, tuioContainer));
@@ -219,11 +219,11 @@ package org.tuio {
 			var target:DisplayObject = getTopDisplayObjectUnderPoint(stagePos);
 			var targetDict:Dictionary = createDict(stage.getObjectsUnderPoint(stagePos));
 			var local:Point = target.globalToLocal(new Point(stagePos.x, stagePos.y));
-			var last:DisplayObject = lastTarget[tuioContainer.sessionID];
+			var last:DisplayObject = lastTarget[tuioContainer];
 			
 			//mouse move or hold
 			if (Math.abs(tuioContainer.X) > 0.001 || Math.abs(tuioContainer.Y) > 0.001 || Math.abs(tuioContainer.Z) > 0.001) {
-				hold[tuioContainer.sessionID] = getTimer();
+				hold[tuioContainer] = getTimer();
 				target.dispatchEvent(new TuioTouchEvent(TuioTouchEvent.TOUCH_MOVE, true, false, local.x, local.y, stagePos.x, stagePos.y, target, tuioContainer));
 				this.dispatchEvent(new TuioTouchEvent(TuioTouchEvent.TOUCH_MOVE, true, false, local.x, local.y, stagePos.x, stagePos.y, target, tuioContainer));
 				if (_dispatchMouseEvents) {
@@ -232,8 +232,8 @@ package org.tuio {
 				if (_dispatchNativeTouchEvents) {
 					target.dispatchEvent(new flash.events.TouchEvent(flash.events.TouchEvent.TOUCH_MOVE, true, false, tuioContainer.sessionID, false, local.x, local.y, 0, 0, 0, target as InteractiveObject));
 				}
-			} else if (hold[tuioContainer.sessionID] < getTimer() - holdTimeout) {
-				hold[tuioContainer.sessionID] = getTimer();
+			} else if (hold[tuioContainer] < getTimer() - holdTimeout) {
+				hold[tuioContainer] = getTimer();
 				target.dispatchEvent(new TuioTouchEvent(TuioTouchEvent.HOLD, true, false, local.x, local.y, stagePos.x, stagePos.y, target, tuioContainer));
 				this.dispatchEvent(new TuioTouchEvent(TuioTouchEvent.HOLD, true, false, local.x, local.y, stagePos.x, stagePos.y, target, tuioContainer));
 			}
@@ -314,11 +314,11 @@ package org.tuio {
 				}
 			}
 			
-			lastTarget[tuioContainer.sessionID] = target;
+			lastTarget[tuioContainer] = target;
 			
 			//handle updates on receivers: call updateTouch from each receiver that listens on sessionID
-			if(this.touchReceiversDict[tuioContainer.sessionID]){
-				for each(var receiver:ITuioTouchReceiver in this.touchReceiversDict[tuioContainer.sessionID]){
+			if(this.touchReceiversDict[tuioContainer]){
+				for each(var receiver:ITuioTouchReceiver in this.touchReceiversDict[tuioContainer]){
 					receiver.updateTouch(new TuioTouchEvent(TuioTouchEvent.TOUCH_MOVE, true, false, local.x, local.y, stagePos.x, stagePos.y, target, tuioContainer));
 				}
 			}
@@ -387,18 +387,18 @@ package org.tuio {
 			
 			
 			//handle receivers
-			if(this.touchReceiversDict[tuioContainer.sessionID]){
+			if(this.touchReceiversDict[tuioContainer]){
 				//call removeTouch from each receiver that listens on sessionID
-				for each(var receiver:ITuioTouchReceiver in this.touchReceiversDict[tuioContainer.sessionID]){
+				for each(var receiver:ITuioTouchReceiver in this.touchReceiversDict[tuioContainer]){
 					receiver.removeTouch(new TuioTouchEvent(TuioTouchEvent.TOUCH_UP, true, false, local.x, local.y, stagePos.x, stagePos.y, target, tuioContainer));
 				}
 				
 				//delete receivers from dictionary
-				delete this.touchReceiversDict[tuioContainer.sessionID];
+				delete this.touchReceiversDict[tuioContainer];
 			}
 			
 			//tap
-			if (target == firstTarget[tuioContainer.sessionID]) {
+			if (target == firstTarget[tuioContainer]) {
 				var double:Boolean = false;
 				var tmpArray:Array = new Array();
 				var item:DoubleTapStore;
@@ -430,9 +430,9 @@ package org.tuio {
 				}
 			}
 			
-			lastTarget[tuioContainer.sessionID] = null;
-			firstTarget[tuioContainer.sessionID] = null;
-			hold[tuioContainer.sessionID] = null;
+			lastTarget[tuioContainer] = null;
+			firstTarget[tuioContainer] = null;
+			hold[tuioContainer] = null;
 		}
 		
 		private function getTopDisplayObjectUnderPoint(point:Point):DisplayObject {
