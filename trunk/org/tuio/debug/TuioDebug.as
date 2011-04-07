@@ -13,12 +13,12 @@ package org.tuio.debug
 	import flash.text.TextFormat;
 	
 	import org.tuio.ITuioListener;
-	import org.tuio.TuioTouchEvent;
 	import org.tuio.TuioBlob;
 	import org.tuio.TuioClient;
 	import org.tuio.TuioCursor;
-	import org.tuio.TuioObject;
 	import org.tuio.TuioFiducialEvent;
+	import org.tuio.TuioObject;
+	import org.tuio.TuioTouchEvent;
 
 	/**
 	 * 
@@ -149,7 +149,7 @@ package org.tuio.debug
 			var objectSprite:Sprite;
 			
 			if(_customObjectClass == TuioDebugObject){
-				objectSprite = new TuioDebugObject(tuioObject.classID, tuioObject.sessionID, tuioObject.a, _objectWidth, _objectHeight, _objectColor, _objectAlpha,_objectLineThickness, _objectLineColor, _objectLineAlpha);
+				objectSprite = new TuioDebugObject(tuioObject.classID, tuioObject.sessionID, tuioObject.a, _objectWidth, _objectHeight, _objectColor, _objectAlpha,_objectLineThickness, _objectLineColor, _objectLineAlpha, tuioObject.source);
 			}else{
 				objectSprite = new _customObjectClass(tuioObject);
 				if(!(objectSprite is ITuioDebugObject)){
@@ -165,6 +165,7 @@ package org.tuio.debug
 				
 				objectObject.object = objectSprite;
 				objectObject.sessionID = tuioObject.sessionID;
+				objectObject.source = tuioObject.source;
 				objects.push(objectObject);
 				stage.addChild(objectSprite);
 				
@@ -359,6 +360,7 @@ package org.tuio.debug
 				}
 			}
 			(cursorSprite as ITuioDebugCursor).sessionId = tuioCursor.sessionID;
+			(cursorSprite as ITuioDebugCursor).source = tuioCursor.source;
 			
 			var cursorObject:Object = new Object();
 			
@@ -367,6 +369,7 @@ package org.tuio.debug
 				cursorSprite.y = tuioCursor.y*stage.stageHeight;
 				cursorObject.cursor = cursorSprite;
 				cursorObject.sessionID = tuioCursor.sessionID;
+				cursorObject.source = tuioCursor.source;
 				cursors.push(cursorObject);
 				stage.addChild(cursorSprite);
 				
@@ -376,7 +379,7 @@ package org.tuio.debug
 					label.selectable = false;
 					label.background = false;
 					label.border = false;
-					label.text = generateCursorLabelText(cursorSprite.x, cursorSprite.y, tuioCursor.sessionID, debugMode);
+					label.text = generateCursorLabelText(cursorSprite.x, cursorSprite.y, tuioCursor.sessionID, tuioCursor.source, debugMode);
 					
 					label.defaultTextFormat = debugTextFormat();
 					label.setTextFormat(debugTextFormat());
@@ -401,12 +404,12 @@ package org.tuio.debug
 		
 		public function updateTuioCursorWithDebugOption(tuioCursor:TuioCursor, debugMode:Boolean):void{
 			for each(var cursor:Object in cursors){
-				if(cursor.sessionID == tuioCursor.sessionID){
+				if(cursor.sessionID == tuioCursor.sessionID && cursor.source == tuioCursor.source){
 					cursor.cursor.x = tuioCursor.x*stage.stageWidth;
 					cursor.cursor.y = tuioCursor.y*stage.stageHeight;
 					
 					if(_showDebugText){
-						cursor.label.text = generateCursorLabelText(cursor.cursor.x, cursor.cursor.y, tuioCursor.sessionID, debugMode);
+						cursor.label.text = generateCursorLabelText(cursor.cursor.x, cursor.cursor.y, tuioCursor.sessionID, tuioCursor.source, debugMode);
 					}
 					break;
 				}
@@ -419,7 +422,7 @@ package org.tuio.debug
 		public function removeTuioCursor(tuioCursor:TuioCursor):void{
 			var i:Number = 0;
 			for each(var cursor:Object in cursors){
-				if(cursor.sessionID == tuioCursor.sessionID){
+				if(cursor.sessionID == tuioCursor.sessionID && cursor.source == tuioCursor.source){
 					stage.removeChild(cursor.cursor);
 					cursors.splice(i,1);
 					break;
@@ -428,10 +431,10 @@ package org.tuio.debug
 			}
 		}
 		
-		private function generateCursorLabelText(xVal:Number, yVal:Number, id:Number, debugMode:Boolean):String{
+		private function generateCursorLabelText(xVal:Number, yVal:Number, id:Number, source:String, debugMode:Boolean):String{
 			var cursorLabel:String;
 			if(!debugMode){
-				cursorLabel = "x: " + xVal + "\ny: " + yVal + "\nsessionId: " + id;
+				cursorLabel = "x: " + xVal + "\ny: " + yVal + "\nsessionId: " + id+ "\nsource: " + source;
 			}else{
 				cursorLabel = "x: " + xVal + "\ny: " + yVal + "\nsessionId: Debug";
 			}
@@ -453,7 +456,6 @@ package org.tuio.debug
 		 * @param	tuioBlob The values of the received /tuio/**Dblb.
 		 */
 		public function addTuioBlob(tuioBlob:TuioBlob):void{
-			trace(this, "addTuioBlob");
 			if(_showBlobs){
 				_showCursors = true;
 				addTuioCursor(new TuioCursor("2dcur", tuioBlob.sessionID, tuioBlob.x, tuioBlob.y, tuioBlob.z,tuioBlob.X, tuioBlob.Y, tuioBlob.Z, tuioBlob.m, tuioBlob.frameID, "TuioDebug"));

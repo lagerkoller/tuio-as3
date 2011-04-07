@@ -25,6 +25,7 @@ package org.tuio.debug
 		private var _sessionId:uint;
 		private var _fiducialId:uint;
 		private var _objectRotation:Number;
+		private var _source:String;
 		
 		/**
 		 * 
@@ -38,11 +39,12 @@ package org.tuio.debug
 		 * @param lineAlpha alpha of the line around the square.
 		 * 
 		 */
-		public function TuioDebugObject(fiducialId:Number, sessionId:Number, objectRotation:Number, width:Number, height:Number, color:Number, alpha:Number, lineThickness:Number, lineColor:Number, lineAlpha:Number){
+		public function TuioDebugObject(fiducialId:Number, sessionId:Number, objectRotation:Number, width:Number, height:Number, color:Number, alpha:Number, lineThickness:Number, lineColor:Number, lineAlpha:Number, source:String){
 			super();
 			this.sessionId = sessionId;
 			this.fiducialId = fiducialId;
 			this.objectRotation = objectRotation;
+			this.source = source;
 			adjustGraphics(fiducialId, width, height, color, alpha, lineThickness, lineColor, lineAlpha);
 		}
 		
@@ -136,6 +138,12 @@ package org.tuio.debug
 		}
 		public function set objectRotation(objectRotation:Number):void{
 			this._objectRotation = objectRotation;	
+		}
+		public function get source():String{
+			return this._source;
+		}
+		public function set source(source:String):void{
+			this._source = source;
 		}
 	}
 }

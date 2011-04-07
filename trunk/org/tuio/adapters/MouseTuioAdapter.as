@@ -49,6 +49,7 @@ package org.tuio.adapters
 		private var stage:Stage;
 		private var tuioSessionId:uint;
 		private var touchMoveId:Number;
+		private var touchMoveSrc:String;
 		private var movedObject:ITuioDebugObject;
 		private var shiftKey:Boolean;
 		private var groups:Dictionary;
@@ -70,6 +71,8 @@ package org.tuio.adapters
 		private const TWO_D_CUR:String = "2Dcur";
 		private const TWO_D_OBJ:String = "2Dobj";
 		
+		private var src:String = "_mouse_tuio_adapter_";
+		
 		/**
 		 * initializes MouseToTouchDispatcher by adding appropriate event listeners to it. Basically, MouseToTouchDispatcher
 		 * listens on mouse events and translates them to touches. However, additionally keyboard listeners are being added
@@ -85,9 +88,11 @@ package org.tuio.adapters
 			this.stage = stage; 
 			enableDispatcher();
 			
-			
-			//descend through uint from the highest number
-			tuioSessionId = 0-1;
+			if (!this._tuioBlobs[this.src]){ this._tuioBlobs[this.src] = [];}
+			if (!this._tuioCursors[this.src]){ this._tuioCursors[this.src] = [];}
+			if (!this._tuioObjects[this.src]){ this._tuioObjects[this.src] = [];}
+
+			tuioSessionId = 0;
 			
 			lastX = stage.mouseX;
 			lastY = stage.mouseY;
@@ -154,10 +159,11 @@ package org.tuio.adapters
 				//add new mouse pointer
 				var frameId:uint = this.frameId++;	
 				var tuioCursor:TuioCursor= createTuioCursor(event.stageX, event.stageY, 0, 0, this.tuioSessionId, frameId);
-				tuioCursors.push(tuioCursor);
+				_tuioCursors[this.src].push(tuioCursor);
 				dispatchAddCursor(tuioCursor);
 				
 				this.touchMoveId = this.tuioSessionId;
+				this.touchMoveSrc = this.src;
 				
 				stage.addEventListener(MouseEvent.MOUSE_MOVE, dispatchTouchMove);
 				stage.addEventListener(MouseEvent.MOUSE_UP, dispatchTouchUp);
@@ -205,7 +211,7 @@ package org.tuio.adapters
 			var itemLabel:String = (event.target as NativeMenuItem).label;
 			var fiducialId:Number = int(itemLabel.substring(itemLabel.lastIndexOf(" ")+1, itemLabel.length));
 			dispatchAddFiducial(this.fiducialX, this.fiducialY, fiducialId);
-			this.tuioSessionId = this.tuioSessionId-1;
+			this.tuioSessionId = this.tuioSessionId+1;
 		}
 		
 		/**
@@ -218,7 +224,7 @@ package org.tuio.adapters
 		private function dispatchAddFiducial(stageX:Number, stageY:Number, fiducialId:uint):void{
 			var frameId:uint = this.frameId++;	
 			var tuioObject:TuioObject = createTuioObject(fiducialId, stageX,stageY, this.tuioSessionId, 0, frameId);
-			tuioObjects.push(tuioObject);
+			_tuioObjects[this.src].push(tuioObject);
 			dispatchAddObject(tuioObject);
 		}
 		
@@ -235,15 +241,23 @@ package org.tuio.adapters
 			//update or remove cursor under mouse pointer
 			if(event.shiftKey){
 				//remove cursor
-				removeCursor(event, cursorUnderPoint.sessionId);
-				deleteFromGroup(cursorUnderPoint);
+				if(cursorUnderPoint.source == this.src){
+					removeCursor(event, cursorUnderPoint.sessionId, cursorUnderPoint.source);
+					deleteFromGroup(cursorUnderPoint);
+				}else{
+					trace("You can only remove touches that you created via mouse clicks.");
+				}
 			}else if(event.ctrlKey){
 				var cursorObject:Object = this.groups[cursorUnderPoint.sessionId];
 				
 				//add cursor to group
 				if(cursorObject == null){
 					//add to group
-					addToGroup(cursorUnderPoint);
+					if(cursorUnderPoint.source == this.src){
+						addToGroup(cursorUnderPoint);
+					}else{
+						trace("You can only add those touches to groups that have been created via mouse clicks.");
+					}
 				}else{
 					//remove from group
 					(cursorObject.cursor as DisplayObjectContainer).removeChild(cursorObject.markerSprite);
@@ -256,6 +270,7 @@ package org.tuio.adapters
 				}
 				//move cursor
 				this.touchMoveId = cursorUnderPoint.sessionId;
+				this.touchMoveSrc = cursorUnderPoint.source;
 				
 				//take care that cursor is moved around the middle
 				this.lastX = stage.mouseX;
@@ -338,7 +353,7 @@ package org.tuio.adapters
 						cursor = cursorObject.cursor as DisplayObjectContainer;
 						xPos = cursor.x + xDiff;
 						yPos = cursor.y + yDiff;
-						moveCursor(xPos, yPos, xDiff, yDiff, cursorObject.cursor.sessionId);
+						moveCursor(xPos, yPos, xDiff, yDiff, cursorObject.cursor.sessionId,cursorObject.cursor.source);
 					}
 				}else{
 					//rotate grouped touches if 'r' key is pressed
@@ -371,12 +386,16 @@ package org.tuio.adapters
 						cursorMatrix.translate(this.centerOfGroupedTouchesX, this.centerOfGroupedTouchesY);
 						xPos = cursorMatrix.tx;
 						yPos = cursorMatrix.ty;
-						moveCursor(xPos, yPos, xDiff, yDiff, cursorObject.cursor.sessionId);
+						moveCursor(xPos, yPos, xDiff, yDiff, cursorObject.cursor.sessionId, cursorObject.cursor.source);
 					}
 				}
 			}else{
-				//if no touch from group has been select simply move single touch
-				moveCursor(stage.mouseX, stage.mouseY, xDiff, yDiff, this.touchMoveId);				
+				//if no touch from group has been selected, simply move single touch
+				if(this.src == this.touchMoveSrc){
+					moveCursor(stage.mouseX, stage.mouseY, xDiff, yDiff, this.touchMoveId, this.touchMoveSrc);
+				}else{
+					trace("You can only move touches that have been created via mouse clicks.");
+				}
 			}
 		}
 		
@@ -389,11 +408,11 @@ package org.tuio.adapters
 		 * @param sessionId the session id of the touch 
 		 * 
 		 */
-		private function moveCursor(stageX:Number, stageY:Number, diffX:Number, diffY:Number, sessionId:uint):void{
+		private function moveCursor(stageX:Number, stageY:Number, diffX:Number, diffY:Number, sessionId:uint, source:String):void{
 			var frameId:uint = this.frameId++;
 			
-			updateTuioCursor(getTuioCursor(sessionId), stageX, stageY, diffX, diffY, sessionId, frameId);
-			dispatchUpdateCursor(getTuioCursor(sessionId));
+			updateTuioCursor(getTuioCursor(sessionId, source), stageX, stageY, diffX, diffY, sessionId, frameId);
+			dispatchUpdateCursor(getTuioCursor(sessionId, source));
 		}
 		
 		/**
@@ -414,7 +433,7 @@ package org.tuio.adapters
 			if(this.groups[this.touchMoveId] == null){
 				//keep touch if shift key has been pressed
 				if(!this.shiftKey && !event.ctrlKey){
-					removeCursor(event, tuioSessionId);
+					removeCursor(event, tuioSessionId, this.src);
 				}else if(event.ctrlKey){
 					var cursorUnderPoint:ITuioDebugCursor = getCursorUnderPointer(event.stageX, event.stageY);
 					addToGroup(cursorUnderPoint);
@@ -424,13 +443,13 @@ package org.tuio.adapters
 					//remove all touches from group if space key is pressed
 					for each(var cursorObject:Object in this.groups){
 						var cursor:DisplayObjectContainer = cursorObject.cursor as DisplayObjectContainer;
-						removeCursor(event, cursorObject.cursor.sessionId);
+						removeCursor(event, cursorObject.cursor.sessionId,cursorObject.cursor.source);
 						deleteFromGroup(cursorObject.cursor);
 					}
 				}
 			}
 			
-			tuioSessionId = tuioSessionId-1;
+			tuioSessionId = tuioSessionId+1;
 			touchMoveId = tuioSessionId;
 			
 			lastX = 0;
@@ -448,10 +467,10 @@ package org.tuio.adapters
 		 * @param sessionId session id of touch
 		 * 
 		 */
-		private function removeCursor(event:MouseEvent, sessionId:uint):void{
+		private function removeCursor(event:MouseEvent, sessionId:uint, source:String):void{
 			var frameId:uint = this.frameId++;
 			
-			dispatchRemoveCursor(getTuioCursor(sessionId));
+			dispatchRemoveCursor(getTuioCursor(sessionId,source));
 		}
 		/**
 		 * returns the touch under the mouse pointer if there is one. Otherwise null will be returned.
@@ -512,7 +531,7 @@ package org.tuio.adapters
 		 * 
 		 */
 		private function createTuioCursor(stageX:Number, stageY:Number, diffX:Number, diffY:Number, sessionId:uint, frameId:uint):TuioCursor {
-			return new TuioCursor(TWO_D_CUR,sessionId,stageX/stage.stageWidth, stageY/stage.stageHeight,0,diffX/stage.stageWidth,diffY/stage.stageHeight,0,0,frameId,'MouseTuioAdapter');
+			return new TuioCursor(TWO_D_CUR,sessionId,stageX/stage.stageWidth, stageY/stage.stageHeight,0,diffX/stage.stageWidth,diffY/stage.stageHeight,0,0,frameId,this.src);
 		}
 		
 		/**
@@ -572,10 +591,18 @@ package org.tuio.adapters
 			var stageX:Number = (this.movedObject as DisplayObjectContainer).x + stage.mouseX - this.lastX;
 			var stageY:Number = (this.movedObject as DisplayObjectContainer).y + stage.mouseY - this.lastY;
 			if(!this.rKey){
-				moveObject(stageX, stageY, this.movedObject.sessionId, this.movedObject.fiducialId, this.movedObject.objectRotation);
+				if(this.movedObject.source == this.src){
+					moveObject(stageX, stageY, this.movedObject.sessionId, this.movedObject.fiducialId, this.movedObject.objectRotation);
+				}else{
+					trace("You can only move objects that have been created via mouse clicks.");
+				}
 			}else{
 				var rotationVal:Number = this.movedObject.objectRotation + (0.01 * (stage.mouseY-this.lastY));
-				moveObject((this.movedObject as DisplayObjectContainer).x,(this.movedObject as DisplayObjectContainer).y, this.movedObject.sessionId, this.movedObject.fiducialId, rotationVal);
+				if(this.movedObject.source == this.src){
+					moveObject((this.movedObject as DisplayObjectContainer).x,(this.movedObject as DisplayObjectContainer).y, this.movedObject.sessionId, this.movedObject.fiducialId, rotationVal);
+				}else{
+					trace("You can only rotate objects that have been created via mouse clicks.");
+				}
 			}
 			this.lastX = stage.mouseX;
 			this.lastY = stage.mouseY;
@@ -592,7 +619,7 @@ package org.tuio.adapters
 		 */
 		private function moveObject(stageX:Number, stageY:Number, sessionId:uint, fiducialId:uint, rotation:Number):void{
 			var frameId:uint = this.frameId++;
-			var updateTuioObject:TuioObject = getTuioObject(sessionId); 
+			var updateTuioObject:TuioObject = getTuioObject(sessionId, this.src); 
 			updateTuioObject.update(stageX/stage.stageWidth, stageY/stage.stageHeight,0,rotation,0,0,0,0,0,0,0,0,0,0,frameId);
 			dispatchUpdateObject(updateTuioObject);
 		}
@@ -609,19 +636,23 @@ package org.tuio.adapters
 		}
 		
 		/**
-		 * removes a fiducial from stage by dispatching an appropriate FiducialEvent or using the TuioManager and
-		 * TuioFiducialDispatcher and removes the display of the fiducial in TuioDebug.
+		 * removes a fiducial from stage by dispatching an appropriate FiducialEvent and 
+		 * removes the display of the fiducial in TuioDebug.
 		 *  
 		 * @param event
 		 * 
 		 */
 		private function removeObject(event:MouseEvent):void{
 			var frameId:uint = this.frameId++;
-			dispatchRemoveObject(getTuioObject(this.movedObject.sessionId));
+			if(this.movedObject.source == this.src){
+				dispatchRemoveObject(getTuioObject(this.movedObject.sessionId, this.movedObject.source));
+			}else{
+				trace("You can only remove objects that have been created via mouse clicks.");
+			}
 		}
 		
 		private function createTuioObject(fiducialId:Number, stageX:Number, stageY:Number, sessionId:uint, rotation:Number, frameId:uint):TuioObject{
-			return new TuioObject(TWO_D_OBJ,sessionId,fiducialId, stageX/stage.stageWidth, stageY/stage.stageHeight,0,rotation,0,0,0,0,0,0,0,0,0,0,frameId,'MouseTuioAdapter');
+			return new TuioObject(TWO_D_OBJ,sessionId,fiducialId, stageX/stage.stageWidth, stageY/stage.stageHeight,0,rotation,0,0,0,0,0,0,0,0,0,0,frameId,this.src);
 		}
 		
 		//==========================================  KEYBOARD STUFF ==========================================

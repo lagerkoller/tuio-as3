@@ -41,23 +41,92 @@
 		 * @param	msg The OSCMessage containing a single TUIOEvent.
 		 */
 		public function acceptOSCMessage(msg:OSCMessage):void {
-			
 			var tuioContainerList:Array;
-			
-			if (msg.arguments[0] == "fseq") {
-				var newFseq:uint = uint(msg.arguments[1]);
-				if (newFseq != this.fseq) {
-					dispatchNewFseq();
-					this.fseq = newFseq;
-				}
-			} 
-			else if (msg.arguments[0] == "source") {
+			if (msg.arguments[0] == "source") {
 				this.src = String(msg.arguments[1]);
 				if (!this._tuioBlobs[this.src]) this._tuioBlobs[this.src] = [];
 				if (!this._tuioCursors[this.src]) this._tuioCursors[this.src] = [];
 				if (!this._tuioObjects[this.src]) this._tuioObjects[this.src] = [];
-			}
-			else if (msg.arguments[0] == "set"){
+			}else if (msg.arguments[0] == "alive") {
+				
+				if (msg.address.indexOf("cur") > -1) {
+					
+					for each(var tcur:TuioCursor in this._tuioCursors[this.src]) {
+						tcur.isAlive = false;
+					}
+					
+					for (var k:uint = 1; k < msg.arguments.length; k++){
+						for each(tcur in this._tuioCursors[this.src]) {
+							if (tcur.sessionID == msg.arguments[k]) {
+								tcur.isAlive = true;
+								break;
+							}
+						}
+					}
+					
+					tuioContainerList = this._tuioCursors[this.src].concat();
+					this._tuioCursors[this.src] = new Array();
+					
+					for each(tcur in tuioContainerList) {
+						if (tcur.isAlive) this._tuioCursors[this.src].push(tcur);
+						else {
+							dispatchRemoveCursor(tcur);
+						}
+					}
+					
+				} else if (msg.address.indexOf("obj") > -1) {
+					
+					for each(var to:TuioObject in this._tuioObjects[this.src]) {
+						to.isAlive = false;
+					}
+					
+					for (var t:uint = 1; t < msg.arguments.length; t++){
+						for each(to in this._tuioObjects[this.src]) {
+							if (to.sessionID == msg.arguments[t]) {
+								to.isAlive = true;
+								break;
+							}
+						}
+					}
+					
+					tuioContainerList = this._tuioObjects[this.src].concat();
+					this._tuioObjects[this.src] = new Array();
+					
+					for each(to in tuioContainerList) {
+						if (to.isAlive) this._tuioObjects[this.src].push(to);
+						else {
+							dispatchRemoveObject(to);
+						}
+					}
+					
+				} else if (msg.address.indexOf("blb") > -1) {
+					
+					for each(var tb:TuioBlob in this._tuioBlobs[this.src]) {
+						tb.isAlive = false;
+					}
+					
+					for (var u:uint = 1; u < msg.arguments.length; u++){
+						for each(tb in this._tuioBlobs[this.src]) {
+							if (tb.sessionID == msg.arguments[u]) {
+								tb.isAlive = true;
+								break;
+							}
+						}
+					}
+					
+					tuioContainerList = this._tuioBlobs[this.src].concat();
+					this._tuioBlobs[this.src] = new Array();
+					
+					for each(tb in tuioContainerList) {
+						if (tb.isAlive) this._tuioBlobs[this.src].push(tb);
+						else {
+							dispatchRemoveBlob(tb);
+						}
+					}
+					
+				} else return;
+				
+			}else if (msg.arguments[0] == "set"){
 				
 				var isObj:Boolean = false;
 				var isBlb:Boolean = false;
@@ -198,86 +267,14 @@
 						dispatchUpdateBlob(tuioContainer as TuioBlob);
 					} else return;
 				}
-				
-			} else if (msg.arguments[0] == "alive") {
-				
-				if (msg.address.indexOf("cur") > -1) {
-					
-					for each(var tcur:TuioCursor in this._tuioCursors[this.src]) {
-						tcur.isAlive = false;
-					}
-					
-					for (var k:uint = 1; k < msg.arguments.length; k++){
-						for each(tcur in this._tuioCursors[this.src]) {
-							if (tcur.sessionID == msg.arguments[k]) {
-								tcur.isAlive = true;
-								break;
-							}
-						}
-					}
-					
-					tuioContainerList = this._tuioCursors[this.src].concat();
-					this._tuioCursors[this.src] = new Array();
-					
-					for each(tcur in tuioContainerList) {
-						if (tcur.isAlive) this._tuioCursors[this.src].push(tcur);
-						else {
-							dispatchRemoveCursor(tcur);
-						}
-					}
-					
-				} else if (msg.address.indexOf("obj") > -1) {
-					
-					for each(var to:TuioObject in this._tuioObjects[this.src]) {
-						to.isAlive = false;
-					}
-					
-					for (var t:uint = 1; t < msg.arguments.length; t++){
-						for each(to in this._tuioObjects[this.src]) {
-							if (to.sessionID == msg.arguments[t]) {
-								to.isAlive = true;
-								break;
-							}
-						}
-					}
-					
-					tuioContainerList = this._tuioObjects[this.src].concat();
-					this._tuioObjects[this.src] = new Array();
-					
-					for each(to in tuioContainerList) {
-						if (to.isAlive) this._tuioObjects[this.src].push(to);
-						else {
-							dispatchRemoveObject(to);
-						}
-					}
-					
-				} else if (msg.address.indexOf("blb") > -1) {
-					
-					for each(var tb:TuioBlob in this._tuioBlobs[this.src]) {
-						tb.isAlive = false;
-					}
-					
-					for (var u:uint = 1; u < msg.arguments.length; u++){
-						for each(tb in this._tuioBlobs[this.src]) {
-							if (tb.sessionID == msg.arguments[u]) {
-								tb.isAlive = true;
-								break;
-							}
-						}
-					}
-					
-					tuioContainerList = this._tuioBlobs[this.src].concat();
-					this._tuioBlobs[this.src] = new Array();
-					
-					for each(tb in tuioContainerList) {
-						if (tb.isAlive) this._tuioBlobs[this.src].push(tb);
-						else {
-							dispatchRemoveBlob(tb);
-						}
-					}
-					
-				} else return;
-				
+			} else if (msg.arguments[0] == "fseq") {
+				var newFseq:uint = uint(msg.arguments[1]);
+				if (newFseq != this.fseq) {
+					dispatchNewFseq();
+					this.fseq = newFseq;
+					//as fseq should be the last message in a TUIO bundle, the source is reset to DEFAULT_SOURCE 
+					this.src = DEFAULT_SOURCE;
+				}
 			}
 		}
 		/**
