@@ -12,6 +12,7 @@ package org.tuio {
 	import flash.utils.getTimer;
 	import flash.utils.setTimeout;
 	
+	import org.tuio.adapters.AbstractTuioAdapter;
 	import org.tuio.debug.ITuioDebugBlob;
 	import org.tuio.debug.ITuioDebugCursor;
 	import org.tuio.debug.ITuioDebugObject;
@@ -317,8 +318,26 @@ package org.tuio {
 			lastTarget[tuioContainer] = target;
 			
 			//handle updates on receivers: call updateTouch from each receiver that listens on sessionID
-			if(this.touchReceiversDict[tuioContainer]){
-				for each(var receiver:ITuioTouchReceiver in this.touchReceiversDict[tuioContainer]){
+			
+			//handle TUIO 1.0 touch receivers that do not make use of the source message
+			updateTouchReceiver(""+tuioContainer.sessionID, local, stagePos, target, tuioContainer);
+//			if(this.touchReceiversDict[tuioContainer.sessionID+tuioContainer.source]){
+//				for each(var receiver:ITuioTouchReceiver in this.touchReceiversDict[tuioContainer.sessionID+tuioContainer.source]){
+//					receiver.updateTouch(new TuioTouchEvent(TuioTouchEvent.TOUCH_MOVE, true, false, local.x, local.y, stagePos.x, stagePos.y, target, tuioContainer));
+//				}
+//			}
+			
+			//handle TUIO 1.0 touch receivers that make use of the source message
+			updateTouchReceiver(tuioContainer.sessionID+tuioContainer.source, local, stagePos, target, tuioContainer);
+//			if(this.touchReceiversDict[tuioContainer.sessionID+tuioContainer.source]){
+//				for each(var receiver:ITuioTouchReceiver in this.touchReceiversDict[tuioContainer.sessionID+tuioContainer.source]){
+//					receiver.updateTouch(new TuioTouchEvent(TuioTouchEvent.TOUCH_MOVE, true, false, local.x, local.y, stagePos.x, stagePos.y, target, tuioContainer));
+//				}
+//			}
+		}
+		private function updateTouchReceiver(keyString:String, local:Point, stagePos:Point, target:DisplayObject, tuioContainer:TuioContainer):void{
+			if(this.touchReceiversDict[keyString]){
+				for each(var receiver:ITuioTouchReceiver in this.touchReceiversDict[keyString]){
 					receiver.updateTouch(new TuioTouchEvent(TuioTouchEvent.TOUCH_MOVE, true, false, local.x, local.y, stagePos.x, stagePos.y, target, tuioContainer));
 				}
 			}
@@ -332,11 +351,17 @@ package org.tuio {
 		 * @param sessionId of the cursor/blob to listen to.
 		 * 
 		 */
-		public function registerTouchReceiver(receiver:ITuioTouchReceiver, sessionId:Number):void{
-			if(!this.touchReceiversDict[sessionId]){
-				this.touchReceiversDict[sessionId] = new Array();
+		public function registerTouchReceiver(receiver:ITuioTouchReceiver, sessionId:Number, src:String = null):void{
+			var keyString:String;
+			if(src != null){
+				keyString = sessionId+src;
+			}else{
+				keyString = ""+sessionId;
 			}
-			this.touchReceiversDict[sessionId].push(receiver);	
+			if(!this.touchReceiversDict[keyString]){
+				this.touchReceiversDict[keyString] = new Array();
+			}
+			this.touchReceiversDict[keyString].push(receiver);	
 		}
 		
 		/**
@@ -346,8 +371,14 @@ package org.tuio {
 		 * @param sessionId of the cursor/blob to listen to.
 		 * 
 		 */
-		public function removeTouchReceiver(receiver:ITuioTouchReceiver, sessionId:Number):void{
-			delete this.touchReceiversDict[sessionId];
+		public function removeTouchReceiver(receiver:ITuioTouchReceiver, sessionId:Number, src:String = null):void{
+			var keyString:String;
+			if(src != null){
+				keyString = sessionId+src;
+			}else{
+				keyString = ""+sessionId;
+			}
+			delete this.touchReceiversDict[keyString];
 		}
 		
 		private function subtractDicts(dict1:Dictionary, dict2:Dictionary):Array{
@@ -387,9 +418,9 @@ package org.tuio {
 			
 			
 			//handle receivers
-			if(this.touchReceiversDict[tuioContainer]){
+			if(this.touchReceiversDict[tuioContainer.sessionID+tuioContainer.source]){
 				//call removeTouch from each receiver that listens on sessionID
-				for each(var receiver:ITuioTouchReceiver in this.touchReceiversDict[tuioContainer]){
+				for each(var receiver:ITuioTouchReceiver in this.touchReceiversDict[tuioContainer.sessionID+tuioContainer.source]){
 					receiver.removeTouch(new TuioTouchEvent(TuioTouchEvent.TOUCH_UP, true, false, local.x, local.y, stagePos.x, stagePos.y, target, tuioContainer));
 				}
 				
@@ -791,7 +822,7 @@ package org.tuio {
 		 * @param fiducialId fiducial id on which TuioFiducialDispatcher should listen
 		 * 
 		 */
-		public function registerFiducialReceiver(receiver:ITuioFiducialReceiver, fiducialId:Number):void{
+		public function registerFiducialReceiver(receiver:ITuioFiducialReceiver, fiducialId:Number, src:String = null):void{
 			var receiverObject:Object = new Object();
 			receiverObject.receiver = receiver;
 			receiverObject.classID = fiducialId;
@@ -805,7 +836,7 @@ package org.tuio {
 		 * @param fiducialId fiducial id on which TuioFiducialDispatcher should listen.
 		 * 
 		 */
-		public function removeFiducialReceiver(receiver:ITuioFiducialReceiver, fiducialId:Number):void{
+		public function removeFiducialReceiver(receiver:ITuioFiducialReceiver, fiducialId:Number, src:String = null):void{
 			var i:Number = 0;
 			for each(var receiverObject:Object in fiducialReceivers){
 				if(receiverObject.receiver == receiver && receiverObject.classID == fiducialId){

@@ -24,5 +24,7 @@ package org.tuio.debug
 		function set fiducialId(fiducialId:uint):void;
 		function get objectRotation():Number;
 		function set objectRotation(rotation:Number):void;
+		function get source():String;
+		function set source(source:String):void;
 	}
 }

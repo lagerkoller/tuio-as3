@@ -64,31 +64,83 @@ package org.tuio.adapters
 		/**
 		 * @return A copy of the list of currently active tuioCursors
 		 */
-		public function getTuioCursors(source:String = DEFAULT_SOURCE):Array {
-			return this._tuioCursors[source];
+		public function getTuioCursors(source:String = null):Array {
+			var returnArray:Array;
+			
+			if(source == null){
+				returnArray = getAllTuioContainersOf(this._tuioCursors);
+			}else{
+				returnArray  = this._tuioCursors[source]; 
+			}
+			return returnArray;
 		}
 		
 		/**
 		 * @return A copy of the list of currently active tuioObjects
 		 */
-		public function getTuioObjects(source:String = DEFAULT_SOURCE):Array {
-			return this._tuioObjects[source];
+		public function getTuioObjects(source:String = null):Array {
+			var returnArray:Array;
+			
+			if(source == null){
+				returnArray = getAllTuioContainersOf(this._tuioObjects);
+			}else{
+				returnArray  = this._tuioObjects[source]; 
+			}
+			return returnArray;
 		}
 		
 		/**
 		 * @return A copy of the list of currently active tuioBlobs
 		 */
-		public function getTuioBlobs(source:String = DEFAULT_SOURCE):Array {
-			return this._tuioBlobs[source];
+		public function getTuioBlobs(source:String = null):Array {
+			var returnArray:Array;
+			
+			if(source == null){
+				returnArray = getAllTuioContainersOf(this._tuioBlobs);
+			}else{
+				returnArray  = this._tuioBlobs[source]; 
+			}
+			return returnArray;
+		}
+		
+		
+		/**
+		 * Takes care for TUIO 1.0 clients that do not use the source message. Creates one big array 
+		 * for the TUIO cursors of all TUIO message in tuioDictionary.
+		 * 
+		 * @param tuioDictionary contains lists of TuioContainers that will be combined in one array.
+		 * @return 
+		 * 
+		 */
+		private function getAllTuioContainersOf(tuioDictionary:Object):Array{
+			var allTuioContainers:Array = new Array();
+			
+			for each(var tuioCursorArray:Array in tuioDictionary){
+				allTuioContainers = allTuioContainers.concat(tuioCursorArray);
+			}
+			
+			return allTuioContainers;
 		}
 		
 		/**
 		 * @param	sessionID The sessionID of the designated tuioCursor
+		 * @param	source The source message of the TUIO message provider. If null, all TuioCursor source messages will be searched for the 
+		 * TuioCursor with the appropriate sessionID. Attention: If there are more than one TuioCursor with sessionID the first appropriate
+		 * TuioCursor will be returned. 
+		 * 
 		 * @return The tuioCursor matching the given sessionID. Returns null if the tuioCursor doesn't exists
 		 */
-		public function getTuioCursor(sessionID:Number, source:String = DEFAULT_SOURCE):TuioCursor {
+		public function getTuioCursor(sessionID:Number, source:String = null):TuioCursor {
 			var out:TuioCursor = null;
-			for each(var tc:TuioCursor in this._tuioCursors[source]) {
+			var searchArray:Array;
+			
+			if(source != null){
+				searchArray = this._tuioCursors[source];
+			}else{
+				searchArray = getAllTuioContainersOf(this._tuioCursors);
+			}
+				
+			for each(var tc:TuioCursor in searchArray) {
 				if (tc.sessionID == sessionID) {
 					out = tc;
 					break;
@@ -99,11 +151,23 @@ package org.tuio.adapters
 		
 		/**
 		 * @param	sessionID The sessionID of the designated tuioObject
+		 * @param	source The source message of the TUIO message provider. If null, all TuioObject source messages will be searched for the 
+		 * TuioObject with the appropriate sessionID. Attention: If there are more than one TuioObject with sessionID the first appropriate
+		 * TuioObject will be returned. 
+		 *    
 		 * @return The tuioObject matching the given sessionID. Returns null if the tuioObject doesn't exists
 		 */
-		public function getTuioObject(sessionID:Number, source:String = DEFAULT_SOURCE):TuioObject {
+		public function getTuioObject(sessionID:Number, source:String = null):TuioObject {
 			var out:TuioObject = null;
-			for each(var to:TuioObject in this._tuioObjects[source]) {
+
+			var searchArray:Array;
+			if(source != null){
+				searchArray = this._tuioObjects[source];
+			}else{
+				searchArray = getAllTuioContainersOf(this._tuioObjects);
+			}
+			
+			for each(var to:TuioObject in searchArray) {
 				if (to.sessionID == sessionID) {
 					out = to;
 					break;
@@ -114,11 +178,23 @@ package org.tuio.adapters
 		
 		/**
 		 * @param	sessionID The sessionID of the designated tuioBlob
+		 *  @param	source The source message of the TUIO message provider. If null, all TuioBlob source messages will be searched for the 
+		 * TuioBlob with the appropriate sessionID. Attention: If there are more than one TuioBlob with sessionID the first appropriate
+		 * TuioBlob will be returned. 
+		 * 
 		 * @return The tuioBlob matching the given sessionID. Returns null if the tuioBlob doesn't exists
 		 */
-		public function getTuioBlob(sessionID:Number, source:String = DEFAULT_SOURCE):TuioBlob {
+		public function getTuioBlob(sessionID:Number, source:String = null):TuioBlob {
 			var out:TuioBlob = null;
-		for each(var tb:TuioBlob in this._tuioBlobs[source]) {
+			
+			var searchArray:Array;
+			if(source != null){
+				searchArray = this._tuioBlobs[source];
+			}else{
+				searchArray = getAllTuioContainersOf(this._tuioBlobs);
+			}
+			
+			for each(var tb:TuioBlob in searchArray) {
 				if (tb.sessionID == sessionID) {
 					out = tb;
 					break;

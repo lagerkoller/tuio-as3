@@ -15,9 +15,10 @@ package org.tuio.adapters
 	import org.tuio.util.DisplayListHelper;
 
 	/**
-	 * Listens on <em>native</em> TouchEvents (currently only supported on touch enabled hardware running with
-	 * Windows 7) and translates them into <code>TuioTouchEvent</code>s. Hence, applications created with TUIO
-	 * AS 3 that use this adapter can be used with native (currently Windows 7 only) touch hardware.  
+	 * Listens on <em>native</em> TouchEvents. All touch devices supported by Adobe AIR (e.g., Windows 7 touch
+	 * and Android touch devices) can be used with <code>NativeTuioAdapter</code>. Native touch events will be translated to
+	 * <code>TuioTouchEvent</code>s. Hence, applications created with TUIO AS3 can be used with native touch 
+	 * hardware by employing <code>NativeTuioAdapter</code>. 
 	 * 
 	 * @author Johannes Luderschmidt
 	 * 
@@ -29,6 +30,8 @@ package org.tuio.adapters
 		private var useTuioDebug:Boolean;
 		private var lastPos:Array;
 		private var frameId:uint = 0;
+		
+		private var src:String = "_native_tuio_adapter_";
 		
 		public function NativeTuioAdapter(stage:Stage){
 			super(this);
@@ -55,14 +58,14 @@ package org.tuio.adapters
 		private function touchBegin(event:TouchEvent):void{
 			this.frameId = this.frameId + 1;
 			var tuioCursor:TuioCursor = createTuioCursor(event);
-			tuioCursors.push(tuioCursor);
+			_tuioCursors[this.src].push(tuioCursor);
 			dispatchAddCursor(tuioCursor);
 			lastPos[event.touchPointID] = new Point(event.stageX, event.stageY);
 		}
 		
 		private function dispatchTouchMove(event:TouchEvent):void{
 			this.frameId = this.frameId + 1;
-			var tuioCursor:TuioCursor = getTuioCursor(event.touchPointID); 
+			var tuioCursor:TuioCursor = getTuioCursor(event.touchPointID, this.src); 
 			updateTuioCursor(tuioCursor, event);
 			dispatchUpdateCursor(tuioCursor);
 			lastPos[event.touchPointID] = new Point(event.stageX, event.stageY);
@@ -70,7 +73,7 @@ package org.tuio.adapters
 		
 		private function dispatchTouchUp(event:TouchEvent):void{
 			this.frameId = this.frameId + 1;
-			dispatchRemoveCursor(getTuioCursor(event.touchPointID));
+			dispatchRemoveCursor(getTuioCursor(event.touchPointID, this.src));
 			lastPos[event.touchPointID] = null;
 			delete lastPos[event.touchPointID];
 		}

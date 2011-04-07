@@ -20,5 +20,8 @@ package org.tuio.debug
 		//necessary for mouse to tuio simulation
 		function get sessionId():uint;
 		function set sessionId(sessionId:uint):void;
+		
+		function get source():String;
+		function set source(source:String):void;
 	}
 }

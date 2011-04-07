@@ -11,10 +11,10 @@ package org.tuio.legacy
 	import org.tuio.TuioClient;
 	import org.tuio.TuioCursor;
 	import org.tuio.TuioObject;
+	import org.tuio.adapters.AbstractTuioAdapter;
 	import org.tuio.debug.ITuioDebugBlob;
 	import org.tuio.debug.ITuioDebugCursor;
 	import org.tuio.debug.ITuioDebugObject;
-	import org.tuio.adapters.AbstractTuioAdapter;
 
 	/**
 	 * Adopts function of <code>TUIO</code> class from Touchlib's Tuio AS3 framework. All functions of
@@ -50,7 +50,7 @@ package org.tuio.legacy
 	public class TuioLegacyListener extends EventDispatcher implements ITuioListener
 	{
 		private var stage:Stage;
-		private var interactionClient:AbstractTuioAdapter;
+		private var interactionClients:Array;
 		private var listenOnIdsArray:Array;
 		private var firstPos:Array;
 		private var lastPos:Array;
@@ -67,7 +67,8 @@ package org.tuio.legacy
 	            throw new Error("Error: Instantiation failed: Use TuioLegacyListener.getInstance() instead of new.");
 			}else{
 				this.stage = stage;
-				this.interactionClient = interactionClient;
+				this.interactionClients = new Array();
+				addInteractionClient(interactionClient);
 //				this.tuioClient.addListener(this);
 				this.listenOnIdsArray = new Array();
 				this.firstPos = new Array();
@@ -91,6 +92,8 @@ package org.tuio.legacy
 				allowInst = true;
 				inst = new TuioLegacyListener(stage, interactionClient);
 				allowInst = false;
+			}else{
+				inst.addInteractionClient(interactionClient);
 			}
 			
 			return inst;
@@ -365,13 +368,16 @@ package org.tuio.legacy
 				tuioObject = new TUIOObject("mouse", 0, stage.mouseX, stage.mouseY, 0, 0, 0, 0, 10, 10, null);
 			}else{
 				//look for blob/cursor in list
-				var objectArray:Array = interactionClient.tuioCursors;
-				for(var i:int=0; i<objectArray.length; i++)  {
-					if(objectArray[i].sessionID == id){
-						var stagePoint:Point = new Point((int)(stage.stageWidth*objectArray[i].x), (int)(stage.stageHeight*objectArray[i].y));
-						var diffPoint:Point = new Point((int)(stage.stageWidth*objectArray[i].X), (int)(stage.stageHeight*objectArray[i].Y));
-						tuioObject = new TUIOObject("2Dcur", id, stagePoint.x, stagePoint.y, diffPoint.x, diffPoint.y,-1,0,0,0, null);
-						break;
+				var objectArray:Array;
+				outerLoop: for each(var interactionClient:AbstractTuioAdapter in this.interactionClients){
+					objectArray = interactionClient.getTuioCursors();
+					for(var i:int=0; i<objectArray.length; i++)  {
+						if(objectArray[i].sessionID == id){
+							var stagePoint:Point = new Point((int)(stage.stageWidth*objectArray[i].x), (int)(stage.stageHeight*objectArray[i].y));
+							var diffPoint:Point = new Point((int)(stage.stageWidth*objectArray[i].X), (int)(stage.stageHeight*objectArray[i].Y));
+							tuioObject = new TUIOObject("2Dcur", id, stagePoint.x, stagePoint.y, diffPoint.x, diffPoint.y,-1,0,0,0, null);
+							break outerLoop;
+						}
 					}
 				}
 			}
@@ -389,17 +395,36 @@ package org.tuio.legacy
 		public function getObjects():Array {
 			var objects:Array = new Array();
 			
-			var objectArray:Array = interactionClient.tuioCursors;
-			for(var i:int=0; i<objectArray.length; i++)  {
-				var tuioObject:TUIOObject;
-				var stagePoint:Point = new Point((int)(stage.stageWidth*objectArray[i].x), (int)(stage.stageHeight*objectArray[i].y));
-				var diffPoint:Point = new Point((int)(stage.stageWidth*objectArray[i].X), (int)(stage.stageHeight*objectArray[i].Y));
-				tuioObject = new TUIOObject("2Dcur", objectArray[i].sessionID, stagePoint.x, stagePoint.y, diffPoint.x, diffPoint.y,-1,0,0,0, null);
-				objects.push(tuioObject);
+			var objectArray:Array;
+			for each(var interactionClient:AbstractTuioAdapter in this.interactionClients){
+				objectArray = interactionClient.getTuioCursors();
+				for(var i:int=0; i<objectArray.length; i++)  {
+					var tuioObject:TUIOObject;
+					var stagePoint:Point = new Point((int)(stage.stageWidth*objectArray[i].x), (int)(stage.stageHeight*objectArray[i].y));
+					var diffPoint:Point = new Point((int)(stage.stageWidth*objectArray[i].X), (int)(stage.stageHeight*objectArray[i].Y));
+					tuioObject = new TUIOObject("2Dcur", objectArray[i].sessionID, stagePoint.x, stagePoint.y, diffPoint.x, diffPoint.y,-1,0,0,0, null);
+					objects.push(tuioObject);
+				}
 			}
 			
 			return objects;
 		}	
+		
+		public function addInteractionClient(interactionClient:AbstractTuioAdapter):void{
+			this.interactionClients.push(interactionClient);
+		}
+		
+		public function removeInteractionClient(interactionClient:AbstractTuioAdapter):void{
+			var i:Number = 0;
+			for each(var interactionClientTemp:AbstractTuioAdapter in this.interactionClients){
+				if(interactionClientTemp == interactionClient){
+					this.interactionClients.splice(i,1);
+					break;
+				}
+				i = i+1;
+			}
+			
+		}
 		
 		/**
 		 * Called if a new frameID is received.

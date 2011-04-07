@@ -18,6 +18,7 @@ package org.tuio.debug
 	public class TuioDebugCursor extends Sprite implements ITuioDebugCursor
 	{
 		private var _sessionId:uint;
+		private var _source:String;
 		
 		/**
 		 * 
@@ -60,6 +61,13 @@ package org.tuio.debug
 		
 		public function set sessionId(sessionId:uint):void{
 			this._sessionId = sessionId;
+		}
+		
+		public function get source():String{
+			return this._source;
+		}
+		public function set source(source:String):void{
+			this._source = source;
 		}
 	}
 }
