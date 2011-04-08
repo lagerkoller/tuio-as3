@@ -104,10 +104,11 @@ package org.tuio.adapters
 			centerOfGroupedTouchesX = 0;
 			centerOfGroupedTouchesY = 0;
 			
-			//TODO find workaround for Flash as
 			//Flash does not have MouseEvent.RIGHT_CLICK
 			if(MouseEvent.RIGHT_CLICK){
 				createContextMenu();
+			}else{
+				addFlashContextMenu();
 			}
 		}
 		
@@ -116,10 +117,11 @@ package org.tuio.adapters
 			stage.addEventListener(KeyboardEvent.KEY_DOWN, keyDown);
 			stage.addEventListener(KeyboardEvent.KEY_UP, keyUp);
 			
-			//TODO find workaround for Flash as
 			//Flash does not have MouseEvent.RIGHT_CLICK
 			if(MouseEvent.RIGHT_CLICK){
 				stage.addEventListener(MouseEvent.RIGHT_CLICK, contextMenuClick);
+			}else{
+				addFlashContextMenu();
 			}
 		}
 		
@@ -127,7 +129,13 @@ package org.tuio.adapters
 			stage.removeEventListener(MouseEvent.MOUSE_DOWN, handleMouseDown);
 			stage.removeEventListener(KeyboardEvent.KEY_DOWN, keyDown);
 			stage.removeEventListener(KeyboardEvent.KEY_UP, keyUp);
-			stage.removeEventListener(MouseEvent.RIGHT_CLICK, contextMenuClick);
+			
+			//Flash does not have MouseEvent.RIGHT_CLICK
+			if(MouseEvent.RIGHT_CLICK){
+				stage.removeEventListener(MouseEvent.RIGHT_CLICK, contextMenuClick);
+			}else{
+				removeFlashContextMenu();
+			}
 		}
 		
 		/**
@@ -344,8 +352,6 @@ package org.tuio.adapters
 				var xPos:Number;
 				var yPos:Number;
 				var cursorMatrix:Matrix;
-				
-//				TuioManager.getInstance().newFrame(frameId);
 				
 				//simply move grouped touches if neither 'r' nor 's' key is pressed
 				if(!this.rKey && !this.sKey){
@@ -740,6 +746,24 @@ package org.tuio.adapters
 			if(event.keyCode == 83){//s
 				this.sKey = false;			
 			}
+		}
+		
+		//==========================================  FLASH CONTEXT MENU STUFF ==========================================
+		
+		private function addFlashContextMenu():void{
+			//flash provides a ContextMenu class in flash.ui that enables to use
+			//the context menu in an swf. however, ContextMenu is not provided 
+			//in the flex sdk and thus not supported by TUIO AS3. so go ahead 
+			//if you want to use flash and implement it yourself like this:
+			//http://www.republicofcode.com/tutorials/flash/as3contextmenu/
+		}
+		
+		private function removeFlashContextMenu():void{
+			//flash provides a ContextMenu class in flash.ui that enables to use
+			//the context menu in an swf. however, ContextMenu is not provided 
+			//in the flex sdk and thus not supported by TUIO AS3. so go ahead 
+			//if you want to use flash and implement it yourself like this:
+			//http://www.republicofcode.com/tutorials/flash/as3contextmenu/
 		}
 	}
 }
