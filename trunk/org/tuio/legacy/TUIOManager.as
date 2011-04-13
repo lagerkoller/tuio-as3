@@ -11,14 +11,15 @@ package org.tuio.legacy
 	import mx.core.Application;
 	
 	import org.tuio.TuioClient;
+	import org.tuio.TuioManager;
 	import org.tuio.connectors.UDPConnector;
 	import org.tuio.debug.TuioDebug;
 	
 	/**
 	 * Legacy TUIOManager from fiducialtuioas3 (http://code.google.com/p/fiducialtuioas3/).
 	 * 
-	 * For a newer version of a fiducial callback implementation see <code>org.tuio.fiducial.TuioFiducialDispatcher</code> and 
-	 * <code>org.tuio.fiducial.ITuioFiducialReceiver</code>.  
+	 * The functionality of TUIOManager is now integrated into <code>org.tuio.TuioManager</code> and 
+	 * <code>org.tuio.ITuioFiducialReceiver</code>.  
 	 * 
 	 * @author Frederic Friess
 	 * 
@@ -66,7 +67,6 @@ package org.tuio.legacy
 		
 		private function onStageAdd(evt:Event=null):void{
 			
-
 			var tuio:TuioClient = 
 				new TuioClient(new UDPConnector());
 			var legacyListener:TuioLegacyListener = TuioLegacyListener.init(stage, tuio);
@@ -79,6 +79,7 @@ package org.tuio.legacy
 			tuio.addListener(legacyListener);
 			tuio.addListener(tuioDebug);
 			tuio.addListener(fiducialLegacyListener);
+			tuio.addListener(TuioManager.init(stage));
 //			tuio.addListener(TuioFiducialDispatcher.init(stage,1000));
 			
 			stage.addEventListener(TouchEvent.MOUSE_DOWN, Touchhandler);

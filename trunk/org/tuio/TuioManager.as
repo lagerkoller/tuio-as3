@@ -595,32 +595,15 @@ package org.tuio {
 			
 			/////////////////////added from TuioFiducialDispatcher///////////////////////
 			for each(var receiverObject:Object in fiducialReceivers){
-				if(receiverObject.classID == tuioObject.classID){
-					if(receiverObject.tuioObject != null){
-						//object is still existing because it had been lost while tracking
-						//update object and stop timer
-						(receiverObject.receiver as ITuioFiducialReceiver).onNotifyReturned(createFiducialEvent(
-							TuioFiducialEvent.NOTIFY_RETURNED, 
-							tuioObject)
-						);
-						//stop return timeout for this fiducial
-						for(var i:Number = 0; i <  fiducialRemovalTimes.length; i++){
-							var removalTimeObject:Object = fiducialRemovalTimes[i]; 
-							if(removalTimeObject.receiverObject.classId == receiverObject.classId){
-								clearTimeout(removalTimeObject.timeoutId);
-								fiducialRemovalTimes.splice(i,1);
-							}
-						}
-						callUpdateMethods(receiverObject, receiverObject.tuioObject, tuioObject);
-					}else{
-						//object does not exist yet. call add, move and rotation method callbacks.
-						receiverObject.tuioObject = tuioObject.clone();
-						(receiverObject.receiver as ITuioFiducialReceiver).onAdd(createFiducialEvent(
-							TuioFiducialEvent.ADD, 
-							tuioObject)
-						);
-						receiverObject.receiver.onMove(createFiducialEvent(TuioFiducialEvent.MOVE, tuioObject));
-						receiverObject.receiver.onRotate(createFiducialEvent(TuioFiducialEvent.ROTATE,tuioObject));
+				if(receiverObject.source != null){
+					//TUIO 1.1
+					if(receiverObject.classID == tuioObject.classID && receiverObject.source == tuioObject.source){
+						notifyReceiverAdded(receiverObject, tuioObject);
+					}
+				}else{
+					//TUIO 1.0
+					if(receiverObject.classID == tuioObject.classID){
+						notifyReceiverAdded(receiverObject, tuioObject);
 					}
 				}
 			}
@@ -655,9 +638,18 @@ package org.tuio {
 			var local:Point = target.globalToLocal(new Point(stagePos.x, stagePos.y));
 			
 			for each(var receiverObject:Object in fiducialReceivers){
-				if(receiverObject.classID == tuioObject.classID){
-					//compare rotation, movement and so on and call according callback methods
-					callUpdateMethods(receiverObject, receiverObject.tuioObject, tuioObject);
+				if(receiverObject.source != null){
+					//TUIO 1.1
+					if(receiverObject.classID == tuioObject.classID && receiverObject.source == tuioObject.source){
+						//compare rotation, movement and so on and call according callback methods
+						callUpdateMethods(receiverObject, receiverObject.tuioObject, tuioObject);
+					}
+				}else{
+					//TUIO 1.0
+					if(receiverObject.classID == tuioObject.classID){
+						//compare rotation, movement and so on and call according callback methods
+						callUpdateMethods(receiverObject, receiverObject.tuioObject, tuioObject);
+					}
 				}
 			}
 			dispatchUpdateEvents(tuioObject);
@@ -686,17 +678,14 @@ package org.tuio {
 			var local:Point = target.globalToLocal(new Point(stagePos.x, stagePos.y));
 			
 			for each(var receiverObject:Object in fiducialReceivers){
-				if(receiverObject.classID == tuioObject.classID){
-					(receiverObject.receiver as ITuioFiducialReceiver).onNotifyRemoved(
-						createFiducialEvent(TuioFiducialEvent.NOTIFY_REMOVED, tuioObject), 
-						_timeoutTime);
-					var timeoutId:Number = setTimeout(checkTimeouts, _timeoutTime);
-					var removalObject:Object = new Object();
-					removalObject.timeout = getTimer()+_timeoutTime;
-					removalObject.receiverObject = receiverObject;
-					removalObject.timeoutId = timeoutId;
-					fiducialRemovalTimes.push(removalObject);
-					break;
+				if(receiverObject.source != null){
+					if(receiverObject.classID == tuioObject.classID && receiverObject.source == tuioObject.source){
+						notifyReceiverRemoved(receiverObject, tuioObject);
+					}
+				}else{
+					if(receiverObject.classID == tuioObject.classID){
+						notifyReceiverRemoved(receiverObject, tuioObject);
+					}
 				}
 			}
 			
@@ -714,7 +703,7 @@ package org.tuio {
 				tuioObject));
 			////////////////////////////////////////////
 		}
-
+		
 		public function addTuioCursor(tuioCursor:TuioCursor):void {
 			this.dispatchEvent(new TuioEvent(TuioEvent.ADD_CURSOR, tuioCursor));
 			this.dispatchEvent(new TuioEvent(TuioEvent.ADD, tuioCursor));
@@ -766,6 +755,47 @@ package org.tuio {
 			getTopDisplayObjectUnderPoint(stagePos).dispatchEvent(createFiducialEvent(
 				TuioFiducialEvent.ROTATE, 
 				newTuioObject));
+		}
+		
+		private function notifyReceiverAdded(receiverObject:Object, tuioObject:TuioObject):void{
+			if(receiverObject.tuioObject != null){
+				//object is still existing because it had been lost while tracking
+				//update object and stop timer
+				(receiverObject.receiver as ITuioFiducialReceiver).onNotifyReturned(createFiducialEvent(
+					TuioFiducialEvent.NOTIFY_RETURNED, 
+					tuioObject)
+				);
+				//stop return timeout for this fiducial
+				for(var i:Number = 0; i <  fiducialRemovalTimes.length; i++){
+					var removalTimeObject:Object = fiducialRemovalTimes[i]; 
+					if(removalTimeObject.receiverObject.classId == receiverObject.classId){
+						clearTimeout(removalTimeObject.timeoutId);
+						fiducialRemovalTimes.splice(i,1);
+					}
+				}
+				callUpdateMethods(receiverObject, receiverObject.tuioObject, tuioObject);
+			}else{
+				//object does not exist yet. call add, move and rotation method callbacks.
+				receiverObject.tuioObject = tuioObject.clone();
+				(receiverObject.receiver as ITuioFiducialReceiver).onAdd(createFiducialEvent(
+					TuioFiducialEvent.ADD, 
+					tuioObject)
+				);
+				receiverObject.receiver.onMove(createFiducialEvent(TuioFiducialEvent.MOVE, tuioObject));
+				receiverObject.receiver.onRotate(createFiducialEvent(TuioFiducialEvent.ROTATE,tuioObject));
+			}
+		}
+		
+		private function notifyReceiverRemoved(receiverObject:Object, tuioObject:TuioObject):void{
+			(receiverObject.receiver as ITuioFiducialReceiver).onNotifyRemoved(
+				createFiducialEvent(TuioFiducialEvent.NOTIFY_REMOVED, tuioObject), 
+				_timeoutTime);
+			var timeoutId:Number = setTimeout(checkTimeouts, _timeoutTime);
+			var removalObject:Object = new Object();
+			removalObject.timeout = getTimer()+_timeoutTime;
+			removalObject.receiverObject = receiverObject;
+			removalObject.timeoutId = timeoutId;
+			fiducialRemovalTimes.push(removalObject);
 		}
 		
 		private function callUpdateMethods(receiverObject:Object, oldTuioObject:TuioObject, newTuioObject:TuioObject):void{
@@ -826,6 +856,7 @@ package org.tuio {
 			var receiverObject:Object = new Object();
 			receiverObject.receiver = receiver;
 			receiverObject.classID = fiducialId;
+			receiverObject.source = src;
 			fiducialReceivers.push(receiverObject);
 		}
 		
@@ -839,7 +870,7 @@ package org.tuio {
 		public function removeFiducialReceiver(receiver:ITuioFiducialReceiver, fiducialId:Number, src:String = null):void{
 			var i:Number = 0;
 			for each(var receiverObject:Object in fiducialReceivers){
-				if(receiverObject.receiver == receiver && receiverObject.classID == fiducialId){
+				if(receiverObject.receiver == receiver && receiverObject.classID == fiducialId && receiverObject.source == src){
 					fiducialReceivers.splice(i,1);
 					break;
 				}
@@ -872,7 +903,7 @@ package org.tuio {
 		}
 		
 		/**
-		 * time, which TuioFiducialDispatcher should wait until it calls the onRemove callback function
+		 * time, which TuioManager should wait until it calls the onRemove callback function
 		 * of a receiver object after a tuio object has been removed from stage.
 		 * 
 		 * @return timeout time
