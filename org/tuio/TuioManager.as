@@ -92,7 +92,7 @@ package org.tuio {
 		public static const TOUCH_TARGET_DISCOVERY_NONE:Number = 0;
 		/**The InteractiveObject's mouseEnabled parameter is used to determine whether a TuioTouchEvent is triggered on an InteractiveObject under the tracked point. Works only for InteractiveObject and subclasses.*/
 		public static const TOUCH_TARGET_DISCOVERY_MOUSE_ENABLED:Number = 1;
-		/**An ignore list is used to determin whether a TuioTouchEvent is triggered on an InteractiveObject under the tracked point. Works for DisplayObject and subclasses.*/
+		/**An ignore list is used to determine whether a TuioTouchEvent is triggered on an InteractiveObject under the tracked point. Works for DisplayObject and subclasses.*/
 		public static const TOUCH_TARGET_DISCOVERY_IGNORELIST:Number = 2;
 		
 		//if true MouseEvents are dispatched alongside the TuioTouchEvents
@@ -327,7 +327,7 @@ package org.tuio {
 //				}
 //			}
 			
-			//handle TUIO 1.0 touch receivers that make use of the source message
+			//handle TUIO 1.1 touch receivers that make use of the source message
 			updateTouchReceiver(tuioContainer.sessionID+tuioContainer.source, local, stagePos, target, tuioContainer);
 //			if(this.touchReceiversDict[tuioContainer.sessionID+tuioContainer.source]){
 //				for each(var receiver:ITuioTouchReceiver in this.touchReceiversDict[tuioContainer.sessionID+tuioContainer.source]){

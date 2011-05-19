@@ -47,6 +47,8 @@ package org.tuio.debug
 		private var stage:Stage;
 		private var tuioClient:TuioClient;
 		
+		private var fseq:uint;
+		
 		private var cursors:Array;
 		private var objects:Array;
 		private var blobs:Array;
@@ -79,9 +81,10 @@ package org.tuio.debug
 		
 		public function TuioDebug(stage:Stage){
 			if (!allowInst) {
-	            throw new Error("Error: Instantiation failed: Use TuioLegacyDebug.getInstance() instead of new.");
+	            throw new Error("Error: Instantiation failed: Use TuioDebug.getInstance() instead of new.");
 			}else{
 				this.stage = stage;
+				fseq = 0;
 				cursors = new Array();
 				objects = new Array();
 				blobs = new Array();
@@ -341,10 +344,6 @@ package org.tuio.debug
 		 * @param	tuioObject The values of the received /tuio/**Dcur.
 		 */
 		public function addTuioCursor(tuioCursor:TuioCursor):void{
-			addTuioCursorWithDebugOption(tuioCursor, false);
-		}
-		
-		public function addTuioCursorWithDebugOption(tuioCursor:TuioCursor, debugMode:Boolean):void{
 			var cursorSprite:Sprite;
 			
 			if(_customCursorSprite == TuioDebugCursor){
@@ -379,7 +378,7 @@ package org.tuio.debug
 					label.selectable = false;
 					label.background = false;
 					label.border = false;
-					label.text = generateCursorLabelText(cursorSprite.x, cursorSprite.y, tuioCursor.sessionID, tuioCursor.source, debugMode);
+					label.text = generateCursorLabelText(cursorSprite.x, cursorSprite.y, tuioCursor.sessionID, tuioCursor.source);
 					
 					label.defaultTextFormat = debugTextFormat();
 					label.setTextFormat(debugTextFormat());
@@ -399,22 +398,19 @@ package org.tuio.debug
 		 * @param	tuioCursor The values of the received /tuio/2Dcur.
 		 */
 		public function updateTuioCursor(tuioCursor:TuioCursor):void{
-			updateTuioCursorWithDebugOption(tuioCursor, false);
-		}
-		
-		public function updateTuioCursorWithDebugOption(tuioCursor:TuioCursor, debugMode:Boolean):void{
 			for each(var cursor:Object in cursors){
 				if(cursor.sessionID == tuioCursor.sessionID && cursor.source == tuioCursor.source){
 					cursor.cursor.x = tuioCursor.x*stage.stageWidth;
 					cursor.cursor.y = tuioCursor.y*stage.stageHeight;
 					
 					if(_showDebugText){
-						cursor.label.text = generateCursorLabelText(cursor.cursor.x, cursor.cursor.y, tuioCursor.sessionID, tuioCursor.source, debugMode);
+						cursor.label.text = generateCursorLabelText(cursor.cursor.x, cursor.cursor.y, tuioCursor.sessionID, tuioCursor.source);
 					}
 					break;
 				}
 			}
 		}
+		
 		/**
 		 * Called if a tracked cursor was removed.
 		 * @param	tuioCursor The values of the received /tuio/2Dcur.
@@ -431,13 +427,9 @@ package org.tuio.debug
 			}
 		}
 		
-		private function generateCursorLabelText(xVal:Number, yVal:Number, id:Number, source:String, debugMode:Boolean):String{
+		private function generateCursorLabelText(xVal:Number, yVal:Number, id:Number, source:String):String{
 			var cursorLabel:String;
-			if(!debugMode){
-				cursorLabel = "x: " + xVal + "\ny: " + yVal + "\nsessionId: " + id+ "\nsource: " + source;
-			}else{
-				cursorLabel = "x: " + xVal + "\ny: " + yVal + "\nsessionId: Debug";
-			}
+			cursorLabel = "x: " + xVal + "\ny: " + yVal + "\nsessionId: " + id+ "\nsource: " + source;
 			return cursorLabel;
 		}
 		
@@ -486,7 +478,7 @@ package org.tuio.debug
 		}
 		
 		public function newFrame(id:uint):void {
-            // TODO
+			this.fseq = id;
         }
 		
 		private function generateObjectLabelText(xVal:Number, yVal:Number, objectId:Number, sessionId:Number, debugMode:Boolean=false):String{

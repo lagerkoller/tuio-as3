@@ -86,7 +86,7 @@ package org.tuio.adapters
 		public function MouseTuioAdapter(stage:Stage){
 			super(this);
 			this.stage = stage; 
-			enableDispatcher();
+			enableAdapter();
 			
 			if (!this._tuioBlobs[this.src]){ this._tuioBlobs[this.src] = [];}
 			if (!this._tuioCursors[this.src]){ this._tuioCursors[this.src] = [];}
@@ -112,7 +112,7 @@ package org.tuio.adapters
 			}
 		}
 		
-		public function enableDispatcher():void{
+		public function enableAdapter():void{
 			stage.addEventListener(MouseEvent.MOUSE_DOWN, handleMouseDown);
 			stage.addEventListener(KeyboardEvent.KEY_DOWN, keyDown);
 			stage.addEventListener(KeyboardEvent.KEY_UP, keyUp);
@@ -125,7 +125,7 @@ package org.tuio.adapters
 			}
 		}
 		
-		public function disableDispatcher():void{
+		public function disableAdapter():void{
 			stage.removeEventListener(MouseEvent.MOUSE_DOWN, handleMouseDown);
 			stage.removeEventListener(KeyboardEvent.KEY_DOWN, keyDown);
 			stage.removeEventListener(KeyboardEvent.KEY_UP, keyUp);

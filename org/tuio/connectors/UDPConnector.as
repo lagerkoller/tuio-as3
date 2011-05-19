@@ -81,6 +81,10 @@ package org.tuio.connectors
 				if (this.listeners.length > 0) {
 					//call receive listeners and push the received messages
 					for each(var l:IOSCConnectorListener in this.listeners) {
+						//packet has to be copied in order to allow for more than one listener
+						//that actually reads from the ByteArray (after one listener has read,
+						//packet will be empty)
+						var copyPacket:ByteArray = copyPacket(packet);
 						if (OSCBundle.isBundle(packet)) {
 							l.acceptOSCPacket(new OSCBundle(packet));
 						} else if (OSCMessage.isMessage(packet)) {
@@ -88,11 +92,19 @@ package org.tuio.connectors
 						} else {
 							//this.debug("\nreceived: invalid osc packet.");
 						}
+						packet = copyPacket;
 					}
 				}
 			}
 			
 			packet = null;
+		}
+		
+		private function copyPacket(packet:ByteArray):ByteArray{
+			var copyPacket:ByteArray = new ByteArray();
+			copyPacket.writeBytes(packet);
+			copyPacket.position = 0;
+			return copyPacket;
 		}
 		
 		/**
