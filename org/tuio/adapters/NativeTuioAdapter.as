@@ -35,6 +35,11 @@ package org.tuio.adapters
 		
 		public function NativeTuioAdapter(stage:Stage){
 			super(this);
+			
+			if (!this._tuioBlobs[this.src]) this._tuioBlobs[this.src] = [];
+			if (!this._tuioCursors[this.src]) this._tuioCursors[this.src] = [];
+			if (!this._tuioObjects[this.src]) this._tuioObjects[this.src] = [];
+			
 			this.stage = stage;
 			
 			this.lastPos = new Array();
