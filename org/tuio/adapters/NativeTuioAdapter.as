@@ -86,24 +86,24 @@ package org.tuio.adapters
 		private function createTuioContainer(event:TouchEvent):TuioContainer{
 			var diffX:Number = 0, diffY:Number = 0;
 			if (lastPos[event.touchPointID]) {
-				diffX = (event.stageX - lastPos[event.touchPointID].x)/stage.stageWidth;
-				diffY = (event.stageY - lastPos[event.touchPointID].y)/stage.stageHeight;
+				diffX = (event.stageX - lastPos[event.touchPointID].x);
+				diffY = (event.stageY - lastPos[event.touchPointID].y);
 			}
-			return new TuioContainer("2Dcur",event.touchPointID,event.stageX/stage.stageWidth, event.stageY/stage.stageHeight,0,diffX,diffY,0,0,0,'NativeTuioAdapter');
+			return new TuioContainer("2Dcur",event.touchPointID,event.stageX/stage.stageWidth, event.stageY/stage.stageHeight,0,diffX/stage.stageWidth,diffY/stage.stageHeight,0,0,0,'NativeTuioAdapter');
 		}
 		private function createTuioCursor(event:TouchEvent):TuioCursor{
 			var diffX:Number = 0, diffY:Number = 0;
 			if (lastPos[event.touchPointID]) {
-				diffX = (event.stageX - lastPos[event.touchPointID].x)/stage.stageWidth;
-				diffY = (event.stageY - lastPos[event.touchPointID].y)/stage.stageHeight;
+				diffX = (event.stageX - lastPos[event.touchPointID].x);
+				diffY = (event.stageY - lastPos[event.touchPointID].y);
 			}
-			return new TuioCursor("2Dcur",event.touchPointID,event.stageX/stage.stageWidth, event.stageY/stage.stageHeight,0,diffX,diffY,0,0,0,'NativeTuioAdapter');
+			return new TuioCursor("2Dcur",event.touchPointID,event.stageX/stage.stageWidth, event.stageY/stage.stageHeight,0,diffX/stage.stageWidth,diffY/stage.stageHeight,0,0,0,'NativeTuioAdapter');
 		}
 		private function updateTuioCursor(tuioCursor:TuioCursor, event:TouchEvent):void{
 			var diffX:Number = 0, diffY:Number = 0;
 			if (lastPos[event.touchPointID]) {
-				diffX = (event.stageX - lastPos[event.touchPointID].x)/stage.stageWidth;
-				diffY = (event.stageY - lastPos[event.touchPointID].y)/stage.stageHeight;
+				diffX = (event.stageX - lastPos[event.touchPointID].x);
+				diffY = (event.stageY - lastPos[event.touchPointID].y);
 			}
 			tuioCursor.update(event.stageX/stage.stageWidth, event.stageY/stage.stageHeight,0,diffX/stage.stageWidth,diffY/stage.stageHeight,0,0,this.frameId);
 		}
