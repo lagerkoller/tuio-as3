@@ -17,6 +17,8 @@ package org.tuio.gestures {
 		private var _prepareTime:int;
 		private var _goto:int;
 		
+		private static var recycleBin:Vector.<GestureStep> = new Vector.<GestureStep>();
+		
 		internal var group:GestureStepSequence;
 		
 		/**
@@ -37,6 +39,14 @@ package org.tuio.gestures {
 		 * @param	properties The properties Object controlling the behaviour of this step.
 		 */
 		public function GestureStep(event:String, properties:Object) {
+			init(event, properties);
+		}
+		
+		/**
+		 * Helper function for th econstructor and recycle.
+		 * @see GestureStep
+		 */
+		private function init(event:String, properties:Object):void {
 			this._event = event;
 			this._targetAlias = (properties.targetAlias)?properties.targetAlias.toString():"*";
 			this._tuioContainerAlias = (properties.tuioContainerAlias)?properties.tuioContainerAlias.toString():"*";
@@ -46,6 +56,35 @@ package org.tuio.gestures {
 			this._die = (properties.die)?(properties.die as Boolean):false;
 			this._optional = (properties.optional)?(properties.optional as Boolean):false;
 			this._goto = (properties.goto)?(properties.goto as int):0;
+		}
+		
+		/**
+		 * Creates and returns an instance by leveraging object recycling
+		 * @see GestureStep
+		 */
+		public static function getInstance(event:String, properties:Object):GestureStep {
+			if (recycleBin.length > 0) {
+				return recycleBin.pop().recycle(event, properties);
+			}else {
+				return new GestureStep(event, properties);
+			}
+		}
+		
+		/**
+		 * Recycles the GestureStep object by deleting the original content and replacing it by the given. The parameters are the same as for the constructor.
+		 * @see GestureStep
+		 * @return The recycled GestureStep object
+		 */
+		private function recycle(event:String, properties:Object):GestureStep {
+			init(event, properties);
+			return this;
+		}
+		
+		/**
+		 * Flags the object for future recycling
+		 */
+		internal function discard():void {
+			recycleBin.push(this);
 		}
 		
 		/**
@@ -102,10 +141,10 @@ package org.tuio.gestures {
 		}
 		
 		/**
-		 * @return A copy of the <code>GestureStep</code> but with a reset timeout counter.
+		 * @return A copy of the <code>GestureStep</code>.
 		 */
 		public function copy():GestureStep {
-			return new GestureStep(this._event, { 	
+			return getInstance(this._event, { 	
 				targetAlias:this._targetAlias,
 				tuioContainerAlias:this._tuioContainerAlias,
 				frameIDAlias:this._frameIDAlias,

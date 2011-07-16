@@ -24,14 +24,53 @@ package org.tuio.gestures {
 		private var _gesture:Gesture;
 		private var _active:Boolean;
 		
+		private static var recycleBin:Vector.<GestureStepSequence> = new Vector.<GestureStepSequence>();
+		
 		public function GestureStepSequence() {
+			init();
+		}
+		
+		/**
+		 * Helper function for the constructor and getInstance.
+		 */
+		private function init():void {
 			this.steps = new Array();
 			this.targetAliasMap = {};
 			this.tuioContainerAliasMap = {};
 			this.frameIDAliasMap = {};
-			this.values = { foo:123 };
+			this.values = {};
 			this.stepPosition = 0;
 			this._active = true;
+		}
+		
+		/**
+		 * @return An instance of <code>GestureStepSequence</code> leveraging object recycling.
+		 */
+		public function getInstance():GestureStepSequence {
+			if (recycleBin.length > 0) {
+				return recycleBin.pop().recycle();
+			}else {
+				return new GestureStepSequence();
+			}
+		}
+		
+		/**
+		 * Recycles the GestureStepSequence object by deleting the original content.
+		 */
+		private function recycle():GestureStepSequence {
+			init();
+			return this;
+		}
+		
+		/**
+		 * Flags the <code>GestureStepSequence</code> and all contained <code>Gesture Steps</code> for future recycling
+		 */
+		internal function discard():void {
+			recycleBin.push(this);
+			var al:int = steps.length;
+			for (var c:int = 0; c < al; c++ ) {
+				(steps[c] as GestureStep).discard();
+			}
 		}
 		
 		/**
@@ -274,7 +313,7 @@ package org.tuio.gestures {
 		 * @return A copy of the basic <code>GestureStepSequence</code> but not its current state and stored values.
 		 */
 		public function copy():GestureStepSequence {
-			var out:GestureStepSequence = new GestureStepSequence();
+			var out:GestureStepSequence = getInstance();
 			out.gesture = this.gesture;
 			var al:int = steps.length;
 			for (var c:int = 0; c < al; c++ ) {

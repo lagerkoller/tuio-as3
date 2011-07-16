@@ -179,6 +179,9 @@ package org.tuio.gestures {
 					used = true;
 					m.gesture.dispatchGestureEvent(target, m);
 					if (m.active) temp.push(m);
+					else m.discard();
+				} else {
+					m.discard();
 				}
 				m = null;
 			}
