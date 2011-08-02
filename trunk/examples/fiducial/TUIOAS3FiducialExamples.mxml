@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:WindowedApplication 
+	xmlns:mx="http://www.adobe.com/2006/mxml"
+	xmlns:mxmlWrapper="mxmlWrapper.*" 
+	layout="absolute"
+	showStatusBar="false" 
+	addedToStage="init()"
+	frameRate="60" 
+	xmlns:multitouch="test.flex.*" 
+	horizontalScrollPolicy="off"
+	verticalScrollPolicy="off"
+	width="1000"
+	height="500" xmlns:local="*">
+	<mx:Script>
+		<![CDATA[
+			import mx.controls.Image;
+			
+			import org.tuio.TuioClient;
+			import org.tuio.TuioManager;
+			import org.tuio.adapters.MouseTuioAdapter;
+			import org.tuio.connectors.UDPConnector;
+			import org.tuio.debug.TuioDebug;
+			import org.tuio.gestures.DragGesture;
+			import org.tuio.gestures.GestureManager;
+			import org.tuio.gestures.RotateGesture;
+			import org.tuio.gestures.ZoomGesture;
+			
+			/**
+			 * 1. adds a keyboard listener to the app: press 'f' to go to fullscreen.
+			 * 2. adds TuioDebug to app: Touches and fiducials will be visualized.
+			 * 3. initializes Tuio connection to standard port 3333 via UDP.
+			 * 4. initializes touch and fiducial simulation with MouseTuioAdapter.
+			 * 
+			 * both, TuioClient and MouseTuioAdapter, forward events to TuioDebug and
+			 * TuioManager.
+			*/
+			private function init():void{
+				stage.addEventListener(KeyboardEvent.KEY_DOWN, keyDownListener);
+				
+				var tuioDebug:TuioDebug = TuioDebug.init(stage);
+				tuioDebug.showDebugText = true;
+				
+				var client:TuioClient = 
+					new TuioClient(new UDPConnector());
+				client.addListener(tuioDebug);
+				client.addListener(TuioManager.init(stage));
+				
+				//xor
+				var client2:MouseTuioAdapter = new MouseTuioAdapter(stage);
+				client2.addListener(tuioDebug);
+				client2.addListener(TuioManager.init(stage));
+				
+				nativeWindow.x = 50;
+				nativeWindow.y = 0;
+				
+			}
+			private function keyDownListener(event:KeyboardEvent):void{
+				if(event.keyCode == 70){
+					goFullScreen();
+				}
+			}
+			public function goFullScreen():void{
+				stage.nativeWindow.stage.displayState = StageDisplayState.FULL_SCREEN_INTERACTIVE;
+			}
+		]]>
+	</mx:Script>
+	
+	<local:FlashToMXMLWrapper />
+	
+</mx:WindowedApplication>
