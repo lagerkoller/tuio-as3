@@ -18,8 +18,8 @@ package org.tuio.adapters
 	import flash.utils.Dictionary;
 	
 	import org.tuio.*;
-	import org.tuio.debug.*;
 	import org.tuio.TuioFiducialEvent;
+	import org.tuio.debug.*;
 	import org.tuio.util.DisplayListHelper;
 	
 	/**
@@ -463,6 +463,18 @@ package org.tuio.adapters
 			
 			stage.removeEventListener(MouseEvent.MOUSE_MOVE, dispatchTouchMove);
 			stage.removeEventListener(MouseEvent.MOUSE_UP, dispatchTouchUp);
+			
+			trace("tuioCursor length", _tuioCursors[this.src].length);
+		}
+		
+		private function deleteTuioCursorFromGlobalList(cursorID:Number):void{
+			var i:Number = 0;
+			for each(var tuioCursor:TuioCursor in _tuioCursors[this.src]){
+				if(tuioCursor.sessionID == cursorID){
+					_tuioCursors[this.src].splice(i, 1);
+				}
+				i = i+1;
+			}
 		}
 		
 		/**
@@ -477,6 +489,7 @@ package org.tuio.adapters
 			var frameId:uint = this.frameId++;
 			
 			dispatchRemoveCursor(getTuioCursor(sessionId,source));
+			deleteTuioCursorFromGlobalList(sessionId);
 		}
 		/**
 		 * returns the touch under the mouse pointer if there is one. Otherwise null will be returned.

@@ -81,6 +81,14 @@ package org.tuio.adapters
 			dispatchRemoveCursor(getTuioCursor(event.touchPointID, this.src));
 			lastPos[event.touchPointID] = null;
 			delete lastPos[event.touchPointID];
+			
+			var i:Number = 0;
+			for each(var tuioCursor:TuioCursor in _tuioCursors[this.src]){
+				if(tuioCursor.sessionID == event.touchPointID){
+					_tuioCursors[this.src].splice(i, 1);
+				}
+				i = i+1;
+			}
 		}
 		
 		private function createTuioContainer(event:TouchEvent):TuioContainer{
