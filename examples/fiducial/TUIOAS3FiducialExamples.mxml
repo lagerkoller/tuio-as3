@@ -10,7 +10,7 @@
 	horizontalScrollPolicy="off"
 	verticalScrollPolicy="off"
 	width="1000"
-	height="500" xmlns:local="*">
+	height="500" xmlns:local="*" xmlns:fiducial="examples.fiducial.*">
 	<mx:Script>
 		<![CDATA[
 			import mx.controls.Image;
@@ -65,6 +65,6 @@
 		]]>
 	</mx:Script>
 	
-	<local:FlashToMXMLWrapper />
+	<fiducial:FlashToMXMLWrapper />
 	
 </mx:WindowedApplication>

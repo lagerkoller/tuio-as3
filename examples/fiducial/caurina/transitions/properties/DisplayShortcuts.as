@@ -1,4 +1,4 @@
-package caurina.transitions.properties {
+package examples.fiducial.caurina.transitions.properties {
 
 	/**
 	 * properties.DisplayShortcuts.as
@@ -9,10 +9,10 @@ package caurina.transitions.properties {
 	 * @version		1.0.0
 	 */
 
+	import examples.fiducial.caurina.transitions.Tweener;
+	
 	import flash.geom.Point;
 	import flash.geom.Rectangle;
-
-	import caurina.transitions.Tweener;
 
 	public class DisplayShortcuts {
 

@@ -1,4 +1,4 @@
-package ascb.play.units {
+package examples.fiducial.ascb.play.units {
 	
   public class Unit {
     private var _sUnitName:String;
@@ -53,15 +53,15 @@ package ascb.play.units {
     }
 
     public static function get CELCIUS():Unit {
-      return new Unit("celcius", "temperature", null, null, "celcius", "celcius");
+      return new Unit("celcius", "temperature", null, 1, "celsius", "celsius");
     }
 
     public static function get FAHRENHEIT():Unit {
-      return new Unit("fahrenheit", "temperature", null, null, "fahrenheit", "fahrenheit");
+      return new Unit("fahrenheit", "temperature", null, 1, "fahrenheit", "fahrenheit");
     }
 
     public static function get KELVIN():Unit {
-      return new Unit("kelvin", "temperature", null, null, "kelvin", "kelvin");
+      return new Unit("kelvin", "temperature", null, 1, "kelvin", "kelvin");
     }
 
     public static function get OUNCE():Unit {
@@ -101,7 +101,7 @@ package ascb.play.units {
     }
 
     public static function get FOOT():Unit {
-      return new Unit("foot", "distance", null, null, "foot", "feet");
+      return new Unit("foot", "distance", null, 1, "foot", "feet");
     }
 
     public static function get YARD():Unit {

@@ -1,6 +1,6 @@
-package
+package examples.fiducial
 {
-	import caurina.transitions.Tweener;
+	import examples.fiducial.caurina.transitions.Tweener;
 	
 	import flash.display.Sprite;
 	import flash.utils.Timer;

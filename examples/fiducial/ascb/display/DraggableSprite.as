@@ -1,5 +1,5 @@
 
-package ascb.display {
+package examples.fiducial.ascb.display {
 	
 	import flash.display.Sprite;
 	import flash.events.MouseEvent;

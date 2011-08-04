@@ -1,4 +1,4 @@
-package caurina.transitions.properties {
+package examples.fiducial.caurina.transitions.properties {
 
 	/**
 	 * properties.SoundShortcuts
@@ -9,9 +9,9 @@ package caurina.transitions.properties {
 	 * @version		1.0.0
 	 */
 
+	import examples.fiducial.caurina.transitions.Tweener;
+	
 	import flash.media.SoundTransform;
-
-	import caurina.transitions.Tweener;
 
 	public class SoundShortcuts {
 

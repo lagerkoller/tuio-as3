@@ -1,4 +1,4 @@
-package caurina.transitions.properties {
+package examples.fiducial.caurina.transitions.properties {
 
 	/**
 	 * properties.ColorShortcuts
@@ -9,11 +9,11 @@ package caurina.transitions.properties {
 	 * @version		1.0.0
 	 */
 
-	import flash.geom.ColorTransform;
+	import examples.fiducial.caurina.transitions.AuxFunctions;
+	import examples.fiducial.caurina.transitions.Tweener;
+	
 	import flash.filters.ColorMatrixFilter;
-
-	import caurina.transitions.Tweener;
-	import caurina.transitions.AuxFunctions;
+	import flash.geom.ColorTransform;
 
 	public class ColorShortcuts {
 

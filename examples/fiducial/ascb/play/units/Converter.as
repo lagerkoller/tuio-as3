@@ -1,6 +1,5 @@
-package ascb.play.units {
-
-  import ascb.util.NumberUtilities;
+package examples.fiducial.ascb.play.units {
+	import examples.fiducial.ascb.util.NumberUtilities;
 
   public class Converter {
 

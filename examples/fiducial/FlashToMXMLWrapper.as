@@ -1,4 +1,4 @@
-package
+package examples.fiducial
 {
 	import mx.core.UIComponent;
 	

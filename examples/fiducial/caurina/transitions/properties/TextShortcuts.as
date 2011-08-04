@@ -1,4 +1,4 @@
-package caurina.transitions.properties {
+package examples.fiducial.caurina.transitions.properties {
 
 	/**
 	 * properties.TextShortcuts
@@ -9,9 +9,9 @@ package caurina.transitions.properties {
 	 * @version		1.0.0
 	 */
 
-	import caurina.transitions.Tweener;
-	import caurina.transitions.AuxFunctions;
-
+	import examples.fiducial.caurina.transitions.AuxFunctions;
+	import examples.fiducial.caurina.transitions.Tweener;
+	
 	import flash.text.TextFormat;
 
 	public class TextShortcuts {

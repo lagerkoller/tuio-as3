@@ -1,4 +1,4 @@
-package caurina.transitions.properties {
+package examples.fiducial.caurina.transitions.properties {
 
 	/**
 	 * properties.FilterShortcuts
@@ -9,6 +9,9 @@ package caurina.transitions.properties {
 	 * @version		1.0.0
 	 */
 
+	import examples.fiducial.caurina.transitions.AuxFunctions;
+	import examples.fiducial.caurina.transitions.Tweener;
+	
 	import flash.display.BitmapData;
 	import flash.filters.BevelFilter;
 	import flash.filters.BitmapFilter;
@@ -21,9 +24,6 @@ package caurina.transitions.properties {
 	import flash.filters.GradientBevelFilter;
 	import flash.filters.GradientGlowFilter;
 	import flash.geom.Point;
-
-	import caurina.transitions.Tweener;
-	import caurina.transitions.AuxFunctions;
 
 	public class FilterShortcuts {
 

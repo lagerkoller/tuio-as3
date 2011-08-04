@@ -1,4 +1,4 @@
-package ascb.util {
+package examples.fiducial.ascb.util {
 
   import flash.events.EventDispatcher;
   import flash.display.Shape;

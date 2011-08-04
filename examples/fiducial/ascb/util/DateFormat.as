@@ -1,4 +1,4 @@
-package ascb.util {
+package examples.fiducial.ascb.util {
 
 	public class DateFormat {
 		
@@ -29,7 +29,7 @@ package ascb.util {
 		}
 		
 		public static function formatSeconds(nTotalSeconds:Number):String {
-		    var nfFormatter:ascb.util.NumberFormat = new ascb.util.NumberFormat("00");
+		    var nfFormatter:NumberFormat = new NumberFormat("00");
 		    var sMinutes:String = nfFormatter.format(Math.floor(nTotalSeconds/60));
 		    var sSeconds:String = nfFormatter.format(Math.round(nTotalSeconds - (parseInt(sMinutes) * 60)));
 		
@@ -86,10 +86,10 @@ package ascb.util {
 		          aFormatted.push(dDate.getDate());
 		          break;
 		        case "D":
-		          aFormatted.push(ascb.util.DateFormat.DAYS_ABBREVIATED[dDate.getDay()]);
+		          aFormatted.push(DateFormat.DAYS_ABBREVIATED[dDate.getDay()]);
 		          break;
 		        case "F":
-		          aFormatted.push(ascb.util.DateFormat.MONTHS[dDate.getMonth()]);
+		          aFormatted.push(DateFormat.MONTHS[dDate.getMonth()]);
 		          break;
 		        case "g":
 		          var nHours:Number = dDate.getHours();
@@ -107,8 +107,8 @@ package ascb.util {
 		          aFormatted.push(dDate.getHours());
 		          break;
 		        case "h":
-		          var nfFormatter:ascb.util.NumberFormat = new ascb.util.NumberFormat("00");
-		          var nHours:Number = dDate.getHours();
+		          var nfFormatter:NumberFormat = new NumberFormat("00");
+		          nHours = dDate.getHours();
 		          if(nHours == 12) {
 		            aFormatted.push(12);
 		          }
@@ -120,35 +120,35 @@ package ascb.util {
 		          }
 		          break;
 		        case "H":
-		          var nfFormatter:ascb.util.NumberFormat = new ascb.util.NumberFormat("00");
+		          nfFormatter = new NumberFormat("00");
 		          aFormatted.push(nfFormatter.format(dDate.getHours()));
 		          break;
 		        case "i":
-		          var nfFormatter:ascb.util.NumberFormat = new ascb.util.NumberFormat("00");
+		          nfFormatter = new NumberFormat("00");
 		          aFormatted.push(nfFormatter.format(dDate.getMinutes()));
 		          break;
 		        case "j":
 		          aFormatted.push(dDate.getDate());
 		          break;
 		        case "l":
-		          aFormatted.push(ascb.util.DateFormat.DAYS[dDate.getDay()]);
+		          aFormatted.push(DateFormat.DAYS[dDate.getDay()]);
 		          break;
 		        case "m":
-		          var nfFormatter:ascb.util.NumberFormat = new ascb.util.NumberFormat("00");
+		          nfFormatter = new NumberFormat("00");
 		          aFormatted.push(nfFormatter.format(dDate.getMonth() + 1));
 		          break;
 		        case "M":
-		          aFormatted.push(ascb.util.DateFormat.MONTHS_ABBREVIATED[dDate.getMonth()]);
+		          aFormatted.push(DateFormat.MONTHS_ABBREVIATED[dDate.getMonth()]);
 		          break;
 		        case "n":
 		          aFormatted.push(dDate.getMonth() + 1);
 		          break;
 		        case "s":
-		          var nfFormatter:ascb.util.NumberFormat = new ascb.util.NumberFormat("00");
+		          nfFormatter = new NumberFormat("00");
 		          aFormatted.push(nfFormatter.format(dDate.getSeconds()));
 		          break;
 		        case "t":
-		          aFormatted.push(ascb.util.DateFormat.DAYSINMONTH[dDate.getMonth()]);
+		          aFormatted.push(DateFormat.DAYSINMONTH[dDate.getMonth()]);
 		          break;
 		        case "w":
 		          aFormatted.push(dDate.getDay());
@@ -190,7 +190,7 @@ package ascb.util {
 		    var dDate:Date = new Date(0, 0, 0, 0, 0, 0, 0);
 		    var sAMPM:String;
 		    var sElement:String;
-		    for(var i:Number = 0; i < aMask.length; i++) {
+		    for(i = 0; i < aMask.length; i++) {
 		      sElement = String(aElements.shift());
 		      switch (aMask[i].element) {
 		        case "a":
@@ -202,8 +202,8 @@ package ascb.util {
 		          break;
 		        case "F":
 		          var sMonth:String = aElements.shift().toLowerCase();
-		          for(var j:Number = 0; j < ascb.util.DateFormat.MONTHS.length; j++) {
-		            if(sMonth == ascb.util.DateFormat.MONTHS[j].toLowerCase()) {
+		          for(var j:Number = 0; j < DateFormat.MONTHS.length; j++) {
+		            if(sMonth == DateFormat.MONTHS[j].toLowerCase()) {
 		              dDate.setMonth(j);
 		              break; 
 		            }
@@ -226,9 +226,9 @@ package ascb.util {
 		          dDate.setMonth(parseInt(sElement) - 1);
 		          break;
 		        case "M":
-		          var sMonth:String = sElement.toLowerCase();
-		          for(var j:Number = 0; j < ascb.util.DateFormat.MONTHS_ABBREVIATED.length; j++) {
-		            if(ascb.util.DateFormat.MONTHS_ABBREVIATED[j].toLowerCase() == sMonth) {
+		          sMonth = sElement.toLowerCase();
+		          for(j = 0; j < DateFormat.MONTHS_ABBREVIATED.length; j++) {
+		            if(DateFormat.MONTHS_ABBREVIATED[j].toLowerCase() == sMonth) {
 		              dDate.setMonth(j);
 		              break;
 		            }
