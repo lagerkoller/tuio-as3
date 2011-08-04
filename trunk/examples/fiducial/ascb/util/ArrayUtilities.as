@@ -1,4 +1,4 @@
-package ascb.util {
+package examples.fiducial.ascb.util {
 	
   public class ArrayUtilities {
 
@@ -175,7 +175,7 @@ package ascb.util {
           return oDuplicate;
         }
         else {
-          var oDuplicate:Object = new Object();
+          oDuplicate = new Object();
           for(var sItem:String in oArray) {
             if(oArray[sItem] is Object && !(oArray[sItem] is String) && !(oArray[sItem] is Boolean) && !(oArray[sItem] is Number)) {
               oDuplicate[sItem] = duplicate(oArray[sItem], bRecursive);
@@ -192,8 +192,8 @@ package ascb.util {
           return oArray.concat();
         }
         else {
-          var oDuplicate:Object = new Object();
-          for(var sItem:String in oArray) {
+          oDuplicate = new Object();
+          for(sItem in oArray) {
             oDuplicate[sItem] = oArray[sItem];
           }
           return oDuplicate;

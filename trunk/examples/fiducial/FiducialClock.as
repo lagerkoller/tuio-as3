@@ -1,10 +1,7 @@
-package
+package examples.fiducial
 {
-	import ascb.drawing.Pen;
-	
-	import caurina.transitions.Tweener;
-	
-	import ext.transitions.*;
+	import examples.fiducial.ascb.drawing.Pen;
+	import examples.fiducial.caurina.transitions.Tweener;
 	
 	import flash.display.Sprite;
 	import flash.events.*;

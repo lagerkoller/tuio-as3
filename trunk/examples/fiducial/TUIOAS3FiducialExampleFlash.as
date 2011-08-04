@@ -1,4 +1,4 @@
-package
+package examples.fiducial
 {
 	import flash.display.Sprite;
 	import flash.events.Event;

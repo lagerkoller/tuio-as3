@@ -1,4 +1,4 @@
-package caurina.transitions {
+package examples.fiducial.caurina.transitions {
 
 	/**
 	 * PropertyInfoObj

@@ -1,4 +1,4 @@
-package ascb.util {
+package examples.fiducial.ascb.util {
 	
   public class NumberFormat {
 
@@ -45,7 +45,7 @@ package ascb.util {
       // so format the number based on the radix.
       if(typeof oParameter1 == "number") {
         var nRadix:Number = Number(oParameter1);
-        var sNumber:String = nNumber.toString(nRadix);
+        sNumber = nNumber.toString(nRadix);
 
         // See if there's an approprate prefix of either 0x or 0.
         // Optionally, the prefix may be specified as a third parameter.
@@ -87,7 +87,7 @@ package ascb.util {
 
         // Get the symbols for the formatting based on the locale - includes grouping,
         // decimal, etc.
-        var oSymbols:Object = getSymbols(false, lStyle);
+        oSymbols = getSymbols(false, lStyle);
       }
 
       sDecimal = oSymbols.decimal;
@@ -127,7 +127,7 @@ package ascb.util {
 
         // Split the mask into arrays of characters.
         var aMask:Array = _sMask.split("");
-        for(var i:Number = 0; i < aMask.length; i++) {
+        for( i = 0; i < aMask.length; i++) {
           if(aMask[i] != "0" && aMask[i] != "#" && aMask[i] != ".") {
             aMask.splice(i, 1);
             i--;
@@ -136,7 +136,7 @@ package ascb.util {
         aMask = aMask.join("").split(".");
         var aMask0:Array = aMask[0].split("");
         var aMask1:Array = (aMask.length > 1) ? aMask[1].split("") : new Array();
-        var nCounter:Number = aMask0.length;
+        nCounter = aMask0.length;
 
         var nPart0Index:Number = 0;
         var nMaskIndex:Number = 0;
@@ -146,7 +146,7 @@ package ascb.util {
         // then that means that several characters of the first part of the number string
         // need to get added to the return string before dealing with the mask.
         if(nCounter < aPart0.length) {
-          for(var i:Number = 0; i < aPart0.length - nCounter; i++) {
+          for(i = 0; i < aPart0.length - nCounter; i++) {
             sNumber += aPart0[i];
             nPart0Index++;
           }
@@ -154,7 +154,7 @@ package ascb.util {
         else if(nCounter > aPart0.length) {
           // Otherwise, if the number of mask character is greater than the digit in the number,
           // Add leading zeros or spaces.
-          for(var i:Number = 0; i < nCounter - aPart0.length; i++) {
+          for(i = 0; i < nCounter - aPart0.length; i++) {
             if(aMask0[i] == "0") {
               sNumber += "0";
             }
@@ -168,7 +168,7 @@ package ascb.util {
         var bNumeric:Boolean = false;
 
         // Loop through each of the remaining characters in the mask.
-        for(var i:Number = nMaskIndex; i < aMask0.length; i++) {
+        for(i = nMaskIndex; i < aMask0.length; i++) {
 
           // If the mask character is anything other than a # or 0, and no other
           // numeric character has yet been encountered, then use a space. Otherwise
@@ -192,10 +192,10 @@ package ascb.util {
         // Declare a variable and initialize it to false. This variable is
         // to keep track of whether or not a numeric value has been encountered
         // yet.
-        var bNumeric:Boolean = false;
+        bNumeric = false;
 
         // Loop through each element of the array of mask characters.
-        for(var i:Number = 0; i < aMask.length; i++) {
+        for(i = 0; i < aMask.length; i++) {
 
           // Check to see if the element of the mask is one of the special
           // mask characters.
@@ -229,7 +229,7 @@ package ascb.util {
         var nDigits:Number;
 
         // Loop through each element of the second mask part.
-        for(var i:Number = 0; i < aMask1.length; i++) {
+        for(i = 0; i < aMask1.length; i++) {
 
           // Check to see if the character in the second number part is
           // defined.
@@ -295,7 +295,7 @@ package ascb.util {
         var oSymbols:Object = oParameter1;
       }
       else {
-        var oSymbols:Object = getSymbols(true, lStyle);
+        oSymbols = getSymbols(true, lStyle);
       }
 
       var sCurrencySymbol:String = oSymbols.currency;

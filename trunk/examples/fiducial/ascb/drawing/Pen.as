@@ -1,4 +1,4 @@
-package ascb.drawing {
+package examples.fiducial.ascb.drawing {
 
   import flash.display.Graphics;
   import flash.geom.Matrix;

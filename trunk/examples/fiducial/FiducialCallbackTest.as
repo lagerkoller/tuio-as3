@@ -1,4 +1,4 @@
-package 
+package examples.fiducial
 {
 	import flash.display.BitmapData;
 	import flash.display.Sprite;

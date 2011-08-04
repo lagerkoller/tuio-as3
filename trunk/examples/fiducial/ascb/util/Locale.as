@@ -1,4 +1,4 @@
-package ascb.util {
+package examples.fiducial.ascb.util {
 	
   import flash.system.System;
   import flash.system.Capabilities;

@@ -1,4 +1,4 @@
-package ascb.filters {
+package examples.fiducial.ascb.filters {
 
 
   public class ConvolutionMatrixArrays {	

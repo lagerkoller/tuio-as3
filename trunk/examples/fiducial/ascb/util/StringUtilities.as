@@ -1,4 +1,4 @@
-package ascb.util {
+package examples.fiducial.ascb.util {
 
 	public class StringUtilities {
 		
@@ -25,7 +25,7 @@ package ascb.util {
 				var tempChars:Array = originalMap.concat();
 				
 				// Loop through all the character code points in originalMap.
-				for ( var i:int = 0; i < originalMap.length; i++ ) {
+				for (i = 0; i < originalMap.length; i++ ) {
 					// Create a random number that is between 0 and the last index of tempChars.
 					var randomIndex:int = Math.floor( Math.random() * ( tempChars.length - 1 ) );
 					

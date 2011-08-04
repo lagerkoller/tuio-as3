@@ -1,4 +1,5 @@
-package caurina.transitions.properties {
+package examples.fiducial.caurina.transitions.properties {
+	import examples.fiducial.caurina.transitions.Tweener;
 
 	/**
 	 * properties.CurveModifiers
@@ -8,8 +9,6 @@ package caurina.transitions.properties {
 	 * @author		Zeh Fernando, Nate Chatellier, Arthur Debert
 	 * @version		1.0.0
 	 */
-
-	import caurina.transitions.Tweener;
 
 	public class CurveModifiers {
 
