@@ -30,6 +30,8 @@ package org.tuio.adapters
 		private var useTuioDebug:Boolean;
 		private var lastPos:Array;
 		private var frameId:uint = 0;
+		private var sessionID:uint = 0;
+		private var sessionIDMap:Array = [];
 		
 		private var src:String = "_native_tuio_adapter_";
 		
@@ -57,20 +59,20 @@ package org.tuio.adapters
 			var target:DisplayObject = DisplayListHelper.getTopDisplayObjectUnderPoint(stagePos, stage);
 			var local:Point = target.globalToLocal(new Point(stagePos.x, stagePos.y));
 			
-			target.dispatchEvent(new org.tuio.TuioTouchEvent(org.tuio.TuioTouchEvent.TAP, true, false, local.x, local.y, stagePos.x, stagePos.y, target, createTuioContainer(event)));
+			target.dispatchEvent(new TuioTouchEvent(TuioTouchEvent.TAP, true, false, local.x, local.y, stagePos.x, stagePos.y, target, _tuioCursors[this.src][event.touchPointID]));
 		}
 		
 		private function touchBegin(event:TouchEvent):void{
 			this.frameId = this.frameId + 1;
 			var tuioCursor:TuioCursor = createTuioCursor(event);
-			_tuioCursors[this.src].push(tuioCursor);
+			_tuioCursors[this.src][event.touchPointID] = tuioCursor;
 			dispatchAddCursor(tuioCursor);
 			lastPos[event.touchPointID] = new Point(event.stageX, event.stageY);
 		}
 		
 		private function dispatchTouchMove(event:TouchEvent):void{
 			this.frameId = this.frameId + 1;
-			var tuioCursor:TuioCursor = getTuioCursor(event.touchPointID, this.src); 
+			var tuioCursor:TuioCursor = _tuioCursors[this.src][event.touchPointID]; 
 			updateTuioCursor(tuioCursor, event);
 			dispatchUpdateCursor(tuioCursor);
 			lastPos[event.touchPointID] = new Point(event.stageX, event.stageY);
@@ -78,7 +80,7 @@ package org.tuio.adapters
 		
 		private function dispatchTouchUp(event:TouchEvent):void{
 			this.frameId = this.frameId + 1;
-			dispatchRemoveCursor(getTuioCursor(event.touchPointID, this.src));
+			dispatchRemoveCursor(_tuioCursors[this.src][event.touchPointID]);
 			lastPos[event.touchPointID] = null;
 			delete lastPos[event.touchPointID];
 			
@@ -90,23 +92,18 @@ package org.tuio.adapters
 				i = i+1;
 			}
 		}
-		
-		private function createTuioContainer(event:TouchEvent):TuioContainer{
-			var diffX:Number = 0, diffY:Number = 0;
-			if (lastPos[event.touchPointID]) {
-				diffX = (event.stageX - lastPos[event.touchPointID].x);
-				diffY = (event.stageY - lastPos[event.touchPointID].y);
-			}
-			return new TuioContainer("2Dcur",event.touchPointID,event.stageX/stage.stageWidth, event.stageY/stage.stageHeight,0,diffX/stage.stageWidth,diffY/stage.stageHeight,0,0,0,'NativeTuioAdapter');
-		}
+
 		private function createTuioCursor(event:TouchEvent):TuioCursor{
 			var diffX:Number = 0, diffY:Number = 0;
 			if (lastPos[event.touchPointID]) {
 				diffX = (event.stageX - lastPos[event.touchPointID].x);
 				diffY = (event.stageY - lastPos[event.touchPointID].y);
 			}
-			return new TuioCursor("2Dcur",event.touchPointID,event.stageX/stage.stageWidth, event.stageY/stage.stageHeight,0,diffX/stage.stageWidth,diffY/stage.stageHeight,0,0,0,'NativeTuioAdapter');
+			sessionIDMap[event.touchPointID] = sessionID;
+			sessionID++;
+			return new TuioCursor("2Dcur",sessionIDMap[event.touchPointID],event.stageX/stage.stageWidth, event.stageY/stage.stageHeight,0,diffX/stage.stageWidth,diffY/stage.stageHeight,0,0,frameId,'NativeTuioAdapter');
 		}
+		
 		private function updateTuioCursor(tuioCursor:TuioCursor, event:TouchEvent):void{
 			var diffX:Number = 0, diffY:Number = 0;
 			if (lastPos[event.touchPointID]) {
