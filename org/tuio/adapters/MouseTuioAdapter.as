@@ -55,6 +55,7 @@ package org.tuio.adapters
 		private var groups:Dictionary;
 		
 		private var frameId:uint = 0;
+		private var lastSentFrameId:Number = 0;
 		private var lastX:Number;
 		private var lastY:Number;
 		
@@ -123,6 +124,8 @@ package org.tuio.adapters
 			}else{
 				addFlashContextMenu();
 			}
+			
+			stage.addEventListener(Event.EXIT_FRAME, sendFrameEvent);
 		}
 		
 		public function disableAdapter():void{
@@ -135,6 +138,20 @@ package org.tuio.adapters
 				stage.removeEventListener(MouseEvent.RIGHT_CLICK, contextMenuClick);
 			}else{
 				removeFlashContextMenu();
+			}
+			
+			stage.removeEventListener(Event.EXIT_FRAME, sendFrameEvent);
+		}
+		
+		/**
+		 * Causes a Tuio update event to be sent. Is, e.g., used in gesture API.
+		 */
+		private function sendFrameEvent(event:Event):void{
+			if(this.frameId != this.lastSentFrameId){
+				for each(var l:ITuioListener in this.listeners) {
+					l.newFrame(this.frameId);
+				}
+				this.lastSentFrameId = this.frameId;
 			}
 		}
 		
@@ -463,8 +480,6 @@ package org.tuio.adapters
 			
 			stage.removeEventListener(MouseEvent.MOUSE_MOVE, dispatchTouchMove);
 			stage.removeEventListener(MouseEvent.MOUSE_UP, dispatchTouchUp);
-			
-			trace("tuioCursor length", _tuioCursors[this.src].length);
 		}
 		
 		private function deleteTuioCursorFromGlobalList(cursorID:Number):void{
@@ -778,5 +793,6 @@ package org.tuio.adapters
 			//if you want to use flash and implement it yourself like this:
 			//http://www.republicofcode.com/tutorials/flash/as3contextmenu/
 		}
+		
 	}
 }
