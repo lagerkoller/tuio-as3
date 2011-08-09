@@ -2,15 +2,18 @@ package org.tuio.adapters
 {
 	import flash.display.DisplayObject;
 	import flash.display.Stage;
+	import flash.events.Event;
 	import flash.events.TouchEvent;
 	import flash.geom.Point;
 	import flash.ui.Multitouch;
 	import flash.ui.MultitouchInputMode;
 	
+	import org.tuio.ITuioListener;
 	import org.tuio.TuioClient;
 	import org.tuio.TuioContainer;
 	import org.tuio.TuioCursor;
 	import org.tuio.TuioManager;
+	import org.tuio.TuioTouchEvent;
 	import org.tuio.debug.TuioDebug;
 	import org.tuio.util.DisplayListHelper;
 
@@ -29,7 +32,8 @@ package org.tuio.adapters
 		private var useTuioManager:Boolean;
 		private var useTuioDebug:Boolean;
 		private var lastPos:Array;
-		private var frameId:uint = 0;
+		private var _frameId:uint = 0;
+		private var lastSentFrameId:Number = 0;
 		private var sessionID:uint = 0;
 		private var sessionIDMap:Array = [];
 		
@@ -52,6 +56,7 @@ package org.tuio.adapters
 			stage.addEventListener(TouchEvent.TOUCH_END, dispatchTouchUp);
 			
 			stage.addEventListener(TouchEvent.TOUCH_TAP, dispatchTap);
+			stage.addEventListener(Event.EXIT_FRAME, sendFrameEvent);
 		}
 		
 		private function dispatchTap(event:TouchEvent):void{
@@ -112,6 +117,23 @@ package org.tuio.adapters
 			}
 			tuioCursor.update(event.stageX/stage.stageWidth, event.stageY/stage.stageHeight,0,diffX/stage.stageWidth,diffY/stage.stageHeight,0,0,this.frameId);
 		}
+		public function set frameId(frameId:Number):void{
+			this._frameId = frameId;
+		}
+		public function get frameId():Number{
+			return this._frameId;
+		}
 		
+		/**
+		 * Causes a Tuio update event to be sent. Is, e.g., used in gesture API.
+		 */
+		private function sendFrameEvent(event:Event):void{
+			if(this.frameId != this.lastSentFrameId){
+				for each(var l:ITuioListener in this.listeners) {
+					l.newFrame(this.frameId);
+				}
+				this.lastSentFrameId = this.frameId;
+			}
+		}
 	}
 }
