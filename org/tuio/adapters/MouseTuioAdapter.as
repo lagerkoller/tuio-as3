@@ -18,7 +18,6 @@ package org.tuio.adapters
 	import flash.utils.Dictionary;
 	
 	import org.tuio.*;
-	import org.tuio.TuioFiducialEvent;
 	import org.tuio.debug.*;
 	import org.tuio.util.DisplayListHelper;
 	

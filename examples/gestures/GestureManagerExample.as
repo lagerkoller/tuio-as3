@@ -4,6 +4,7 @@ package examples.gestures {
 	import flash.text.*;
 	import flash.events.KeyboardEvent;
 	import flash.ui.Keyboard;
+	import org.tuio.adapters.NativeTuioAdapter;
 	import org.tuio.gestures.*;
 	
 	import org.tuio.connectors.*;
@@ -37,11 +38,12 @@ package examples.gestures {
 			 * You can replace the connector used for creating the TuioClient with any connector you'd like to use.
 			 */
 			var tc:TuioClient = new TuioClient(new UDPConnector("0.0.0.0", 3333));
+			//var tc:NativeTuioAdapter = new NativeTuioAdapter(stage);
 			tc.addListener(TuioManager.init(stage));
 			var tm:GestureManager = GestureManager.init(stage);
 			GestureManager.addGesture(new DragGesture());
-			GestureManager.addGesture(new ZoomGesture());
-			GestureManager.addGesture(new RotateGesture());
+			GestureManager.addGesture(new ZoomGesture(TwoFingerMoveGesture.TRIGGER_MODE_MOVE));
+			GestureManager.addGesture(new RotateGesture(TwoFingerMoveGesture.TRIGGER_MODE_MOVE));
 			tDbg = TuioDebug.init(stage);
 			tc.addListener(tDbg);
 			

@@ -45,21 +45,21 @@ package org.tuio {
 	[Event(name = "org.tuio.TuioEvent.removeBlob", type = "org.tuio.TuioEvent")]
 	
 	/**
-	 * The TuioManager class implements the ITuioListener interface and triggers events 
+	 * The TuioManager class implements the ITuioListener interface and dispatches events 
 	 * into Flash's event flow according to the called callback functions.
 	 * 
-	 * <p><b>Triggered events</b></p>
+	 * <p><b>Dispatched events</b></p>
 	 * <ul>
-	 * 	<li>TuioEvent: Is triggered on the TuioManager itself.</li>
-	 * 	<li>TuioTouchEvent: Is triggered on DisplayObjects under the tracked point according to the TuioManager's settings.</li>
-	 * 	<li>TuioFiducialEvent: Is triggered on DisplayObjects under the tracked point according to the TuioManager's settings.</li>
+	 * 	<li>TuioEvent: Is dispatced on the TuioManager itself.</li>
+	 * 	<li>TuioTouchEvent: Is dispatched on DisplayObjects under the tracked point according to the TuioManager's settings.</li>
+	 * 	<li>TuioFiducialEvent: Is dispatched on DisplayObjects under the tracked point according to the TuioManager's settings.</li>
 	 * </ul>
 	 * 
 	 <p><b>Callback system</b></p>
 	 * <ul>
-	 * 	<li>Touches: Callbacks can register themselves in order to receive callbacks for a certain session id. 
+	 * 	<li>Touches: Callbackreceivers can register themselves in order to receive callbacks for a certain session id. 
 	 * 	A touch callback class must implement <code>ITuioTouchReceiver</code>.</li>
-	 * 	<li>Fiducials: Callbacks can register themselves in order to receive callbacks for a certain fiducial id. 
+	 * 	<li>Fiducials: Callbackreceivers can register themselves in order to receive callbacks for a certain fiducial id. 
 	 * 	A fiducial callback class must implement <code>ITuioFiducialReceiver</code>.</li>
 	 * </ul>
 	 * 
@@ -135,9 +135,9 @@ package org.tuio {
 		
 		/**
 		 * Creates a new TuioManager instance which processes the Tuio tracking data received by the given TuioClient.
+		 * The constructor is only meant to be used for internal calls. Use <code>getInstance</code> instead.
 		 * 
 		 * @param	stage The Stage object of the Flashmovie.
-		 * @param	tuioClient A TuioClient instance that receives Tuio tracking data from a tracker.
 		 */
 		public function TuioManager(stage:Stage) {
 			if (!allowInst) {
@@ -189,6 +189,7 @@ package org.tuio {
 			return inst;
 		}
 		
+		/** @private */
 		public function handleAdd(tuioContainer:TuioContainer):void {
 			var stagePos:Point = new Point(stage.stageWidth * tuioContainer.x, stage.stageHeight * tuioContainer.y);
 			var target:DisplayObject = getTopDisplayObjectUnderPoint(stagePos);
@@ -215,6 +216,7 @@ package org.tuio {
 			
 		}
 		
+		/** @private */
 		public function handleUpdate(tuioContainer:TuioContainer):void {
 			var stagePos:Point = new Point(stage.stageWidth * tuioContainer.x, stage.stageHeight * tuioContainer.y);
 			var target:DisplayObject = getTopDisplayObjectUnderPoint(stagePos);
@@ -402,6 +404,7 @@ package org.tuio {
 			return objectsDict;
 		}
 		
+		/** @private */
 		public function handleRemove(tuioContainer:TuioContainer):void {
 			var stagePos:Point = new Point(stage.stageWidth * tuioContainer.x, stage.stageHeight * tuioContainer.y);
 			var target:DisplayObject = getTopDisplayObjectUnderPoint(stagePos);
@@ -575,7 +578,7 @@ package org.tuio {
 		}
 		
 		/**
-		 * If set true native TouchEvents (since Flash 10.1 and Air2.0) are dispatched alongside the org.tuio.TouchEvents also the touchTargetDicoveryMode
+		 * If set true native TouchEvents (since Flash 10.1 and Air2.0) are dispatched alongside the TuioTouchEvents also the touchTargetDicoveryMode
 		 * is automatically set to TOUCH_TARGET_DISCOVERY_MOUSE_ENABLED.
 		 * The default value is false.
 		 */
@@ -588,6 +591,9 @@ package org.tuio {
 			return this._dispatchNativeTouchEvents;
 		}
 		
+		/**
+		 * @inheritDoc
+		 */
 		public function addTuioObject(tuioObject:TuioObject):void {
 			this.dispatchEvent(new TuioEvent(TuioEvent.ADD_OBJECT, tuioObject));
 			this.dispatchEvent(new TuioEvent(TuioEvent.ADD, tuioObject));
@@ -627,6 +633,9 @@ package org.tuio {
 			////////////////////////////////////////////
 		}
 		
+		/**
+		 * @inheritDoc
+		 */
 		public function updateTuioObject(tuioObject:TuioObject):void {
 			this.dispatchEvent(new TuioEvent(TuioEvent.UPDATE_OBJECT, tuioObject));
 			this.dispatchEvent(new TuioEvent(TuioEvent.UPDATE, tuioObject));
@@ -667,6 +676,9 @@ package org.tuio {
 			////////////////////////////////////////////
 		}
 		
+		/**
+		 * @inheritDoc
+		 */
 		public function removeTuioObject(tuioObject:TuioObject):void {
 			this.dispatchEvent(new TuioEvent(TuioEvent.REMOVE_OBJECT, tuioObject));
 			this.dispatchEvent(new TuioEvent(TuioEvent.REMOVE, tuioObject));
@@ -704,42 +716,63 @@ package org.tuio {
 			////////////////////////////////////////////
 		}
 		
+		/**
+		 * @inheritDoc
+		 */
 		public function addTuioCursor(tuioCursor:TuioCursor):void {
 			this.dispatchEvent(new TuioEvent(TuioEvent.ADD_CURSOR, tuioCursor));
 			this.dispatchEvent(new TuioEvent(TuioEvent.ADD, tuioCursor));
 			this.handleAdd(tuioCursor);
 		}
 		
+		/**
+		 * @inheritDoc
+		 */
 		public function updateTuioCursor(tuioCursor:TuioCursor):void {
 			this.dispatchEvent(new TuioEvent(TuioEvent.UPDATE_CURSOR, tuioCursor));
 			this.dispatchEvent(new TuioEvent(TuioEvent.UPDATE, tuioCursor));
 			this.handleUpdate(tuioCursor);
 		}
 		
+		/**
+		 * @inheritDoc
+		 */
 		public function removeTuioCursor(tuioCursor:TuioCursor):void {
 			this.dispatchEvent(new TuioEvent(TuioEvent.REMOVE_CURSOR, tuioCursor));
 			this.dispatchEvent(new TuioEvent(TuioEvent.REMOVE, tuioCursor));
 			this.handleRemove(tuioCursor);
 		}
 		
+		/**
+		 * @inheritDoc
+		 */
 		public function addTuioBlob(tuioBlob:TuioBlob):void {
 			this.dispatchEvent(new TuioEvent(TuioEvent.ADD_BLOB, tuioBlob));
 			this.dispatchEvent(new TuioEvent(TuioEvent.ADD, tuioBlob));
 			if(triggerTouchOnBlob) this.handleAdd(tuioBlob);
 		}
 
+		/**
+		 * @inheritDoc
+		 */
 		public function updateTuioBlob(tuioBlob:TuioBlob):void {
 			this.dispatchEvent(new TuioEvent(TuioEvent.UPDATE_BLOB, tuioBlob));
 			this.dispatchEvent(new TuioEvent(TuioEvent.UPDATE, tuioBlob));
 			if(triggerTouchOnBlob) this.handleUpdate(tuioBlob);
 		}
-		
+
+		/**
+		 * @inheritDoc
+		 */
 		public function removeTuioBlob(tuioBlob:TuioBlob):void {
 			this.dispatchEvent(new TuioEvent(TuioEvent.REMOVE_BLOB, tuioBlob));
 			this.dispatchEvent(new TuioEvent(TuioEvent.REMOVE, tuioBlob));
 			if(triggerTouchOnBlob) this.handleRemove(tuioBlob);
 		}
 		
+		/**
+		 * @inheritDoc
+		 */
 		public function newFrame(id:uint):void {
 			this.dispatchEvent(new TuioEvent(TuioEvent.NEW_FRAME, null));
 		}

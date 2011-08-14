@@ -7,8 +7,13 @@ package org.tuio.gestures {
 	
 	public class ScrollGesture extends TwoFingerMoveGesture {
 		
-		public function ScrollGesture() {
-			super();
+		/**
+		 * A basic two finger scroll gesture.
+		 * @inheritDoc
+		 * @see TwoFingerMoveGesture
+		 */
+		public function ScrollGesture(triggerMode:int) {
+			super(triggerMode);
 		}
 		
 		public override function dispatchGestureEvent(target:DisplayObject, gsg:GestureStepSequence):void {

@@ -2,9 +2,7 @@
 	
 	import flash.errors.EOFError;
 	import flash.utils.ByteArray;
-	
-	import org.tuio.connectors.tcp.OSCSocket;
-	
+
 	/**
 	 * An OSCMessage
 	 * @author Immanuel Bauer

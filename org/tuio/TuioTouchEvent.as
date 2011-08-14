@@ -5,7 +5,7 @@ package org.tuio {
 	import flash.geom.Point;
 	
 	/**
-	 * The TochEvent is a multitouch version of Flash's MouseEvent.
+	 * The <code>TuioTouchEvent</code> is the event dispatched by the <code>TuioManager</code> and behaves uch like the MouseEvent or the native TouchEvent. 
 	 * 
 	 * @author Immanuel Bauer
 	 */
@@ -28,7 +28,7 @@ package org.tuio {
 		
 		/**Triggered if a TOUCH_DOWN and TOUCH_UP occurred over the same DisplayObject.*/
 		public static const TAP:String = "org.tuio.TuioTouchEvent.TAP";
-		/**Triggered if two subsequent TABs occurred over the same DisplayObject.*/
+		/**Triggered if two subsequent TAPs occurred over the same DisplayObject.*/
 		public static const DOUBLE_TAP:String = "org.tuio.TuioTouchEvent.DOUBLE_TAP";
 		
 		/**Triggered if a touch is held for a certain time over the same DisplayObject without movement.*/
@@ -36,29 +36,68 @@ package org.tuio {
 		
 		private var _tuioContainer:TuioContainer;
 		
-		public var localX:Number = NaN;
-		public var localY:Number = NaN;
-		public var stageX:Number = NaN;
-		public var stageY:Number = NaN;
-		public var relatedObject:DisplayObject;
+		private var _localX:Number = NaN;
+		private var _localY:Number = NaN;
+		private var _stageX:Number = NaN;
+		private var _stageY:Number = NaN;
+		private var _relatedObject:DisplayObject;
 		
 		public function TuioTouchEvent(type:String, bubbles:Boolean = true, cancelable:Boolean = false, localX:Number = NaN, localY:Number = NaN, stageX:Number = NaN, stageY:Number = NaN, relatedObject:DisplayObject = null, tuioContainer:TuioContainer = null) {
 			super(type, bubbles, cancelable);
 			this._tuioContainer = tuioContainer;
 			
-			this.relatedObject = relatedObject;
+			this._relatedObject = relatedObject;
 			
-			this.stageX = stageX;
-			this.stageY = stageY;
+			this._stageX = stageX;
+			this._stageY = stageY;
 				
-			this.localX = localX;
-			this.localY = localY;
+			this._localX = localX;
+			this._localY = localY;
 		}
 		
+		/**
+		 * The <code>TuioContainer</code> related to this <code>TuioTouchEvent</code> containing the raw TUIO information.
+		 * @see TuioContainer
+		 * @see TuioCursor
+		 */
 		public function get tuioContainer():TuioContainer {
 			return this._tuioContainer;
 		}
 		
+		/**
+		 * The touch's position on the x-axis relative to the touchTarget's origin.
+		 */
+		public function get localX():Number {
+			return this._localX;
+		}
+		
+		/**
+		 * The touch's position on the y-axis relative to the touchTarget's origin.
+		 */
+		public function get localY():Number {
+			return this._localY;
+		}
+		
+		/**
+		 * The touch's position on the x-axis relative to the stage's origin.
+		 */
+		public function get stageX():Number {
+			return this._stageX;
+		}
+		
+		/**
+		 * The touch's position on the y-axis relative to the stage's origin.
+		 */
+		public function get stageY():Number {
+			return this._stageY;
+		}
+		
+		/**
+		 * The related <code>DisplayObject</code>
+		 */
+		public function get relatedObject():DisplayObject {
+			return this._relatedObject;
+		}
 	}
 	
 }

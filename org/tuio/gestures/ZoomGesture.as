@@ -12,8 +12,13 @@ package org.tuio.gestures {
 		
 		private var lastDistance:Number;
 
-		public function ZoomGesture() {
-			super();
+		/**
+		 * A basic two finger zoom gesture.
+		 * @inheritDoc
+		 * @see TwoFingerMoveGesture
+		 */
+		public function ZoomGesture(triggerMode:int) {
+			super(triggerMode);
 		}
 		
 		public override function dispatchGestureEvent(target:DisplayObject, gsg:GestureStepSequence):void {

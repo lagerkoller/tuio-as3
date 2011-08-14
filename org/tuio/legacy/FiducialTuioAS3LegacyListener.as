@@ -4,11 +4,7 @@ package org.tuio.legacy
 	import flash.events.EventDispatcher;
 	import flash.display.Stage;
 	
-	import org.tuio.ITuioListener;
-	import org.tuio.TuioBlob;
-	import org.tuio.TuioClient;
-	import org.tuio.TuioCursor;
-	import org.tuio.TuioObject;
+	import org.tuio.*;
 
 	
 	/**
