@@ -12,13 +12,7 @@ package org.tuio.debug
 	import flash.text.TextFieldAutoSize;
 	import flash.text.TextFormat;
 	
-	import org.tuio.ITuioListener;
-	import org.tuio.TuioBlob;
-	import org.tuio.TuioClient;
-	import org.tuio.TuioCursor;
-	import org.tuio.TuioFiducialEvent;
-	import org.tuio.TuioObject;
-	import org.tuio.TuioTouchEvent;
+	import org.tuio.*;
 
 	/**
 	 * 

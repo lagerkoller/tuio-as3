@@ -26,7 +26,7 @@
 			this.f_id = id;
 		}
 		
-		public function set_s_ID(_s_id:Number){
+		public function set_s_ID(_s_id:Number):void{
 			this.s_id = _s_id;
 		}
 		

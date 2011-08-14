@@ -10,8 +10,13 @@ package org.tuio.gestures {
 		
 		private var lastAngle:Number;
 		
-		public function RotateGesture() {
-			super();
+		/**
+		 * A basic two finger rotate gesture.
+		 * @inheritDoc
+		 * @see TwoFingerMoveGesture
+		 */
+		public function RotateGesture(triggerMode:int) {
+			super(triggerMode);
 		}
 		
 		public override function dispatchGestureEvent(target:DisplayObject, gsg:GestureStepSequence):void {

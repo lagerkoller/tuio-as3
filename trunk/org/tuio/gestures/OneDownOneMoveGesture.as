@@ -3,7 +3,6 @@ package org.tuio.gestures {
 	import flash.display.DisplayObject;
 	import flash.utils.getTimer;
 	import org.tuio.TuioContainer;
-	import org.tuio.TuioEvent;
 	import org.tuio.TuioTouchEvent;
 	
 	public class OneDownOneMoveGesture extends Gesture {

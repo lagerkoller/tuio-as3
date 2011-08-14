@@ -7,16 +7,27 @@ package org.tuio {
 	 */
 	public class TuioContainer {
 		
+		/** @private */
 		internal var _sessionID:uint;
+		/** @private */
 		internal var _x:Number;
+		/** @private */
 		internal var _y:Number;
+		/** @private */
 		internal var _z:Number;
+		/** @private */
 		internal var _X:Number;
+		/** @private */
 		internal var _Y:Number;
+		/** @private */
 		internal var _Z:Number;
+		/** @private */
 		internal var _m:Number;
+		/** @private */
 		internal var _type:String;
+		/** @private */
 		internal var _frameID:uint;
+		/** @private */
 		internal var _source:String;
 		
 		public var isAlive:Boolean;

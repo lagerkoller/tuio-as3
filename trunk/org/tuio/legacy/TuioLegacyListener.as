@@ -8,7 +8,6 @@ package org.tuio.legacy
 	
 	import org.tuio.ITuioListener;
 	import org.tuio.TuioBlob;
-	import org.tuio.TuioClient;
 	import org.tuio.TuioCursor;
 	import org.tuio.TuioObject;
 	import org.tuio.adapters.AbstractTuioAdapter;
@@ -82,18 +81,18 @@ package org.tuio.legacy
 		 * initializes Singleton instance. Must be called before <code>getInstance()</code>.
 		 *  
 		 * @param stage
-		 * @param tuioClient
+		 * @param tuioAdapter
 		 * 
 		 * @return singleton instance of <code>TuioLegacyListener</code>.
 		 * 
 		 */
-		public static function init(stage:Stage, interactionClient:AbstractTuioAdapter):TuioLegacyListener{
+		public static function init(stage:Stage, tuioAdapter:AbstractTuioAdapter):TuioLegacyListener{
 			if(inst == null){
 				allowInst = true;
-				inst = new TuioLegacyListener(stage, interactionClient);
+				inst = new TuioLegacyListener(stage, tuioAdapter);
 				allowInst = false;
 			}else{
-				inst.addInteractionClient(interactionClient);
+				inst.addInteractionClient(tuioAdapter);
 			}
 			
 			return inst;

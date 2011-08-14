@@ -9,12 +9,9 @@ package org.tuio.adapters
 	import flash.ui.MultitouchInputMode;
 	
 	import org.tuio.ITuioListener;
-	import org.tuio.TuioClient;
 	import org.tuio.TuioContainer;
 	import org.tuio.TuioCursor;
-	import org.tuio.TuioManager;
 	import org.tuio.TuioTouchEvent;
-	import org.tuio.debug.TuioDebug;
 	import org.tuio.util.DisplayListHelper;
 
 	/**
@@ -89,13 +86,13 @@ package org.tuio.adapters
 			lastPos[event.touchPointID] = null;
 			delete lastPos[event.touchPointID];
 			
-			var i:Number = 0;
+			/*var i:Number = 0;
 			for each(var tuioCursor:TuioCursor in _tuioCursors[this.src]){
 				if(tuioCursor.sessionID == event.touchPointID){
 					_tuioCursors[this.src].splice(i, 1);
 				}
 				i = i+1;
-			}
+			}*/
 		}
 
 		private function createTuioCursor(event:TouchEvent):TuioCursor{
