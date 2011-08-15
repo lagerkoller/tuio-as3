@@ -6,6 +6,10 @@ package org.tuio.gestures {
 	import org.tuio.TuioEvent;
 	import org.tuio.TuioTouchEvent;
 	
+	/**
+	 * This is an example implementation of a three finger move gesture. 
+	 * It is recommended to modify this event to fit the wanted behaviour.
+	 */
 	public class ThreeFingerMoveGesture extends Gesture {
 		
 		public function ThreeFingerMoveGesture() {

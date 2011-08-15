@@ -7,23 +7,23 @@ package org.tuio
 	
 	
 	/**
-	 * <code>FiducialEvent</code> is a high-level implementation of <code>TuioEvent</code> that
+	 * <code>TuipFiducialEvent</code> is a high-level implementation of <code>TuioEvent</code> that
 	 * offers only information that is connected to TuioObjects. It is the fiducial analogon to
-	 * <code>TouchEvent</code>. 
+	 * <code>TuioTouchEvent</code>. 
 	 * 
 	 * @author Johannes Luderschmidt
 	 * 
 	 */
 	public class TuioFiducialEvent extends Event
 	{
-		public static var MOVE:String = "FIDUCIAL_MOVE";
-		public static var ROTATE:String = "FIDUCIAL_ROTATE";
-		public static var ADD:String = "FIDUCIAL_ADD";
-		public static var OVER:String = "FIDUCIAL_OVER";
-		public static var OUT:String = "FIDUCIAL_OUT";
-		public static var REMOVED:String = "FIDUCIAL_REMOVED";
-		public static var NOTIFY_REMOVED:String = "FIDUCIAL_NOTIFY_REMOVED";
-		public static var NOTIFY_RETURNED:String = "FIDUCIAL_NOTIFY_RETURNED";
+		public static const MOVE:String = "FIDUCIAL_MOVE";
+		public static const ROTATE:String = "FIDUCIAL_ROTATE";
+		public static const ADD:String = "FIDUCIAL_ADD";
+		public static const OVER:String = "FIDUCIAL_OVER";
+		public static const OUT:String = "FIDUCIAL_OUT";
+		public static const REMOVED:String = "FIDUCIAL_REMOVED";
+		public static const NOTIFY_REMOVED:String = "FIDUCIAL_NOTIFY_REMOVED";
+		public static const NOTIFY_RETURNED:String = "FIDUCIAL_NOTIFY_RETURNED";
 		
 		private var _fiducialId:Number;
 		private var _x:Number;

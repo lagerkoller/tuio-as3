@@ -337,10 +337,12 @@ package org.tuio {
 //				}
 //			}
 		}
+		
 		private function updateTouchReceiver(keyString:String, local:Point, stagePos:Point, target:DisplayObject, tuioContainer:TuioContainer):void{
 			if(this.touchReceiversDict[keyString]){
+				var event:TuioTouchEvent = new TuioTouchEvent(TuioTouchEvent.TOUCH_MOVE, true, false, local.x, local.y, stagePos.x, stagePos.y, target, tuioContainer);
 				for each(var receiver:ITuioTouchReceiver in this.touchReceiversDict[keyString]){
-					receiver.updateTouch(new TuioTouchEvent(TuioTouchEvent.TOUCH_MOVE, true, false, local.x, local.y, stagePos.x, stagePos.y, target, tuioContainer));
+					receiver.updateTouch(event);
 				}
 			}
 		}
@@ -423,8 +425,9 @@ package org.tuio {
 			//handle receivers
 			if(this.touchReceiversDict[tuioContainer.sessionID+tuioContainer.source]){
 				//call removeTouch from each receiver that listens on sessionID
+				var event:TuioTouchEvent = new TuioTouchEvent(TuioTouchEvent.TOUCH_UP, true, false, local.x, local.y, stagePos.x, stagePos.y, target, tuioContainer);
 				for each(var receiver:ITuioTouchReceiver in this.touchReceiversDict[tuioContainer.sessionID+tuioContainer.source]){
-					receiver.removeTouch(new TuioTouchEvent(TuioTouchEvent.TOUCH_UP, true, false, local.x, local.y, stagePos.x, stagePos.y, target, tuioContainer));
+					receiver.removeTouch(event);
 				}
 				
 				//delete receivers from dictionary
@@ -564,9 +567,9 @@ package org.tuio {
 		}
 		
 		/**
-		 * If set true MouseEvents are dispatched alongside the TouchEvents also the touchTargetDicoveryMode
+		 * If set <code>true</code> MouseEvents are dispatched alongside the TouchEvents also the touchTargetDicoveryMode
 		 * is automatically set to TOUCH_TARGET_DISCOVERY_MOUSE_ENABLED.
-		 * The default value is false.
+		 * @default false.
 		 */
 		public function set dispatchMouseEvents(value:Boolean):void {
 			if (value) this.touchTargetDiscoveryMode = TOUCH_TARGET_DISCOVERY_MOUSE_ENABLED;
@@ -578,9 +581,9 @@ package org.tuio {
 		}
 		
 		/**
-		 * If set true native TouchEvents (since Flash 10.1 and Air2.0) are dispatched alongside the TuioTouchEvents also the touchTargetDicoveryMode
+		 * If set <code>true</code> native TouchEvents (since Flash 10.1 and Air2.0) are dispatched alongside the TuioTouchEvents also the touchTargetDicoveryMode
 		 * is automatically set to TOUCH_TARGET_DISCOVERY_MOUSE_ENABLED.
-		 * The default value is false.
+		 * @default false.
 		 */
 		public function set dispatchNativeTouchEvents(value:Boolean):void {
 			if (value) this.touchTargetDiscoveryMode = TOUCH_TARGET_DISCOVERY_MOUSE_ENABLED;

@@ -4,10 +4,15 @@ package org.tuio.gestures {
 	import flash.events.EventDispatcher;
 	/**
 	 * This class is thought as a base class for creating custom gestures for the <code>GestureManager</code>.
-	 * To create a custom gesture you have to extend this class and overwrite <code>dispatchGestureEvent</code> function. 
+	 * To create a custom gesture you have to extend this class and overwrite <code>dispatchGestureEvent</code> function.
 	 * 
-	 * Gestures are described by a sequence of steps. If all steps are saturated the <code>dispatchGestureEvent</code> is called.
-	 * For more information on gesture steps have a look at the <code>GestureStep</code> asdoc.
+	 * <p>Gestures are described by a sequence of steps. If all steps are saturated the <code>dispatchGestureEvent</code> is called.
+	 * For more information on gesture steps have a look at the <code>GestureStep</code> asdoc.</p>
+	 * 
+	 * <p>To track the progress in the <code>GestureStepSequences</code> you can add an event listener for <code>GestureStepEvent</code> to your extension of <code>Gesture</code></p>
+	 * 
+	 * @see GestureStepSequence
+	 * @see GestureStep
 	 * 
 	 * @author Immanuel Bauer
 	 * 

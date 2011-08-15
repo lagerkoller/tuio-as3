@@ -8,6 +8,9 @@ package org.tuio.gestures {
 	import org.tuio.TuioEvent;
 	import org.tuio.TuioTouchEvent;
 	
+	/**
+	 * A simple drag gesture based on the <code>OneFingerMoveGesture</code>
+	 */
 	public class DragGesture extends OneFingerMoveGesture {
 		
 		private var lastPosition:Point;

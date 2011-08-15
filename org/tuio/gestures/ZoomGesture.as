@@ -8,14 +8,16 @@ package org.tuio.gestures {
 	import org.tuio.TuioEvent;
 	import org.tuio.TuioTouchEvent;
 	
+	/**
+	 * A basic two finger zoom gesture based on the <code>TwoFingerMoveGesture</code>
+	 * @see TwoFingerMoveGesture
+	 */
 	public class ZoomGesture extends TwoFingerMoveGesture {
 		
 		private var lastDistance:Number;
 
 		/**
-		 * A basic two finger zoom gesture.
-		 * @inheritDoc
-		 * @see TwoFingerMoveGesture
+		 * @param	triggerMode The trigger mode changes the behaviour how a zoom gesture is detected. Possible values are <code>TwoFingerMoveGesture.TRIGGER_MODE_MOVE</code> and <code>TwoFingerMoveGesture.TRIGGER_MODE_TOUCH</code>
 		 */
 		public function ZoomGesture(triggerMode:int) {
 			super(triggerMode);

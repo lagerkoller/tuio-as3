@@ -7,7 +7,7 @@ package org.tuio.gestures {
 	import org.tuio.TuioTouchEvent;
 	
 	/**
-	 * This is an example implementation of a TwoFingerMoveGesture.
+	 * This is an example implementation of a two finger move gesture. 
 	 * It is recommended to modify this event to fit the wanted behaviour.
 	 */
 	public class TwoFingerMoveGesture extends Gesture {

@@ -19,10 +19,14 @@ package org.tuio.adapters
 	 */
 	public class AbstractTuioAdapter
 	{
+		/** @private */
 		protected var _tuioCursors:Object;
+		/** @private */
 		protected var _tuioObjects:Object;
+		/** @private */
 		protected var _tuioBlobs:Object;
 		
+		/** @private */
 		protected var listeners:Array;
 		
 		public static const DEFAULT_SOURCE:String = "_no_source_";
@@ -62,6 +66,8 @@ package org.tuio.adapters
 		}
 		
 		/**
+		 * Retrieves all active <code>TuioCursors</code> for the given source.
+		 * @param The wanted source. If null or ommited all active <code>TuioCursors</code> are returned.
 		 * @return A copy of the list of currently active tuioCursors
 		 */
 		public function getTuioCursors(source:String = null):Array {
@@ -76,6 +82,8 @@ package org.tuio.adapters
 		}
 		
 		/**
+		 * Retrieves all active <code>TuioObjects</code> for the given source.
+		 * @param The wanted source. If null or ommited all active <code>TuioObjects</code> are returned.
 		 * @return A copy of the list of currently active tuioObjects
 		 */
 		public function getTuioObjects(source:String = null):Array {
@@ -90,6 +98,8 @@ package org.tuio.adapters
 		}
 		
 		/**
+		 * Retrieves all active <code>TuioBlobs</code> for the given source.
+		 * @param The wanted source. If null or ommited all active <code>TuioBlobs</code> are returned.
 		 * @return A copy of the list of currently active tuioBlobs
 		 */
 		public function getTuioBlobs(source:String = null):Array {
@@ -123,12 +133,13 @@ package org.tuio.adapters
 		}
 		
 		/**
+		 * Retrieves the <code>TuioCursor</code> fitting the given sessionID and source.
 		 * @param	sessionID The sessionID of the designated tuioCursor
 		 * @param	source The source message of the TUIO message provider. If null, all TuioCursor source messages will be searched for the 
 		 * TuioCursor with the appropriate sessionID. Attention: If there are more than one TuioCursor with sessionID the first appropriate
 		 * TuioCursor will be returned. 
 		 * 
-		 * @return The tuioCursor matching the given sessionID. Returns null if the tuioCursor doesn't exists
+		 * @return The <code>TuioCursor</code> matching the given sessionID. Returns null if the tuioCursor doesn't exists
 		 */
 		public function getTuioCursor(sessionID:Number, source:String = null):TuioCursor {
 			var out:TuioCursor = null;
@@ -150,12 +161,13 @@ package org.tuio.adapters
 		}
 		
 		/**
+		 * Retrieves the <code>TuioObject</code> fitting the given sessionID and source.
 		 * @param	sessionID The sessionID of the designated tuioObject
 		 * @param	source The source message of the TUIO message provider. If null, all TuioObject source messages will be searched for the 
 		 * TuioObject with the appropriate sessionID. Attention: If there are more than one TuioObject with sessionID the first appropriate
 		 * TuioObject will be returned. 
 		 *    
-		 * @return The tuioObject matching the given sessionID. Returns null if the tuioObject doesn't exists
+		 * @return The <code>TuioObject</code> matching the given sessionID. Returns null if the tuioObject doesn't exists
 		 */
 		public function getTuioObject(sessionID:Number, source:String = null):TuioObject {
 			var out:TuioObject = null;
@@ -177,12 +189,13 @@ package org.tuio.adapters
 		}
 		
 		/**
+		 * Retrieves the <code>TuioBlob</code> fitting the given sessionID and source.
 		 * @param	sessionID The sessionID of the designated tuioBlob
-		 *  @param	source The source message of the TUIO message provider. If null, all TuioBlob source messages will be searched for the 
+		 * @param	source The source message of the TUIO message provider. If null, all TuioBlob source messages will be searched for the 
 		 * TuioBlob with the appropriate sessionID. Attention: If there are more than one TuioBlob with sessionID the first appropriate
 		 * TuioBlob will be returned. 
 		 * 
-		 * @return The tuioBlob matching the given sessionID. Returns null if the tuioBlob doesn't exists
+		 * @return The <code>TuioBlob</code> matching the given sessionID. Returns null if the tuioBlob doesn't exists
 		 */
 		public function getTuioBlob(sessionID:Number, source:String = null):TuioBlob {
 			var out:TuioBlob = null;

@@ -5,6 +5,10 @@ package org.tuio.gestures {
 	import org.tuio.TuioContainer;
 	import org.tuio.TuioTouchEvent;
 	
+	/**
+	 * This is an example implementation of a one finger move gesture. 
+	 * It is recommended to modify this event to fit the wanted behaviour.
+	 */
 	public class OneFingerMoveGesture extends Gesture {
 		
 		public function OneFingerMoveGesture() {
