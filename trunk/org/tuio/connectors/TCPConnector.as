@@ -6,6 +6,10 @@ package org.tuio.connectors {
 	import org.tuio.osc.*;
 	import org.tuio.connectors.tcp.OSCSocket;
 	
+	/**
+	 * An implementation of the <code>IOSCConnector</code> using TCP.
+	 * Note that the <code>TuioConnector</code> only works with bridges and trackers tht send TUIO in binary form via TCP i.e. <b>not XML</b> 
+	 */
 	public class TCPConnector implements IOSCConnector {
 		
 		private var host:String;
@@ -15,6 +19,11 @@ package org.tuio.connectors {
 		
 		private var listeners:Array;
 		
+		/**
+		 * Creates a new instance of the TCPConnector
+		 * @param	host The IP of the tracker or bridge.
+		 * @param	port The port on which the tracker or bridge sends the TUIO tracking data.
+		 */
 		public function TCPConnector(host:String = "127.0.0.1", port:int = 3333) {
 			
 			this.listeners = new Array();
@@ -28,6 +37,9 @@ package org.tuio.connectors {
 			this.connection.connect(host, port);
 		}
 		
+		/**
+		 * @private
+		 */
 		public function receiveOscData(e:OSCEvent):void {
 			var packet:ByteArray = new ByteArray();
 			packet.writeBytes(e.data,4);
@@ -48,6 +60,9 @@ package org.tuio.connectors {
 			}
 		}
 		
+		/**
+		 * @inheritDoc
+		 */
 		public function addListener(listener:IOSCConnectorListener):void {
 			
 			if (this.listeners.indexOf(listener) > -1) return;
@@ -56,6 +71,9 @@ package org.tuio.connectors {
 			
 		}
 		
+		/**
+		 * @inheritDoc
+		 */
 		public function removeListener(listener:IOSCConnectorListener):void {
 			
 			var tmp:Array = this.listeners.concat();
@@ -70,6 +88,10 @@ package org.tuio.connectors {
 			
 		}
 		
+		/**
+		 * <b>not implemented</b>
+		 * @inheritDoc
+		 */
 		public function sendOSCPacket(oscPacket:OSCPacket):void {
 			// Not Implemented
 		}

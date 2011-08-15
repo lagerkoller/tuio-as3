@@ -6,14 +6,16 @@ package org.tuio.gestures {
 	import flash.utils.getTimer;
 	import org.tuio.*
 	
+	/**
+	 * A basic two finger rotate gesture based on the <code>TwoFingerMoveGesture</code>
+	 * @see TwoFingerMoveGesture
+	 */
 	public class RotateGesture extends TwoFingerMoveGesture {
 		
 		private var lastAngle:Number;
 		
 		/**
-		 * A basic two finger rotate gesture.
-		 * @inheritDoc
-		 * @see TwoFingerMoveGesture
+		 * @param	triggerMode The trigger mode changes the behaviour how a rotate gesture is detected. Possible values are <code>TwoFingerMoveGesture.TRIGGER_MODE_MOVE</code> and <code>TwoFingerMoveGesture.TRIGGER_MODE_TOUCH</code>
 		 */
 		public function RotateGesture(triggerMode:int) {
 			super(triggerMode);

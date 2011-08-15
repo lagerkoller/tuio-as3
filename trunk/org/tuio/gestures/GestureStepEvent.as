@@ -1,6 +1,9 @@
 package org.tuio.gestures {
 	import flash.events.Event;
 	
+	/**
+	 * This event is used for dispatching statechanges of <code>GestureSteps</code> back to their gestures. 
+	 */
 	public class GestureStepEvent extends Event {
 		
 		public static const SATURATED:String = "saturated";
@@ -15,10 +18,16 @@ package org.tuio.gestures {
 			this._group = group;
 		}
 		
+		/**
+		 * At which step in the containing <code>GestureStepSequence</code> the statechange happened
+		 */
 		public function get step():uint {
 			return this._step;
 		}
 		
+		/**
+		 * The <code>GestureStepSequence</code> in which the statechange happened
+		 */
 		public function get group():GestureStepSequence {
 			return this._group;
 		}

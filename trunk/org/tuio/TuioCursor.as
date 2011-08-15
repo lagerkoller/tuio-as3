@@ -11,7 +11,9 @@ package org.tuio {
 			super(type, sID, x, y, z, X, Y, Z, m, frameID, source);
 		}
 	
-		/* Updates the values of the TuioCursor */
+		/**
+		 * Updates the values of the TuioCursor 
+		 */
 		public function update(x:Number, y:Number, z:Number, X:Number, Y:Number, Z:Number, m:Number, frameID:uint):void {
 			this._x = x;
 			this._y = y;
@@ -23,7 +25,9 @@ package org.tuio {
 			this._frameID = frameID;
 		}
 		
-		/* This function converts the TuioCursors values into a String for output purposes */
+		/**
+		 * This function converts the TuioCursors values into a String for output purposes 
+		 */
 		public function toString():String {
 			var out:String = "";
 			out += "TuioCursor(";

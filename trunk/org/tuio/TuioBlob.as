@@ -39,7 +39,9 @@ package org.tuio {
 			this._frameID;
 		}
 		
-		/* Updates the values of the TuioBlob */
+		/**
+		 * Updates the values of the TuioBlob
+		 */
 		public function update(x:Number, y:Number, z:Number, a:Number, b:Number, c:Number, w:Number, h:Number, d:Number, f:Number, v:Number, X:Number, Y:Number, Z:Number, A:Number, B:Number, C:Number, m:Number, r:Number, frameID:uint):void {
 			this._x = x;
 			this._y = y;
@@ -113,7 +115,9 @@ package org.tuio {
 			return this._r;
 		}
 		
-		/* This function converts the TuioBlobs values into a String for output purposes */
+		/**
+		 * This function converts the TuioBlob's values into a String for output purposes
+		 */
 		public function toString():String {
 			var out:String = "";
 			out += "TuioBlob(";

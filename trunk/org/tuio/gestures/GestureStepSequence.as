@@ -5,12 +5,12 @@ package org.tuio.gestures {
 	import org.tuio.TuioContainer;
 	
 	/**
-	 * This class is the heart of the <code>GestureManager</code>'s gesture system.
-	 * The <code>GestureStepSequence</code> stores a sequence of <code>GestureStep</code>s that determine the events needed
-	 * until a certain <code>GestureEvent</code> may be dispatched.
+	 * This class is the heart of the <code>GestureManager</code>'s gesture system and handles the state of the multiple instances of a gesture.
+	 * <p>The <code>GestureStepSequence</code> stores a sequence of <code>GestureStep</code>s that determine the events needed
+	 * until a certain <code>GestureEvent</code> may be dispatched.</p>
 	 * 
-	 * This class also provides the means to share targets, <code>TuioContainer</code>s, Tuio frameIDs and custom values between
-	 * the steps and with the final dispatching of the <code>GestureEvent</code>.
+	 * <p>This class also provides the means to share targets, <code>TuioContainer</code>s, Tuio frameIDs and custom values between
+	 * the steps and with the final dispatching of the <code>GestureEvent</code>.</p>
 	 * 
 	 */
 	public class GestureStepSequence {

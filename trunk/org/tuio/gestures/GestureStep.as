@@ -4,6 +4,9 @@ package org.tuio.gestures {
 	import flash.display.DisplayObject;
 	import org.tuio.TuioContainer;
 	
+	/**
+	 * The <code>GestureStep</code> is the base element of a <code>GestureStepSequence</code> which makes up the description of a gesture.
+	 */
 	public class GestureStep {
 		
 		private var _event:String;

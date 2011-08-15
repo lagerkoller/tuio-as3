@@ -11,27 +11,14 @@ package org.tuio.connectors
 	import org.tuio.osc.OSCPacket;
 
 	/**
-	 * <p>Currently UDP in Adobe Air is only supported in Air 2 beta. Additionally, this connector 
-	 * only works under Windows and with Mac OS X.</p>
+	 * An implementation of the <code>IOSCConnector</code> using UDP.
+	 * This connector only works in Adobe AIR since v2 due to it using the <code>DatagramSocket</code>
 	 * 
-	 * <p>I tested it with Air 2 beta 2 and it did NOT work under Mac OS X 10.5 with Flex Builder 3 but
-	 * only wit Flash Builder 4 beta 2. With Flex Builder 3 I regularly 
-	 * got a "VerifyError: Error #1014: Class flash.net::DatagramSocket could not be found."
-	 * in adl.</p>  
-	 * 
-	 * <p>This function is currently only supported in Adobe Air 2 beta. Thus, as long as
-	 * Air 2 is still beta following arrangements have to be made in your app to use 
-	 * UDPConnector:
-	 * <pre>
-	 * 1. Download Adobe Air 2 Beta from Adobe: http://labs.adobe.com/technologies/air2/ 
-	 * 2. Install it: http://labs.adobe.com/wiki/index.php/AIR_2:Release_Notes#How_to_overlay_the_Adobe_AIR_SDK_for_use_with_the_Flex_SDK
-	 * 3. Set the SDK of your project to the SDK that supports Air 2.
-	 * 4. If your updating an existing App don't forget to adjust the namespace in your app descriptor to "http://ns.adobe.com/air/application/2.0beta2" otherwise you will
-	 * get the VerifyError as well under Windows.</pre></p>
-	 * 
-	 
+	 * This connector can be used to send an receive OSC bundles and messages. 
+	 * Though you have to create seperate instances of the connector.
 	 * 
 	 * @author Johannes Luderschmidt
+	 * @author Immanuel Bauer
 	 * 
 	 */
 	public class UDPConnector implements IOSCConnector
@@ -55,7 +42,7 @@ package org.tuio.connectors
 		 * 
 		 * @param host ip of the tracker resp. tuio message producer.
 		 * @param port of the tracker resp. tuio message producer.
-		 * @param connect If true the <code>UDPConnector</code> will try to bind the given IP:port and to receive packets. If false the <code>UDPConnector</code> connect to the given IP:port and will wait for calls of <code>UDPConnector.sendOSCPacket()</code>
+		 * @param bind If true the <code>UDPConnector</code> will try to bind the given IP:port and to receive packets. If false the <code>UDPConnector</code> connects to the given IP:port and will wait for calls of <code>UDPConnector.sendOSCPacket()</code>
 		 *
 		 */
 		public function UDPConnector(host:String = "127.0.0.1", port:int = 3333, bind:Boolean = true)
@@ -69,7 +56,7 @@ package org.tuio.connectors
 		/**
 		 * parses an incoming OSC message.
 		 * 
-		 * @param e
+		 * @private
 		 * 
 		 */
 		public function receiveOscData(e:OSCEvent):void {
@@ -109,7 +96,6 @@ package org.tuio.connectors
 		
 		/**
 		 * @inheritDoc 
-		 * 
 		 */
 		public function addListener(listener:IOSCConnectorListener):void
 		{
@@ -120,7 +106,6 @@ package org.tuio.connectors
 		
 		/**
 		 * @inheritDoc 
-		 * 
 		 */
 		public function removeListener(listener:IOSCConnectorListener):void
 		{
@@ -137,7 +122,6 @@ package org.tuio.connectors
 		
 		/**
 		 * @inheritDoc 
-		 * 
 		 */
 		public function sendOSCPacket(oscPacket:OSCPacket):void
 		{

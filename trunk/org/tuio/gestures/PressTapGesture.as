@@ -5,6 +5,10 @@ package org.tuio.gestures {
 	import org.tuio.TuioContainer;
 	import org.tuio.TuioTouchEvent;
 	
+	/**
+	 * This is an example implementation of a two finger press tap gesture. 
+	 * It is recommended to modify this event to fit the wanted behaviour.
+	 */
 	public class PressTapGesture extends Gesture {
 		
 		public function PressTapGesture() {

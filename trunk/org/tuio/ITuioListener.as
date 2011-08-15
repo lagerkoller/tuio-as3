@@ -1,8 +1,8 @@
 package org.tuio {
 	
 	/**
-	 * This Interface defines callback functions that will be called by the TuioClient if the 
-	 * implementing class was added as a listener to the according TuioClient.
+	 * This interface defines callback functions that will be called by the <code>TuioClient</code> if the 
+	 * implementing class was added as a listener to the according <code>TuioClient</code>.
 	 */
     public interface ITuioListener {
 		

@@ -5,12 +5,14 @@ package org.tuio.gestures {
 	import org.tuio.TuioEvent;
 	import org.tuio.TuioTouchEvent;
 	
+	/**
+	 * A basic two finger scroll gesture based on the <code>TwoFingerMoveGesture</code>
+	 * @see TwoFingerMoveGesture
+	 */
 	public class ScrollGesture extends TwoFingerMoveGesture {
 		
 		/**
-		 * A basic two finger scroll gesture.
-		 * @inheritDoc
-		 * @see TwoFingerMoveGesture
+		 * @param	triggerMode The trigger mode changes the behaviour how a scroll gesture is detected. Possible values are <code>TwoFingerMoveGesture.TRIGGER_MODE_MOVE</code> and <code>TwoFingerMoveGesture.TRIGGER_MODE_TOUCH</code>
 		 */
 		public function ScrollGesture(triggerMode:int) {
 			super(triggerMode);

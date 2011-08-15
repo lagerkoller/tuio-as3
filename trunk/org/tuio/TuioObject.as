@@ -30,7 +30,9 @@ package org.tuio {
 			this._r = r;
 		}
 		
-		/* Updates the values of the TuioObject */
+		/**
+		 * Updates the values of the TuioObject
+		 */
 		public function update(x:Number, y:Number, z:Number, a:Number, b:Number, c:Number, X:Number, Y:Number, Z:Number, A:Number, B:Number, C:Number, m:Number, r:Number, frameID:uint):void {
 			this._x = x;
 			this._y = y;
@@ -83,7 +85,9 @@ package org.tuio {
 			return this._r;
 		}
 		
-		/* This function converts the TuioObjects values into a String for output purposes */
+		/**
+		 * This function converts the TuioObject's values into a String for output purposes
+		 */ 
 		public function toString():String {
 			var out:String = "";
 			out += "TuioObject(";
@@ -109,6 +113,10 @@ package org.tuio {
 			return out;
 		}
 		
+		/**
+		 * Creates a new <code>TuioObject</code> instance containing the same values
+		 * @return The cloned object
+		 */
 		public function clone():TuioObject{
 			return new TuioObject(_type,_sessionID, _id, _x, _y, _z, _a, _b, _c, _X, _Y, _Z, _A, _B, _C, _m, _r, _frameID, _source);
 		}
