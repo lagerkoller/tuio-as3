@@ -129,5 +129,12 @@ package org.tuio.connectors
 			else throw new Error("Can't send if not connected.");
 		}
 		
+		/**
+		 * @inheritDoc 
+		 */
+		public function close():void
+		{
+			if (this.connection.connected) this.connection.close();
+		}
 	}
 }

@@ -96,6 +96,14 @@ package org.tuio.connectors {
 			// Not Implemented
 		}
 		
+		/**
+		 * @inheritDoc 
+		 */
+		public function close():void
+		{
+			if (this.connection.connected) this.connection.close();
+		}
+		
 		private function debug(msg:String):void {
 			trace(msg);
 		}

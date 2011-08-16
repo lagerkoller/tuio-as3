@@ -98,6 +98,14 @@ package org.tuio.connectors {
 			
 		}
 		
+		/**
+		 * @inheritDoc 
+		 */
+		public function close():void
+		{
+			connectionIn.stop();
+		}
+		
 		private function debug(msg:String):void {
 			trace(msg);
 		}

@@ -20,6 +20,10 @@ package org.tuio.osc {
 		 */
 		function sendOSCPacket(oscPacket:OSCPacket):void;
 		
+		/**
+		 * Closes the connector
+		 */
+		function close():void;
     }
 	
 }
