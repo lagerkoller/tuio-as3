@@ -9,6 +9,9 @@ package org.tuio.connectors.udp
 	import flash.utils.Endian;
 	import org.tuio.osc.OSCEvent;
 	
+	/**
+	 * A simple class for receiving and sending OSCPackets via UDP.
+	 */
 	public class OSCDatagramSocket extends DatagramSocket
 	{
 		private var Debug:Boolean = true;
