@@ -10,9 +10,15 @@ package org.tuio.util
 	import org.tuio.debug.ITuioDebugObject;
 	import org.tuio.debug.ITuioDebugTextSprite;
 
+	/**
+	 * This class provides static functions for display list traversals and lookups which are used internally.
+	 */
 	public class DisplayListHelper
 	{
 		
+		/**
+		 * Finds the most top DisplayObject under a given point which is eanbled for user interaction.
+		 */
 		public static function getTopDisplayObjectUnderPoint(point:Point, stage:Stage):DisplayObject {
 			var targets:Array =  stage.getObjectsUnderPoint(point);
 			var item:DisplayObject = (targets.length > 0) ? targets[targets.length - 1] : stage;

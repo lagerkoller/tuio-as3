@@ -11,6 +11,9 @@ package org.tuio.connectors.tcp
 	import org.tuio.osc.OSCEvent;
 	import org.tuio.osc.OSCBundle;
 	
+	/**
+	 * A class for receiving OSCBundles from a TCP socket stream.
+	 */
 	public class OSCSocket extends Socket
 	{
 		private var Debug:Boolean = true;

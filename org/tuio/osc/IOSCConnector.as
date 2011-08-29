@@ -1,5 +1,9 @@
 package org.tuio.osc {
 	
+	/**
+	 * This interface has to be implemented in order to receive OSC data
+	 * via a certain connection and forward it to the OSCManager.
+	 */
     public interface IOSCConnector {
 		
 		/**

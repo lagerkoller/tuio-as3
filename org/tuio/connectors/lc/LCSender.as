@@ -2,6 +2,9 @@ package org.tuio.connectors.lc {
 	
 	import flash.net.LocalConnection;
 
+	/**
+	 * A class for sending data via LocalConnection
+	 */
 	public class LCSender {
 
 		private var debugListener:Function;
