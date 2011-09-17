@@ -42,8 +42,8 @@ package examples.gestures {
 			tc.addListener(TuioManager.init(stage));
 			var tm:GestureManager = GestureManager.init(stage);
 			GestureManager.addGesture(new DragGesture());
-			GestureManager.addGesture(new ZoomGesture(TwoFingerMoveGesture.TRIGGER_MODE_MOVE));
-			GestureManager.addGesture(new RotateGesture(TwoFingerMoveGesture.TRIGGER_MODE_MOVE));
+			GestureManager.addGesture(new ZoomGesture(TwoFingerMoveGesture.TRIGGER_MODE_MOVE));  //TRIGGER_MODE_TOUCH for NativeTuioAdapter
+			GestureManager.addGesture(new RotateGesture(TwoFingerMoveGesture.TRIGGER_MODE_MOVE)); //TRIGGER_MODE_TOUCH for NativeTuioAdapter
 			tDbg = TuioDebug.init(stage);
 			tc.addListener(tDbg);
 			
