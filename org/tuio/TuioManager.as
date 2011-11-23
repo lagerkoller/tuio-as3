@@ -155,8 +155,8 @@ package org.tuio {
 				this._rotationShift = ROTATION_SHIFT_DEFAULT;
 				this._timeoutTime = TIMEOUT_TIME_DEFAULT;
 				
-				fiducialReceivers = new Array();
-				fiducialRemovalTimes = new Array();
+				this.fiducialReceivers = new Array();
+				this.fiducialRemovalTimes = new Array();
 				this.lastFiducialTarget = new Array();
 				this.firstFiducialTarget = new Array();
 				////////////////////////////////////////////////////////
