@@ -52,6 +52,7 @@ package org.tuio.debug
 		private var _showBlobs:Boolean = true;
 		
 		private var _showDebugText:Boolean = true;
+		private var _debugTextColor:Number = 0x0;
 		
 		private var _cursorRadius:Number = 13;
 		private var _cursorColor:Number = 0x0;
@@ -166,7 +167,7 @@ package org.tuio.debug
 				objects.push(objectObject);
 				stage.addChild(objectSprite);
 				
-				if(_showDebugText){
+				if(this.showDebugText){
 					var label:TextField = new TextField();
 					label.autoSize = TextFieldAutoSize.LEFT;
 					label.selectable = false;
@@ -430,7 +431,7 @@ package org.tuio.debug
 		private function debugTextFormat():TextFormat{
 			var format:TextFormat = new TextFormat();
 	            format.font = this.arialFont.fontName;
-	            format.color = 0x0;
+	            format.color = this.debugTextColor;
 	            format.size = 11;
 	            format.underline = false;
 	            
@@ -442,8 +443,8 @@ package org.tuio.debug
 		 * @param	tuioBlob The values of the received /tuio/**Dblb.
 		 */
 		public function addTuioBlob(tuioBlob:TuioBlob):void{
-			if(_showBlobs){
-				_showCursors = true;
+			if(this.showBlobs){
+				this.showCursors = true;
 				addTuioCursor(new TuioCursor("2dcur", tuioBlob.sessionID, tuioBlob.x, tuioBlob.y, tuioBlob.z,tuioBlob.X, tuioBlob.Y, tuioBlob.Z, tuioBlob.m, tuioBlob.frameID, "TuioDebug"));
 			}
 		}
@@ -613,6 +614,27 @@ package org.tuio.debug
 		public function get showObjects():Boolean{
 			return _showObjects;
 		}
+
+		public function get debugTextColor():Number
+		{
+			return _debugTextColor;
+		}
+
+		public function set debugTextColor(value:Number):void
+		{
+			_debugTextColor = value;
+		}
+
+		public function get showBlobs():Boolean
+		{
+			return _showBlobs;
+		}
+
+		public function set showBlobs(value:Boolean):void
+		{
+			_showBlobs = value;
+		}
+
 		
 	}
 }
