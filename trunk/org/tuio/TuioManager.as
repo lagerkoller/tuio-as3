@@ -207,7 +207,7 @@ package org.tuio {
 			if (_dispatchMouseEvents) {
 				//target.dispatchEvent(new MouseEvent(MouseEvent.MOUSE_OVER, true, false, local.x, local.y, (target as InteractiveObject), false, false, false, false, 0));
 				//target.dispatchEvent(new MouseEvent(MouseEvent.ROLL_OVER, false, false, local.x, local.y, (target as InteractiveObject), false, false, false, false, 0));
-				target.dispatchEvent(new MouseEvent(MouseEvent.MOUSE_DOWN, true, false, local.x, local.y, (target as InteractiveObject), false, false, false, false, 0));
+				target.dispatchEvent(new MouseEvent(MouseEvent.MOUSE_DOWN, true, false, local.x, local.y, (target as InteractiveObject), false, false, false, false, 0, false, false, 1));
 			}
 			
 			if (_dispatchNativeTouchEvents) {
@@ -230,7 +230,7 @@ package org.tuio {
 				target.dispatchEvent(new TuioTouchEvent(TuioTouchEvent.TOUCH_MOVE, true, false, local.x, local.y, stagePos.x, stagePos.y, target, tuioContainer));
 				this.dispatchEvent(new TuioTouchEvent(TuioTouchEvent.TOUCH_MOVE, true, false, local.x, local.y, stagePos.x, stagePos.y, target, tuioContainer));
 				if (_dispatchMouseEvents) {
-					target.dispatchEvent(new MouseEvent(MouseEvent.MOUSE_MOVE, true, false, local.x, local.y, (target as InteractiveObject), false, false, false, false, 0));
+					target.dispatchEvent(new MouseEvent(MouseEvent.MOUSE_MOVE, true, false, Math.round(local.x), Math.round(local.y), null, false, false, false, false, 0, false, false, 0));
 				}
 				if (_dispatchNativeTouchEvents) {
 					target.dispatchEvent(new flash.events.TouchEvent(flash.events.TouchEvent.TOUCH_MOVE, true, false, tuioContainer.sessionID, false, local.x, local.y, 0, 0, 0, target as InteractiveObject));
@@ -255,8 +255,8 @@ package org.tuio {
 				if (la != null) lastAncestors.push(la);
 				
 				if (_dispatchMouseEvents) {
-					target.dispatchEvent(new MouseEvent(MouseEvent.MOUSE_OVER, true, false, local.x, local.y, (target as InteractiveObject), false, false, false, false, 0));
-					target.dispatchEvent(new MouseEvent(MouseEvent.ROLL_OVER, false, false, local.x, local.y, (target as InteractiveObject), false, false, false, false, 0));
+					target.dispatchEvent(new MouseEvent(MouseEvent.MOUSE_OVER, true, false, local.x, local.y, (last as InteractiveObject), false, false, false, false, 0));
+					target.dispatchEvent(new MouseEvent(MouseEvent.ROLL_OVER, false, false, local.x, local.y, (last as InteractiveObject), false, false, false, false, 0));
 				}
 				if (_dispatchNativeTouchEvents) {
 					target.dispatchEvent(new flash.events.TouchEvent(flash.events.TouchEvent.TOUCH_OVER, true, false, tuioContainer.sessionID, false, local.x, local.y, 0, 0, 0, target as InteractiveObject));
@@ -265,8 +265,8 @@ package org.tuio {
 				
 				if (ancestors.indexOf(last) < 0) {
 					if (_dispatchMouseEvents) {
-						last.dispatchEvent(new MouseEvent(MouseEvent.MOUSE_OUT, true, false, local.x, local.y, (last as InteractiveObject), false, false, false, false, 0));
-						last.dispatchEvent(new MouseEvent(MouseEvent.ROLL_OUT, false, false, local.x, local.y, (last as InteractiveObject), false, false, false, false, 0));
+						last.dispatchEvent(new MouseEvent(MouseEvent.MOUSE_OUT, true, false, local.x, local.y, (target as InteractiveObject), false, false, false, false, 0));
+						last.dispatchEvent(new MouseEvent(MouseEvent.ROLL_OUT, false, false, local.x, local.y, (target as InteractiveObject), false, false, false, false, 0));
 					}
 					if (_dispatchNativeTouchEvents) {
 						last.dispatchEvent(new flash.events.TouchEvent(flash.events.TouchEvent.TOUCH_OUT, true, false, tuioContainer.sessionID, false, local.x, local.y, 0, 0, 0, last as InteractiveObject));
@@ -415,7 +415,7 @@ package org.tuio {
 			target.dispatchEvent(new TuioTouchEvent(TuioTouchEvent.TOUCH_UP, true, false, local.x, local.y, stagePos.x, stagePos.y, target, tuioContainer));
 			this.dispatchEvent(new TuioTouchEvent(TuioTouchEvent.TOUCH_UP, true, false, local.x, local.y, stagePos.x, stagePos.y, target, tuioContainer));
 			if (_dispatchMouseEvents) {
-				target.dispatchEvent(new MouseEvent(MouseEvent.MOUSE_UP, true, false, local.x, local.y, (target as InteractiveObject), false, false, false, false, 0));
+				target.dispatchEvent(new MouseEvent(MouseEvent.MOUSE_UP, true, false, local.x, local.y, (target as InteractiveObject), false, false, false, false, 0, false, false, 1));
 			}
 			if (_dispatchNativeTouchEvents) {
 				target.dispatchEvent(new flash.events.TouchEvent(flash.events.TouchEvent.TOUCH_END, true, false, tuioContainer.sessionID, false, local.x, local.y, 0, 0, 0, target as InteractiveObject));
@@ -465,6 +465,11 @@ package org.tuio {
 						target.dispatchEvent(new flash.events.TouchEvent(flash.events.TouchEvent.TOUCH_TAP, true, false, tuioContainer.sessionID, false, local.x, local.y, 0, 0, 0, target as InteractiveObject));
 					}
 				}
+			}
+			
+			if (_dispatchMouseEvents) {
+				target.dispatchEvent(new MouseEvent(MouseEvent.MOUSE_OUT, true, false, local.x, local.y));
+				target.dispatchEvent(new MouseEvent(MouseEvent.ROLL_OUT, false, false, local.x, local.y));
 			}
 			
 			lastTarget[tuioContainer] = null;
