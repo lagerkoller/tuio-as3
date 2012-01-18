@@ -6,8 +6,10 @@ package org.tuio {
 	import flash.events.Event;
 	import flash.events.EventDispatcher;
 	import flash.events.MouseEvent;
+	import flash.events.TimerEvent;
 	import flash.geom.Point;
 	import flash.utils.Dictionary;
+	import flash.utils.Timer;
 	import flash.utils.clearTimeout;
 	import flash.utils.getTimer;
 	import flash.utils.setTimeout;
@@ -104,7 +106,9 @@ package org.tuio {
 		private var lastTarget:Dictionary;
 		private var firstTarget:Dictionary;
 		private var tapped:Array;
-		private var hold:Dictionary;
+//		private var hold:Dictionary;
+		private var holdTimerDictionary:Dictionary;
+		private var containerToTimerDictionary:Dictionary;
 		
 		private var ignoreList:Array;
 		
@@ -147,7 +151,9 @@ package org.tuio {
 				this.lastTarget = new Dictionary();
 				this.firstTarget = new Dictionary();
 				this.tapped = new Array();
-				this.hold = new Dictionary();
+//				this.hold = new Dictionary();
+				this.holdTimerDictionary = new Dictionary();
+				this.containerToTimerDictionary = new Dictionary();
 				this.ignoreList = new Array();
 				this.touchReceiversDict = new Dictionary();
 				
@@ -197,7 +203,8 @@ package org.tuio {
 			
 			firstTarget[tuioContainer] = target;
 			lastTarget[tuioContainer] = target;
-			hold[tuioContainer] = getTimer();
+//			hold[tuioContainer] = getTimer();
+			manageHoldTimer(tuioContainer,target, local, stagePos);
 			
 			//target.dispatchEvent(new TuioTouchEvent(TuioTouchEvent.TOUCH_OVER, true, false, local.x, local.y, stagePos.x, stagePos.y, target, tuioContainer));
 			//target.dispatchEvent(new TuioTouchEvent(TuioTouchEvent.ROLL_OVER, false, false, local.x, local.y, stagePos.x, stagePos.y, target, tuioContainer));
@@ -224,21 +231,17 @@ package org.tuio {
 			var local:Point = target.globalToLocal(new Point(stagePos.x, stagePos.y));
 			var last:DisplayObject = lastTarget[tuioContainer];
 			
+			var holdThreshold:Number = 0.0001;
 			//mouse move or hold
-			if (Math.abs(tuioContainer.X) > 0.001 || Math.abs(tuioContainer.Y) > 0.001 || Math.abs(tuioContainer.Z) > 0.001) {
-				hold[tuioContainer] = getTimer();
-				target.dispatchEvent(new TuioTouchEvent(TuioTouchEvent.TOUCH_MOVE, true, false, local.x, local.y, stagePos.x, stagePos.y, target, tuioContainer));
-				this.dispatchEvent(new TuioTouchEvent(TuioTouchEvent.TOUCH_MOVE, true, false, local.x, local.y, stagePos.x, stagePos.y, target, tuioContainer));
-				if (_dispatchMouseEvents) {
-					target.dispatchEvent(new MouseEvent(MouseEvent.MOUSE_MOVE, true, false, Math.round(local.x), Math.round(local.y), null, false, false, false, false, 0, false, false, 0));
-				}
-				if (_dispatchNativeTouchEvents) {
-					target.dispatchEvent(new flash.events.TouchEvent(flash.events.TouchEvent.TOUCH_MOVE, true, false, tuioContainer.sessionID, false, local.x, local.y, 0, 0, 0, target as InteractiveObject));
-				}
-			} else if (hold[tuioContainer] < getTimer() - holdTimeout) {
-				hold[tuioContainer] = getTimer();
-				target.dispatchEvent(new TuioTouchEvent(TuioTouchEvent.HOLD, true, false, local.x, local.y, stagePos.x, stagePos.y, target, tuioContainer));
-				this.dispatchEvent(new TuioTouchEvent(TuioTouchEvent.HOLD, true, false, local.x, local.y, stagePos.x, stagePos.y, target, tuioContainer));
+//			hold[tuioContainer] = getTimer();
+			manageHoldTimer(tuioContainer,target, local, stagePos);
+			target.dispatchEvent(new TuioTouchEvent(TuioTouchEvent.TOUCH_MOVE, true, false, local.x, local.y, stagePos.x, stagePos.y, target, tuioContainer));
+			this.dispatchEvent(new TuioTouchEvent(TuioTouchEvent.TOUCH_MOVE, true, false, local.x, local.y, stagePos.x, stagePos.y, target, tuioContainer));
+			if (_dispatchMouseEvents) {
+				target.dispatchEvent(new MouseEvent(MouseEvent.MOUSE_MOVE, true, false, Math.round(local.x), Math.round(local.y), null, false, false, false, false, 0, false, false, 0));
+			}
+			if (_dispatchNativeTouchEvents) {
+				target.dispatchEvent(new flash.events.TouchEvent(flash.events.TouchEvent.TOUCH_MOVE, true, false, tuioContainer.sessionID, false, local.x, local.y, 0, 0, 0, target as InteractiveObject));
 			}
 			
 			//mouse out/over
@@ -323,19 +326,42 @@ package org.tuio {
 			
 			//handle TUIO 1.0 touch receivers that do not make use of the source message
 			updateTouchReceiver(""+tuioContainer.sessionID, local, stagePos, target, tuioContainer);
-//			if(this.touchReceiversDict[tuioContainer.sessionID+tuioContainer.source]){
-//				for each(var receiver:ITuioTouchReceiver in this.touchReceiversDict[tuioContainer.sessionID+tuioContainer.source]){
-//					receiver.updateTouch(new TuioTouchEvent(TuioTouchEvent.TOUCH_MOVE, true, false, local.x, local.y, stagePos.x, stagePos.y, target, tuioContainer));
-//				}
-//			}
 			
 			//handle TUIO 1.1 touch receivers that make use of the source message
 			updateTouchReceiver(tuioContainer.sessionID+tuioContainer.source, local, stagePos, target, tuioContainer);
-//			if(this.touchReceiversDict[tuioContainer.sessionID+tuioContainer.source]){
-//				for each(var receiver:ITuioTouchReceiver in this.touchReceiversDict[tuioContainer.sessionID+tuioContainer.source]){
-//					receiver.updateTouch(new TuioTouchEvent(TuioTouchEvent.TOUCH_MOVE, true, false, local.x, local.y, stagePos.x, stagePos.y, target, tuioContainer));
+		}
+		
+		
+		
+		private function manageHoldTimer(tuioContainer:TuioContainer, target:DisplayObject, localPos:Point, stagePos:Point):void{
+			if(this.holdTimerDictionary[tuioContainer.sessionID] == null){
+				this.holdTimerDictionary[tuioContainer.sessionID] = new Timer(holdTimeout);
+				this.holdTimerDictionary[tuioContainer.sessionID].addEventListener(TimerEvent.TIMER, onTimer);
+			}else{
+				//check if moved distance is big enough to justify a timer reset
+//				if(movedDistance > threshold){
+					this.holdTimerDictionary[tuioContainer.sessionID].stop();
+					this.holdTimerDictionary[tuioContainer.sessionID].reset();	
 //				}
-//			}
+			}
+			this.containerToTimerDictionary[this.holdTimerDictionary[tuioContainer.sessionID]] = {tuioContainer: tuioContainer, target:target, local:localPos, stagePos:stagePos};
+			this.holdTimerDictionary[tuioContainer.sessionID].start();
+		}
+		private function removeTimer(tuioContainer:TuioContainer):void{
+			if(this.holdTimerDictionary[tuioContainer.sessionID] != null){
+				this.holdTimerDictionary[tuioContainer.sessionID].stop();
+				delete this.containerToTimerDictionary[this.holdTimerDictionary[tuioContainer.sessionID]];
+				delete this.holdTimerDictionary[tuioContainer.sessionID];
+			}
+		}
+		private function onTimer(event:TimerEvent):void{
+			//dispatch hold event
+			var timerObject:Object = this.containerToTimerDictionary[event.target]; 
+			timerObject.target.dispatchEvent(new TuioTouchEvent(TuioTouchEvent.HOLD, true, false, timerObject.local.x, timerObject.local.y, timerObject.stagePos.x, timerObject.stagePos.y, timerObject.target, timerObject.tuioContainer));
+			event.target.stop();
+			event.target.reset();
+			delete this.holdTimerDictionary[timerObject.tuioContainer.sessionID];
+			delete this.containerToTimerDictionary[event.target];
 		}
 		
 		private function updateTouchReceiver(keyString:String, local:Point, stagePos:Point, target:DisplayObject, tuioContainer:TuioContainer):void{
@@ -421,6 +447,8 @@ package org.tuio {
 				target.dispatchEvent(new flash.events.TouchEvent(flash.events.TouchEvent.TOUCH_END, true, false, tuioContainer.sessionID, false, local.x, local.y, 0, 0, 0, target as InteractiveObject));
 			}
 			
+			//remove TuioTouchEvent.HOLD timer 
+			removeTimer(tuioContainer);
 			
 			//handle receivers
 			if(this.touchReceiversDict[tuioContainer.sessionID+tuioContainer.source]){
@@ -474,7 +502,6 @@ package org.tuio {
 			
 			lastTarget[tuioContainer] = null;
 			firstTarget[tuioContainer] = null;
-			hold[tuioContainer] = null;
 		}
 		
 		private function getTopDisplayObjectUnderPoint(point:Point):DisplayObject {
@@ -836,6 +863,7 @@ package org.tuio {
 			removalObject.timeout = getTimer()+_timeoutTime;
 			removalObject.receiverObject = receiverObject;
 			removalObject.timeoutId = timeoutId;
+			removalObject.tuioObject = tuioObject;
 			fiducialRemovalTimes.push(removalObject);
 		}
 		
@@ -874,7 +902,7 @@ package org.tuio {
 			
 			if(firstTimeout <= getTimer()){
 				var removalTimeObject:Object = fiducialRemovalTimes.shift(); 
-				(removalTimeObject.receiverObject.receiver as ITuioFiducialReceiver).onRemove(null);
+				(removalTimeObject.receiverObject.receiver as ITuioFiducialReceiver).onRemove(createFiducialEvent(TuioFiducialEvent.REMOVED, removalTimeObject.tuioObject));
 				for(var i:Number = 0; i < fiducialReceivers.length; i++){
 					if(removalTimeObject.receiverObject.classID == fiducialReceivers[i].classID){
 						fiducialReceivers[i].tuioObject = null;
