@@ -358,10 +358,11 @@ package org.tuio.adapters
 			var xDiff:Number =  stage.mouseX-this.lastX;
 			var yDiff:Number = stage.mouseY-this.lastY;
 			
+			this.lastX = stage.mouseX;
+			this.lastY = stage.mouseY;
+			
 			if(this.groups[this.touchMoveId] != null){
 				
-				this.lastX = stage.mouseX;
-				this.lastY = stage.mouseY;
 				var cursorObject:Object;
 				var cursor:DisplayObjectContainer
 				
