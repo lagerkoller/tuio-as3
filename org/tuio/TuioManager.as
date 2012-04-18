@@ -148,14 +148,14 @@ package org.tuio {
 				throw new Error("Error: Instantiation failed: Use TuioManager.getInstance() instead of new.");
 			}else{
 				this.stage = stage;
-				this.lastTarget = new Dictionary();
-				this.firstTarget = new Dictionary();
+				this.lastTarget = new Dictionary(true);
+				this.firstTarget = new Dictionary(true);
 				this.tapped = new Array();
-//				this.hold = new Dictionary();
-				this.holdTimerDictionary = new Dictionary();
-				this.containerToTimerDictionary = new Dictionary();
+//				this.hold = new Dictionary(true);
+				this.holdTimerDictionary = new Dictionary(true);
+				this.containerToTimerDictionary = new Dictionary(true);
 				this.ignoreList = new Array();
-				this.touchReceiversDict = new Dictionary();
+				this.touchReceiversDict = new Dictionary(true);
 				
 				/////////////////////constructor integrated from TuioFiducialDispatcher///////////////////////
 				this._rotationShift = ROTATION_SHIFT_DEFAULT;
@@ -425,7 +425,7 @@ package org.tuio {
 		}
 		
 		private function createDict(objectsUnderPoint:Array):Dictionary{
-			var objectsDict:Dictionary = new Dictionary();
+			var objectsDict:Dictionary = new Dictionary(true);
 			for each(var displayObject:DisplayObject in objectsUnderPoint){
 				objectsDict[displayObject] = "";
 			}

@@ -97,7 +97,7 @@ package org.tuio.adapters
 			lastX = stage.mouseX;
 			lastY = stage.mouseY;
 			
-			groups = new Dictionary();
+			groups = new Dictionary(true);
 			
 			spaceKey = false;
 			rKey = false;
