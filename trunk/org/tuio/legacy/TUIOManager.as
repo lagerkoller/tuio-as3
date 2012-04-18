@@ -34,8 +34,8 @@ package org.tuio.legacy
 		
 		public function TUIOManager(){
 			
-			PropObjectDict = new Dictionary();
-			AliveDict = new Dictionary();
+			PropObjectDict = new Dictionary(true);
+			AliveDict = new Dictionary(true);
 			var RemoveChecker:Timer = new Timer(1000, 0);
 			
 			addEventListener(Event.ADDED_TO_STAGE, onStageAdd);
@@ -126,7 +126,7 @@ package org.tuio.legacy
 					}
 				}
 			}	
-			AliveDict = new Dictionary();
+			AliveDict = new Dictionary(true);
 			
 			
 			//speichern der statuse der Props nach der änderung
