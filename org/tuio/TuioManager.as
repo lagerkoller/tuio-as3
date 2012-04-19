@@ -334,24 +334,24 @@ package org.tuio {
 		
 		
 		private function manageHoldTimer(tuioContainer:TuioContainer, target:DisplayObject, localPos:Point, stagePos:Point):void{
-			if(this.holdTimerDictionary[tuioContainer.sessionID] == null){
-				this.holdTimerDictionary[tuioContainer.sessionID] = new Timer(holdTimeout);
-				this.holdTimerDictionary[tuioContainer.sessionID].addEventListener(TimerEvent.TIMER, onTimer);
+			if(this.holdTimerDictionary[tuioContainer] == null){
+				this.holdTimerDictionary[tuioContainer] = new Timer(holdTimeout);
+				this.holdTimerDictionary[tuioContainer].addEventListener(TimerEvent.TIMER, onTimer);
 			}else{
 				//check if moved distance is big enough to justify a timer reset
 //				if(movedDistance > threshold){
-					this.holdTimerDictionary[tuioContainer.sessionID].stop();
-					this.holdTimerDictionary[tuioContainer.sessionID].reset();	
+					this.holdTimerDictionary[tuioContainer].stop();
+					this.holdTimerDictionary[tuioContainer].reset();	
 //				}
 			}
-			this.containerToTimerDictionary[this.holdTimerDictionary[tuioContainer.sessionID]] = {tuioContainer: tuioContainer, target:target, local:localPos, stagePos:stagePos};
-			this.holdTimerDictionary[tuioContainer.sessionID].start();
+			this.containerToTimerDictionary[this.holdTimerDictionary[tuioContainer]] = {tuioContainer: tuioContainer, target:target, local:localPos, stagePos:stagePos};
+			this.holdTimerDictionary[tuioContainer].start();
 		}
 		private function removeTimer(tuioContainer:TuioContainer):void{
-			if(this.holdTimerDictionary[tuioContainer.sessionID] != null){
-				this.holdTimerDictionary[tuioContainer.sessionID].stop();
-				delete this.containerToTimerDictionary[this.holdTimerDictionary[tuioContainer.sessionID]];
-				delete this.holdTimerDictionary[tuioContainer.sessionID];
+			if(this.holdTimerDictionary[tuioContainer] != null){
+				this.holdTimerDictionary[tuioContainer].stop();
+				delete this.containerToTimerDictionary[this.holdTimerDictionary[tuioContainer]];
+				delete this.holdTimerDictionary[tuioContainer];
 			}
 		}
 		private function onTimer(event:TimerEvent):void{
@@ -360,7 +360,7 @@ package org.tuio {
 			timerObject.target.dispatchEvent(new TuioTouchEvent(TuioTouchEvent.HOLD, true, false, timerObject.local.x, timerObject.local.y, timerObject.stagePos.x, timerObject.stagePos.y, timerObject.target, timerObject.tuioContainer));
 			event.target.stop();
 			event.target.reset();
-			delete this.holdTimerDictionary[timerObject.tuioContainer.sessionID];
+			delete this.holdTimerDictionary[timerObject.tuioContainer];
 			delete this.containerToTimerDictionary[event.target];
 		}
 		
@@ -459,7 +459,7 @@ package org.tuio {
 				}
 				
 				//delete receivers from dictionary
-				delete this.touchReceiversDict[tuioContainer];
+				delete this.touchReceiversDict[tuioContainer.sessionID+tuioContainer.source];
 			}
 			
 			//tap
