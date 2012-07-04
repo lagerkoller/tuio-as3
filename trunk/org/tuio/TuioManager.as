@@ -80,7 +80,7 @@ package org.tuio {
 		/**The time between a touch down event and a hold event in ms*/
 		public var holdTimeout:int = 500;
 
-		/**The distance a touch may move without interfering with the dispatching of a HOLD event. If distance gets bigger, no HOLD event will be dispatched.*/
+		/**The distance a touch may move after touch down without interfering with the dispatching of a HOLD event. If distance gets bigger, no HOLD event will be dispatched.*/
 		public var holdThreshold:Number = 3;
 
 		/**If set true a TuioTouchEvent is triggered if a TuioObject is received. The default is false.*/
@@ -121,8 +121,7 @@ package org.tuio {
 		protected static var allowInst:Boolean;
 		protected static var inst:TuioManager;
 
-
-		/////////////////////properties integrated from TuioFiducialDispatcher///////////////////////
+		//fiducial related properties
 		private var fiducialReceivers:Array;
 		private var fiducialRemovalTimes:Array;
 
@@ -137,7 +136,6 @@ package org.tuio {
 
 		private var lastFiducialTarget:Array;
 		private var firstFiducialTarget:Array;
-		////////////////////////////////////////////////////////
 
 		/**
 		 * Creates a new TuioManager instance which processes the Tuio tracking data received by the given TuioClient.
@@ -153,13 +151,12 @@ package org.tuio {
 				this.lastTarget = new Dictionary(true);
 				this.firstTarget = new Dictionary(true);
 				this.tapped = new Array();
-//				this.hold = new Dictionary(true);
 				this.holdTimerDictionary = new Dictionary(true);
 				this.containerToTimerDictionary = new Dictionary(true);
 				this.ignoreList = new Array();
 				this.touchReceiversDict = new Dictionary(true);
 
-				/////////////////////constructor integrated from TuioFiducialDispatcher///////////////////////
+				//initialize fiducial related properties
 				this._rotationShift = ROTATION_SHIFT_DEFAULT;
 				this._timeoutTime = TIMEOUT_TIME_DEFAULT;
 
@@ -167,7 +164,6 @@ package org.tuio {
 				this.fiducialRemovalTimes = new Array();
 				this.lastFiducialTarget = new Array();
 				this.firstFiducialTarget = new Array();
-				////////////////////////////////////////////////////////
 			}
 		}
 
@@ -207,14 +203,10 @@ package org.tuio {
 			lastTarget[tuioContainer] = target;
 			manageHoldTimer(tuioContainer,target, local, stagePos);
 
-			//target.dispatchEvent(new TuioTouchEvent(TuioTouchEvent.TOUCH_OVER, true, false, local.x, local.y, stagePos.x, stagePos.y, target, tuioContainer));
-			//target.dispatchEvent(new TuioTouchEvent(TuioTouchEvent.ROLL_OVER, false, false, local.x, local.y, stagePos.x, stagePos.y, target, tuioContainer));
 			target.dispatchEvent(new TuioTouchEvent(TuioTouchEvent.TOUCH_DOWN, true, false, local.x, local.y, stagePos.x, stagePos.y, target, tuioContainer));
 			this.dispatchEvent(new TuioTouchEvent(TuioTouchEvent.TOUCH_DOWN, true, false, local.x, local.y, stagePos.x, stagePos.y, target, tuioContainer));
 
 			if (_dispatchMouseEvents) {
-				//target.dispatchEvent(new MouseEvent(MouseEvent.MOUSE_OVER, true, false, local.x, local.y, (target as InteractiveObject), false, false, false, false, 0));
-				//target.dispatchEvent(new MouseEvent(MouseEvent.ROLL_OVER, false, false, local.x, local.y, (target as InteractiveObject), false, false, false, false, 0));
 				target.dispatchEvent(new MouseEvent(MouseEvent.MOUSE_DOWN, true, false, local.x, local.y, (target as InteractiveObject), false, false, false, false, 0, false, false, 1));
 			}
 
@@ -234,7 +226,6 @@ package org.tuio {
 
 			var holdThreshold:Number = 0.0001;
 			//mouse move or hold
-//			hold[tuioContainer] = getTimer();
 			manageHoldTimer(tuioContainer,target, local, stagePos);
 			target.dispatchEvent(new TuioTouchEvent(TuioTouchEvent.TOUCH_MOVE, true, false, local.x, local.y, stagePos.x, stagePos.y, target, tuioContainer));
 			this.dispatchEvent(new TuioTouchEvent(TuioTouchEvent.TOUCH_MOVE, true, false, local.x, local.y, stagePos.x, stagePos.y, target, tuioContainer));
@@ -334,6 +325,18 @@ package org.tuio {
 
 
 
+		/**
+		 * manages dispatching of TuioTouchEvent.HOLD events. A hold event will only be dispatched when a) within holdTimeout (default 500ms) after
+		 * touch down the touch does not move for more than b) holdThreshold (default 3 pixels). Therefore, developers may adapt dispatching of hold
+		 * events to the characteristics of their setups / applications by changing those values. holdThreshold makes sense especially if tracking
+		 * systems deliver touch values that flicker a bit even if touches do not move.
+		 *
+		 * @param tuioContainer
+		 * @param target
+		 * @param localPos
+		 * @param stagePos
+		 *
+		 */
 		private function manageHoldTimer(tuioContainer:TuioContainer, target:DisplayObject, localPos:Point, stagePos:Point):void{
 			var startPos:Point;
 			if(this.holdTimerDictionary[tuioContainer] == null){
@@ -633,7 +636,6 @@ package org.tuio {
 			this.dispatchEvent(new TuioEvent(TuioEvent.ADD, tuioObject));
 			if(triggerTouchOnObject) this.handleAdd(tuioObject);
 
-			/////////////////////added from TuioFiducialDispatcher///////////////////////
 			for each(var receiverObject:Object in fiducialReceivers){
 				if(receiverObject.source != null){
 					//TUIO 1.1
@@ -664,7 +666,6 @@ package org.tuio {
 			target.dispatchEvent(createFiducialEvent(
 				TuioFiducialEvent.OVER,
 				tuioObject));
-			////////////////////////////////////////////
 		}
 
 		/**
@@ -675,7 +676,6 @@ package org.tuio {
 			this.dispatchEvent(new TuioEvent(TuioEvent.UPDATE, tuioObject));
 			if(triggerTouchOnObject) this.handleUpdate(tuioObject);
 
-			/////////////////////added from fiducial dispatcher///////////////////////
 			var stagePos:Point = new Point(stage.stageWidth * tuioObject.x, stage.stageHeight * tuioObject.y);
 			var target:DisplayObject = DisplayListHelper.getTopDisplayObjectUnderPoint(stagePos, stage);
 			var local:Point = target.globalToLocal(new Point(stagePos.x, stagePos.y));
@@ -707,7 +707,6 @@ package org.tuio {
 					tuioObject));
 			}
 			lastFiducialTarget[tuioObject.sessionID] = target;
-			////////////////////////////////////////////
 		}
 
 		/**
@@ -718,7 +717,6 @@ package org.tuio {
 			this.dispatchEvent(new TuioEvent(TuioEvent.REMOVE, tuioObject));
 			if(triggerTouchOnObject) this.handleRemove(tuioObject);
 
-			/////////////////////added from fiducial dispatcher///////////////////////
 			var stagePos:Point = new Point(stage.stageWidth * tuioObject.x, stage.stageHeight * tuioObject.y);
 			var target:DisplayObject = DisplayListHelper.getTopDisplayObjectUnderPoint(stagePos, stage);
 			var local:Point = target.globalToLocal(new Point(stagePos.x, stagePos.y));
@@ -747,7 +745,6 @@ package org.tuio {
 			lastFiducialTarget[tuioObject.sessionID].dispatchEvent(createFiducialEvent(
 				TuioFiducialEvent.OUT,
 				tuioObject));
-			////////////////////////////////////////////
 		}
 
 		/**
@@ -893,7 +890,6 @@ package org.tuio {
 				//update tuioObject to be able to check for movement and rotation
 				receiverObject.tuioObject = newTuioObject.clone();
 			}
-
 		}
 
 		private function checkTimeouts():void{
@@ -1015,10 +1011,6 @@ package org.tuio {
 		public function set invertRotation(invertRotation:Boolean):void{
 			_invertRotation = invertRotation;
 		}
-
-
-		////////////////////////////////////////////////////////
-
 	}
 
 }
