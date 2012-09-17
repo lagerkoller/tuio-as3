@@ -728,8 +728,8 @@ package org.tuio.adapters
 					//rotate around barycenter of touches
 					var xPos:Number;
 					var yPos:Number;
-					var xPositions:Array = new Array();
-					var yPositions:Array = new Array();
+					var xPositions:Array = [];
+					var yPositions:Array = [];
 					var calcCenterPoint:Point = new Point();
 					var touchAmount:Number = 0;
 					

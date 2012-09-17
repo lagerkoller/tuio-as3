@@ -66,13 +66,13 @@ package org.tuio.legacy
 	            throw new Error("Error: Instantiation failed: Use TuioLegacyListener.getInstance() instead of new.");
 			}else{
 				this.stage = stage;
-				this.interactionClients = new Array();
+				this.interactionClients = [];
 				addInteractionClient(interactionClient);
 //				this.tuioClient.addListener(this);
-				this.listenOnIdsArray = new Array();
-				this.firstPos = new Array();
-				this.lastPos = new Array();
-				this.lastTarget = new Array();
+				this.listenOnIdsArray = [];
+				this.firstPos = [];
+				this.lastPos = [];
+				this.lastTarget = [];
 			}
 			
 		}
@@ -392,7 +392,7 @@ package org.tuio.legacy
 		 * 
 		 */
 		public function getObjects():Array {
-			var objects:Array = new Array();
+			var objects:Array = [];
 			
 			var objectArray:Array;
 			for each(var interactionClient:AbstractTuioAdapter in this.interactionClients){

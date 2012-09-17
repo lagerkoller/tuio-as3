@@ -30,7 +30,7 @@ package org.tuio.connectors {
 		 */
 		public function LCConnector(connectionNameIn:String = "_OscDataStream", connectionNameOut:String = "_OscDataStreamOut") {
 			
-			this.listeners = new Array();
+			this.listeners = [];
 			
 			this.connectionNameIn = connectionNameIn;
 			this.connectionNameOut = connectionNameOut;
@@ -78,7 +78,7 @@ package org.tuio.connectors {
 		public function removeListener(listener:IOSCConnectorListener):void {
 			
 			var tmp:Array = this.listeners.concat();
-			var newList:Array = new Array();
+			var newList:Array = [];
 			
 			var item:Object = tmp.pop();
 			while (item != null) {

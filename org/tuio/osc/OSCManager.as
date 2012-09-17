@@ -29,8 +29,8 @@ package org.tuio.osc {
 		 */
 		public function OSCManager(connectorIn:IOSCConnector = null, connectorOut:IOSCConnector = null, autoStart:Boolean = true) {
 			
-			this.msgListener = new Array();
-			this.oscMethods = new Array();
+			this.msgListener = [];
+			this.oscMethods = [];
 			
 			this._connectorIn = connectorIn;
 			if(this._connectorIn != null) this._connectorIn.addListener(this);
@@ -187,7 +187,7 @@ package org.tuio.osc {
 		 * @param	listener The listener to be removed.
 		 */
 		public function removeMsgListener(listener:IOSCListener):void {
-			var temp:Array = new Array();
+			var temp:Array = [];
 			for each(var l:IOSCListener in this.msgListener) {
 				if (l != listener) temp.push(l);
 			}

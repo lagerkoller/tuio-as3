@@ -79,9 +79,9 @@ package org.tuio.gestures {
 				this._tuioManager.addEventListener(TuioTouchEvent.TOUCH_MOVE, handleTouchEvent);
 				this._tuioManager.addEventListener(TuioTouchEvent.TOUCH_OUT, handleTouchEvent);
 				this._tuioManager.addEventListener(TuioTouchEvent.TOUCH_OVER, handleTouchEvent);
-				this.ignoreList = new Array();
-				this.gestures = new Array();
-				this.activeGestures = new Array();
+				this.ignoreList = [];
+				this.gestures = [];
+				this.activeGestures = [];
 			} else {
 				throw new Error("Error: Instantiation failed: Use GestureManager.getInstance() instead of new.");
 			}
@@ -163,7 +163,7 @@ package org.tuio.gestures {
 		 * @return <code>true</code> if an active <code>GestureStepSequence</code> progressed.
 		 */
 		private function progressGestures(event:String, target:DisplayObject, tuioContainer:TuioContainer):Boolean {
-			var temp:Array = new Array();
+			var temp:Array = [];
 			var l:int = this.activeGestures.length;
 			var used:Boolean = false;
 
@@ -287,7 +287,7 @@ package org.tuio.gestures {
 		 * @param	item The DisplayObject that should be ignored by TuioTouchEvents.
 		 */
 		public function removeFromIgnoreList(item:DisplayObject):void {
-			var tmpList:Array = new Array();
+			var tmpList:Array = [];
 			var listItem:Object;
 			while (ignoreList.length > 0) {
 				listItem = ignoreList.pop();

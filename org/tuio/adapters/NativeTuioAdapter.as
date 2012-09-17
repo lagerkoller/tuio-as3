@@ -45,7 +45,7 @@ package org.tuio.adapters
 			
 			this.stage = stage;
 			
-			this.lastPos = new Array();
+			this.lastPos = [];
 			
 			Multitouch.inputMode = MultitouchInputMode.TOUCH_POINT;
 			stage.addEventListener(TouchEvent.TOUCH_BEGIN, touchBegin);

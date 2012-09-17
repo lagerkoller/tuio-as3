@@ -80,9 +80,9 @@ package org.tuio.debug
 			}else{
 				this.stage = stage;
 				fseq = 0;
-				cursors = new Array();
-				objects = new Array();
-				blobs = new Array();
+				cursors = [];
+				objects = [];
+				blobs = [];
 				
 				_customObjectClass = TuioDebugObject;
 				_customCursorSprite = TuioDebugCursor;

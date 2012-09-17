@@ -92,7 +92,7 @@ package org.tuio.legacy
 		
 		private function timerHandler(evt:TimerEvent):void{
 			//speichern der statuse der Props vor der änderung
-			var preAliveArray:Array = new Array();
+			var preAliveArray:Array = [];
 			for (var f_id in PropObjectDict) {
 				//trace(f_id+"----------")
 				var prop:PropObject = PropObject(PropObjectDict[f_id]);
@@ -104,7 +104,7 @@ package org.tuio.legacy
 			}
 			
 			// alle auf 0 setzen
-			var tempArray:Array = new Array();
+			var tempArray:Array = [];
 			for (var f_id in PropObjectDict) {
 				tempArray.push(0);
 			}
@@ -130,7 +130,7 @@ package org.tuio.legacy
 			
 			
 			//speichern der statuse der Props nach der änderung
-			var postAliveArray:Array = new Array();
+			var postAliveArray:Array = [];
 			for (var f_id in PropObjectDict) {
 				//trace(f_id+"----------")
 				var prop:PropObject = PropObject(PropObjectDict[f_id]);

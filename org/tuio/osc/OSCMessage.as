@@ -32,9 +32,9 @@
 				//read the parsing pattern for the following OSCMessage bytes
 				this.pattern = this.readString();
 				
-				this.typesArray = new Array();
+				this.typesArray = [];
 				
-				this.argumentArray = new Array();
+				this.argumentArray = [];
 				
 				//read the remaining bytes according to the parsing pattern
 				this.openArray = this.argumentArray;
@@ -56,14 +56,14 @@
 							case "F": openArray.push(false); this.typesArray.push("F"); break;
 							case "N": openArray.push(null); this.typesArray.push("N"); break;
 							case "I": openArray.push(Infinity); this.typesArray.push("I"); break;
-							case "[": innerArray = new Array(); openArray = innerArray; this.typesArray.push("["); break;
+							case "[": innerArray = []; openArray = innerArray; this.typesArray.push("["); break;
 							case "]": this.argumentArray.push(innerArray.concat()); openArray = this.argumentArray; this.typesArray.push("]"); break;
 							default: break;
 						}
 					}
 				} catch (e:EOFError) {
 					trace("corrupt");
-					this.argumentArray = new Array();
+					this.argumentArray = [];
 					this.argumentArray.push("Corrupted OSCMessage");
 					openArray = null;
 				}
@@ -154,7 +154,7 @@
 				oscType = oscTypes.charAt(c);
 				if (oscType.charCodeAt(0) < 97) { //isn't a small letter
 					if (oscType == "[") {
-						innerArray = new Array(); 
+						innerArray = []; 
 						openArray = innerArray;
 					} else if (oscType == "]") {
 						this.argumentArray.push(innerArray.concat()); 
