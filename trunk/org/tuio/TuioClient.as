@@ -65,7 +65,7 @@
 					}
 					
 					tuioContainerList = this._tuioCursors[this.src].concat();
-					this._tuioCursors[this.src] = new Array();
+					this._tuioCursors[this.src] = [];
 					
 					for each(tcur in tuioContainerList) {
 						if (tcur.isAlive) this._tuioCursors[this.src].push(tcur);
@@ -90,7 +90,7 @@
 					}
 					
 					tuioContainerList = this._tuioObjects[this.src].concat();
-					this._tuioObjects[this.src] = new Array();
+					this._tuioObjects[this.src] = [];
 					
 					for each(to in tuioContainerList) {
 						if (to.isAlive) this._tuioObjects[this.src].push(to);
@@ -115,7 +115,7 @@
 					}
 					
 					tuioContainerList = this._tuioBlobs[this.src].concat();
-					this._tuioBlobs[this.src] = new Array();
+					this._tuioBlobs[this.src] = [];
 					
 					for each(tb in tuioContainerList) {
 						if (tb.isAlive) this._tuioBlobs[this.src].push(tb);

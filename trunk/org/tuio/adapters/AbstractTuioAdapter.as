@@ -19,6 +19,9 @@ package org.tuio.adapters
 	 */
 	public class AbstractTuioAdapter
 	{
+	
+		public static const DEFAULT_SOURCE:String = "_no_source_";
+		
 		/** @private */
 		protected var _tuioCursors:Object;
 		/** @private */
@@ -29,13 +32,11 @@ package org.tuio.adapters
 		/** @private */
 		protected var listeners:Array;
 		
-		public static const DEFAULT_SOURCE:String = "_no_source_";
-		
 		public function AbstractTuioAdapter(self:AbstractTuioAdapter){
 			if(self != this){
 				throw new Error("Do not initialize this abstract class directly. Instantiate from inheriting class instead.");
 			}
-			this.listeners = new Array();
+			this.listeners = [];
 			
 			this._tuioCursors = {};
 			this._tuioObjects = {};
@@ -58,7 +59,7 @@ package org.tuio.adapters
 		 * @param	listener
 		 */
 		public function removeListener(listener:ITuioListener):void {
-			var temp:Array = new Array();
+			var temp:Array = [];
 			for each(var l:ITuioListener in this.listeners) {
 				if (l != listener) temp.push(l);
 			}
@@ -113,7 +114,6 @@ package org.tuio.adapters
 			return returnArray;
 		}
 		
-		
 		/**
 		 * Takes care for TUIO 1.0 clients that do not use the source message. Creates one big array 
 		 * for the TUIO cursors of all TUIO message in tuioDictionary.
@@ -123,7 +123,7 @@ package org.tuio.adapters
 		 * 
 		 */
 		private function getAllTuioContainersOf(tuioDictionary:Object):Array{
-			var allTuioContainers:Array = new Array();
+			var allTuioContainers:Array = [];
 			
 			for each(var tuioCursorArray:Array in tuioDictionary){
 				allTuioContainers = allTuioContainers.concat(tuioCursorArray);

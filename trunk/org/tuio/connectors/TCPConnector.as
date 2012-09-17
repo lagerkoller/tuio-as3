@@ -26,7 +26,7 @@ package org.tuio.connectors {
 		 */
 		public function TCPConnector(host:String = "127.0.0.1", port:int = 3333) {
 			
-			this.listeners = new Array();
+			this.listeners = [];
 			
 			this.host = host;
 			this.port = port;
@@ -77,7 +77,7 @@ package org.tuio.connectors {
 		public function removeListener(listener:IOSCConnectorListener):void {
 			
 			var tmp:Array = this.listeners.concat();
-			var newList:Array = new Array();
+			var newList:Array = [];
 			
 			var item:Object = tmp.pop();
 			while (item != null) {

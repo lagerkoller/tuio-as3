@@ -34,7 +34,7 @@ package org.tuio.gestures {
 		 * Helper function for the constructor and getInstance.
 		 */
 		private function init():void {
-			this.steps = new Array();
+			this.steps = [];
 			this.targetAliasMap = {};
 			this.tuioContainerAliasMap = {};
 			this.frameIDAliasMap = {};

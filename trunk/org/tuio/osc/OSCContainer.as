@@ -48,7 +48,7 @@ package org.tuio.osc {
 		 * @return An Array containing all children which names matched the given pattern.
 		 */
 		public function getMatchingChildren(pattern:String):Array {
-			var out:Array = new Array();
+			var out:Array = [];
 			
 			var firstSeperator:int = pattern.indexOf("/");
 			var part:String = pattern.substring(0, firstSeperator);

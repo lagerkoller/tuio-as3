@@ -150,20 +150,22 @@ package org.tuio {
 				this.stage = stage;
 				this.lastTarget = new Dictionary(true);
 				this.firstTarget = new Dictionary(true);
-				this.tapped = new Array();
+
+				this.tapped = [];
+
 				this.holdTimerDictionary = new Dictionary(true);
 				this.containerToTimerDictionary = new Dictionary(true);
-				this.ignoreList = new Array();
+				this.ignoreList = [];
 				this.touchReceiversDict = new Dictionary(true);
 
 				//initialize fiducial related properties
 				this._rotationShift = ROTATION_SHIFT_DEFAULT;
 				this._timeoutTime = TIMEOUT_TIME_DEFAULT;
 
-				this.fiducialReceivers = new Array();
-				this.fiducialRemovalTimes = new Array();
-				this.lastFiducialTarget = new Array();
-				this.firstFiducialTarget = new Array();
+				this.fiducialReceivers = [];
+				this.fiducialRemovalTimes = [];
+				this.lastFiducialTarget = [];
+				this.firstFiducialTarget = [];
 			}
 		}
 
@@ -391,7 +393,7 @@ package org.tuio {
 				keyString = ""+sessionId;
 			}
 			if(!this.touchReceiversDict[keyString]){
-				this.touchReceiversDict[keyString] = new Array();
+				this.touchReceiversDict[keyString] = [];
 			}
 			this.touchReceiversDict[keyString].push(receiver);
 		}
@@ -414,7 +416,7 @@ package org.tuio {
 		}
 
 		private function subtractDicts(dict1:Dictionary, dict2:Dictionary):Array{
-			var diffArray:Array = new Array();
+			var diffArray:Array = [];
 
 			for (var key:Object in dict1){
 				var isIn:Object = dict2[key];
@@ -467,7 +469,7 @@ package org.tuio {
 			//tap
 			if (target == firstTarget[tuioContainer]) {
 				var double:Boolean = false;
-				var tmpArray:Array = new Array();
+				var tmpArray:Array = [];
 				var item:DoubleTapStore;
 				while (tapped.length > 0) {
 					item = tapped.pop() as DoubleTapStore;
@@ -564,7 +566,7 @@ package org.tuio {
 		 * @return The ancestor list of the given <code>DisplayObject</code>
 		 */
 		private function createAncestorList(item:DisplayObject):Array {
-			var list:Array = new Array();
+			var list:Array = [];
 			var stage:Stage = item.stage;
 			while (item != stage) {
 				list.push(item.parent);
@@ -591,7 +593,7 @@ package org.tuio {
 		 * @param	item The DisplayObject that should be ignored by TouchEvents.
 		 */
 		public function removeFromIgnoreList(item:DisplayObject):void {
-			var tmpList:Array = new Array();
+			var tmpList:Array = [];
 			var listItem:Object;
 			while (ignoreList.length > 0) {
 				listItem = ignoreList.pop();

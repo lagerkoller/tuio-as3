@@ -47,7 +47,7 @@ package org.tuio.connectors
 		 */
 		public function UDPConnector(host:String = "127.0.0.1", port:int = 3333, bind:Boolean = true)
 		{
-			this.listeners = new Array();
+			this.listeners = [];
 			
 			this.connection = new OSCDatagramSocket(host, port, bind);
 			this.connection.addEventListener(OSCEvent.OSC_DATA,receiveOscData);
@@ -110,7 +110,7 @@ package org.tuio.connectors
 		public function removeListener(listener:IOSCConnectorListener):void
 		{
 			var tmp:Array = this.listeners.concat();
-			var newList:Array = new Array();
+			var newList:Array = [];
 			
 			var item:Object = tmp.pop();
 			while (item != null) {
@@ -134,7 +134,7 @@ package org.tuio.connectors
 		 */
 		public function close():void
 		{
-			if (this.connection.connected) this.connection.close();
+			if (this.connection.connected || this.connection.bound) this.connection.close();
 		}
 	}
 }
