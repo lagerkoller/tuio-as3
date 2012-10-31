@@ -89,8 +89,21 @@ package org.tuio {
 		/**If set true a TuioTouchEvent is triggered if a TuioBlob is received. The default is false.*/
 		public var triggerTouchOnBlob:Boolean = false;
 
+		/**If set true a TuioTouchEvent.TAP is triggered only if the TOUCH_UP event is max. tapLocalZone away. The default is false.*/
+		public var restrictTapToLocalZone:Boolean = false;
+
+		/**If restrictTapToLocalZone is true a TuioTouchEvent.TAP is triggered only if the TOUCH_UP event is max. tapLocalZone away.*/
+		public var tapLocalZone:Number = 3;
+
 		/**Sets the method how to discover the TuioTouchEvent's target object. The default is TOUCH_TARGET_DISCOVERY_MOUSE_ENABLED.*/
 		public var touchTargetDiscoveryMode:uint = TOUCH_TARGET_DISCOVERY_MOUSE_ENABLED;
+
+		/** If set to true TuioManager will wait for doubleTapTimeout before dispatching a TAP event. This provides the possibility to
+		 * distinguish between TAP and DOUBLE_TAP events. Therefore, if set to true, only a DOUBLE_TAP event and no TAP event will be
+		 * dispatched if a DOUBLE_TAP has occurred. If set to false both will be dispatched (2 * TAP + 1 * DOUBLE_TAP). However, if set
+		 * to true, a TAP will only be dispatched after a recognizable delay.
+		 * */
+		public var waitForDoubleTapBeforeTap:Boolean = false;
 
 		//the possible touch target discovery modes.
 		/**The events will be triggered on the top object under the tracked point. Fastest method. Works for DisplayObject and subclasses.*/
@@ -108,9 +121,11 @@ package org.tuio {
 
 		private var lastTarget:Dictionary;
 		private var firstTarget:Dictionary;
+		private var startCoords:Dictionary;
 		private var tapped:Array;
 		private var holdTimerDictionary:Dictionary;
 		private var containerToTimerDictionary:Dictionary;
+		private var tapTimers:Dictionary;
 
 		private var ignoreList:Array;
 
@@ -150,11 +165,13 @@ package org.tuio {
 				this.stage = stage;
 				this.lastTarget = new Dictionary(true);
 				this.firstTarget = new Dictionary(true);
+				this.startCoords = new Dictionary(true);
 
 				this.tapped = [];
 
 				this.holdTimerDictionary = new Dictionary(true);
 				this.containerToTimerDictionary = new Dictionary(true);
+				this.tapTimers = new Dictionary(true);
 				this.ignoreList = [];
 				this.touchReceiversDict = new Dictionary(true);
 
@@ -203,6 +220,7 @@ package org.tuio {
 
 			firstTarget[tuioContainer] = target;
 			lastTarget[tuioContainer] = target;
+			startCoords[tuioContainer] = stagePos;
 			manageHoldTimer(tuioContainer,target, local, stagePos);
 
 			target.dispatchEvent(new TuioTouchEvent(TuioTouchEvent.TOUCH_DOWN, true, false, local.x, local.y, stagePos.x, stagePos.y, target, tuioContainer));
@@ -471,11 +489,16 @@ package org.tuio {
 				var double:Boolean = false;
 				var tmpArray:Array = [];
 				var item:DoubleTapStore;
-				while (tapped.length > 0) {
+
+				tapped = sortOutOldTaps();
+
+				//check remaining items for double tap
+				while(tapped.length > 0){
 					item = tapped.pop() as DoubleTapStore;
-					if (item.check(this.doubleTapTimeout)) {
-						if (item.target == target && Math.abs(stagePos.x-item.x) < this.doubleTapDistance && Math.abs(stagePos.y - item.y) < this.doubleTapDistance ) double = true;
-						else tmpArray.push(item);
+					if (item.target == target && Math.abs(stagePos.x-item.x) < this.doubleTapDistance && Math.abs(stagePos.y - item.y) < this.doubleTapDistance ){
+						double = true;
+					}else{
+						tmpArray.push(item);
 					}
 				}
 				tapped = tmpArray.concat();
@@ -487,14 +510,31 @@ package org.tuio {
 						target.dispatchEvent(new MouseEvent(MouseEvent.DOUBLE_CLICK, true, false, local.x, local.y, (target as InteractiveObject), false, false, false, false, 0));
 					}
 				} else {
-					tapped.push(new DoubleTapStore(target, getTimer(), stagePos.x, stagePos.y));
-					target.dispatchEvent(new TuioTouchEvent(TuioTouchEvent.TAP, true, false, local.x, local.y, stagePos.x, stagePos.y, target, tuioContainer));
-					this.dispatchEvent(new TuioTouchEvent(TuioTouchEvent.TAP, true, false, local.x, local.y, stagePos.x, stagePos.y, target, tuioContainer));
-					if (_dispatchMouseEvents) {
-						target.dispatchEvent(new MouseEvent(MouseEvent.CLICK, true, false, local.x, local.y, (target as InteractiveObject), false, false, false, false, 0));
+					item = new DoubleTapStore(target, tuioContainer, getTimer(), stagePos.x, stagePos.y);
+					tapped.push(item);
+					var dispatchTap:Boolean = true;
+
+					//only dispatch tap if the area where the touch up happened is in close proximity to where the touch down happened (see also tapLocalZone)
+					if(restrictTapToLocalZone){
+						var startPos:Point = startCoords[tuioContainer];
+						var distanceSinceStart:Number = Math.sqrt((stagePos.x-startPos.x)*(stagePos.x-startPos.x)+(stagePos.y-startPos.y)*(stagePos.y-startPos.y));
+						if(distanceSinceStart > tapLocalZone){
+							dispatchTap = false;
+						}
+						delete startCoords[tuioContainer];
 					}
-					if (_dispatchNativeTouchEvents) {
-						target.dispatchEvent(new flash.events.TouchEvent(flash.events.TouchEvent.TOUCH_TAP, true, false, tuioContainer.sessionID, false, local.x, local.y, 0, 0, 0, target as InteractiveObject));
+
+					//to distinguish between DOUBLE_TAP and TAP doubleTapTimeout will be waited until TAP will be dispatched
+					if(dispatchTap){
+						if(!waitForDoubleTapBeforeTap){
+							dispatchTapEvent(item);
+						}else{
+							//start timer for this tap event
+							var tapTimer:Timer = new Timer(doubleTapTimeout);
+							tapTimer.addEventListener(TimerEvent.TIMER, onTapTimer);
+							tapTimer.start();
+							this.tapTimers[tapTimer] = tuioContainer;
+						}
 					}
 				}
 			}
@@ -506,6 +546,54 @@ package org.tuio {
 
 			lastTarget[tuioContainer] = null;
 			firstTarget[tuioContainer] = null;
+		}
+
+		private function onTapTimer(event:TimerEvent):void{
+			var item:DoubleTapStore;
+			var tapTimer:Timer = event.target as Timer;
+
+			for each(var tempItem:DoubleTapStore in this.tapped){
+				if(tempItem.tuioContainer == this.tapTimers[tapTimer]){
+					item = tempItem;
+					break;
+				}
+			}
+			delete this.tapTimers[tapTimer];
+			tapped = sortOutOldTaps();
+			tapTimer.stop();
+
+			if(item != null){
+				dispatchTapEvent(item);
+			}
+		}
+
+		private function dispatchTapEvent(item:DoubleTapStore):void{
+			var stagePos:Point = new Point(item.x, item.y);
+			var target:DisplayObject = getTopDisplayObjectUnderPoint(stagePos);
+			var local:Point = target.globalToLocal(new Point(stagePos.x, stagePos.y));
+
+			target.dispatchEvent(new TuioTouchEvent(TuioTouchEvent.TAP, true, false, local.x, local.y, stagePos.x, stagePos.y, target, item.tuioContainer));
+			this.dispatchEvent(new TuioTouchEvent(TuioTouchEvent.TAP, true, false, local.x, local.y, stagePos.x, stagePos.y, target, item.tuioContainer));
+			if (_dispatchMouseEvents) {
+				target.dispatchEvent(new MouseEvent(MouseEvent.CLICK, true, false, local.x, local.y, (target as InteractiveObject), false, false, false, false, 0));
+			}
+			if (_dispatchNativeTouchEvents) {
+				target.dispatchEvent(new flash.events.TouchEvent(flash.events.TouchEvent.TOUCH_TAP, true, false, item.tuioContainer.sessionID, false, local.x, local.y, 0, 0, 0, target as InteractiveObject));
+			}
+		}
+
+		private function sortOutOldTaps():Array{
+			var tmpArray:Array = [];
+			var item:DoubleTapStore;
+
+			while (tapped.length > 0) {
+				item = tapped.pop() as DoubleTapStore;
+				if (item.check(this.doubleTapTimeout)) {
+					tmpArray.push(item);
+				}
+			}
+
+			return tmpArray.concat();
 		}
 
 		private function getTopDisplayObjectUnderPoint(point:Point):DisplayObject {
@@ -1020,15 +1108,19 @@ package org.tuio {
 import flash.display.DisplayObject;
 import flash.utils.getTimer;
 
+import org.tuio.TuioContainer;
+
 internal class DoubleTapStore {
 
 	internal var target:DisplayObject;
+	internal var tuioContainer:TuioContainer;
 	internal var time:int;
 	internal var x:Number;
 	internal var y:Number;
 
-	function DoubleTapStore(target:DisplayObject, time:int, x:Number, y:Number) {
+	function DoubleTapStore(target:DisplayObject, tuioContainer:TuioContainer, time:int, x:Number, y:Number) {
 		this.target = target;
+		this.tuioContainer = tuioContainer;
 		this.time = time;
 		this.x = x;
 		this.y = y;
