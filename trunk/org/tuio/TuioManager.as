@@ -430,7 +430,14 @@ package org.tuio {
 			}else{
 				keyString = ""+sessionId;
 			}
-			delete this.touchReceiversDict[keyString];
+			for(var i:Number = 0; i < this.touchReceiversDict[keyString].length; i++){
+				if(this.touchReceiversDict[keyString][i] == receiver){
+					(this.touchReceiversDict[keyString] as Array).splice(i,1);
+				}
+			}
+			if(this.touchReceiversDict[keyString].length == 0){
+				delete this.touchReceiversDict[keyString];
+			}
 		}
 
 		private function subtractDicts(dict1:Dictionary, dict2:Dictionary):Array{
@@ -476,7 +483,10 @@ package org.tuio {
 			if(this.touchReceiversDict[tuioContainer.sessionID+tuioContainer.source]){
 				//call removeTouch from each receiver that listens on sessionID
 				var event:TuioTouchEvent = new TuioTouchEvent(TuioTouchEvent.TOUCH_UP, true, false, local.x, local.y, stagePos.x, stagePos.y, target, tuioContainer);
-				for each(var receiver:ITuioTouchReceiver in this.touchReceiversDict[tuioContainer.sessionID+tuioContainer.source]){
+
+				//make copy in order to prevent ArrayOutOfBounds if receiver removes itself from receivers array
+				var touchReceivers:Array = (this.touchReceiversDict[tuioContainer.sessionID+tuioContainer.source] as Array).concat();
+				for each(var receiver:ITuioTouchReceiver in touchReceivers){
 					receiver.removeTouch(event);
 				}
 
