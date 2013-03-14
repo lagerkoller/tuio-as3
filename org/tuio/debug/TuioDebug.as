@@ -5,6 +5,7 @@ package org.tuio.debug
 	import flash.display.DisplayObjectContainer;
 	import flash.display.Sprite;
 	import flash.display.Stage;
+	import flash.events.Event;
 	import flash.geom.Matrix;
 	import flash.geom.Point;
 	import flash.text.Font;
@@ -13,24 +14,24 @@ package org.tuio.debug
 	import flash.text.TextFormat;
 	
 	import org.tuio.*;
-
+	
 	/**
-	 * 
-	 * <p>implements the interface <code>ITuioListener</code> to show debug information about all tuio cursors and objects 
+	 *
+	 * <p>implements the interface <code>ITuioListener</code> to show debug information about all tuio cursors and objects
 	 * that are prevailing in the application.</p>
-	 * 
-	 * <p>The appearance of the cursors and objects is controlled by the classes <code>TuioDebugCursor</code> and 
-	 * <code>TuioDebugObject</code>. Their appearance can be tweaked with multiple settings. Additionally, custom debug cursor 
-	 * and object implementations can be set via the functions <code>customCursorSprite</code> and <code>customObjectClass</code>.</p> 
-	 * 
+	 *
+	 * <p>The appearance of the cursors and objects is controlled by the classes <code>TuioDebugCursor</code> and
+	 * <code>TuioDebugObject</code>. Their appearance can be tweaked with multiple settings. Additionally, custom debug cursor
+	 * and object implementations can be set via the functions <code>customCursorSprite</code> and <code>customObjectClass</code>.</p>
+	 *
 	 * @see org.tuio.ITuioListener
 	 * @see TuioDebugCursor
 	 * @see ITuioDebugCursor
 	 * @see TuioDebugObject
 	 * @see ITuioDebugObject
-	 * 
+	 *
 	 * @author Johannes Luderschmidt
-	 * 
+	 *
 	 */
 	public class TuioDebug implements ITuioListener{
 		
@@ -53,6 +54,7 @@ package org.tuio.debug
 		
 		private var _showDebugText:Boolean = true;
 		private var _debugTextColor:Number = 0x0;
+		private var _showDebugObjectGlow:Boolean;
 		
 		private var _cursorRadius:Number = 13;
 		private var _cursorColor:Number = 0x0;
@@ -76,7 +78,7 @@ package org.tuio.debug
 		
 		public function TuioDebug(stage:Stage){
 			if (!allowInst) {
-	            throw new Error("Error: Instantiation failed: Use TuioDebug.getInstance() instead of new.");
+				throw new Error("Error: Instantiation failed: Use TuioDebug.getInstance() instead of new.");
 			}else{
 				this.stage = stage;
 				fseq = 0;
@@ -87,17 +89,18 @@ package org.tuio.debug
 				_customObjectClass = TuioDebugObject;
 				_customCursorSprite = TuioDebugCursor;
 				
-				this.arialFont = new Arial(); 
+				this.arialFont = new Arial();
+				stage.addEventListener(Event.ADDED, onAdded);
 			}
 		}
 		
 		/**
-		 * initializes Singleton instance of TuioDebug. Must be called before <code>getInstance()</code> 
+		 * initializes Singleton instance of TuioDebug. Must be called before <code>getInstance()</code>
 		 * can be called.
-		 *  
+		 *
 		 * @param stage
 		 * @return Singleton instance of TuioDebug.
-		 * 
+		 *
 		 */
 		public static function init(stage:Stage):TuioDebug{
 			if(inst == null){
@@ -111,9 +114,9 @@ package org.tuio.debug
 		
 		/**
 		 * Singleton instance of TuioDebug.
-		 * 
+		 *
 		 * @return Singleton instance of TuioDebug.
-		 * 
+		 *
 		 */
 		public static function getInstance():TuioDebug{
 			if(inst == null){
@@ -131,23 +134,24 @@ package org.tuio.debug
 		}
 		
 		/**
-		 * creates actual debug representation of TUIO object and shows it on screen 
-		 *  
+		 * creates actual debug representation of TUIO object and shows it on screen
+		 *
 		 * @param tuioObject the current TUIO object
-		 * @param debugMode sets whether the TUIO id should be shown (debugMode == false) or 
-		 * whether only the hint 'Debug' should be shown (debugMode == true) as the debug TUIO session id 
-		 * starts  
+		 * @param debugMode sets whether the TUIO id should be shown (debugMode == false) or
+		 * whether only the hint 'Debug' should be shown (debugMode == true) as the debug TUIO session id
+		 * starts
 		 * with the highest possible unsigned integer value and decrements for each other TUIO debug
 		 * element in order to not interfere with regular TUIO session ids from a tracker or from
 		 * the TUIO debug application. Thus, the high session ids would be looking awkwardly and only
 		 * the 'Debug' string is being shown.
-		 * 
+		 *
 		 */
 		public function addTuioObjectWithDebugOption(tuioObject:TuioObject, debugMode:Boolean):void{
 			var objectSprite:Sprite;
 			
 			if(_customObjectClass == TuioDebugObject){
 				objectSprite = new TuioDebugObject(tuioObject.classID, tuioObject.sessionID, tuioObject.a, _objectWidth, _objectHeight, _objectColor, _objectAlpha,_objectLineThickness, _objectLineColor, _objectLineAlpha, tuioObject.source);
+				(objectSprite as TuioDebugObject).showGlow = showDebugObjectGlow;
 			}else{
 				objectSprite = new _customObjectClass(tuioObject);
 				if(!(objectSprite is ITuioDebugObject)){
@@ -174,7 +178,7 @@ package org.tuio.debug
 					label.background = false;
 					label.border = false;
 					label.text = generateObjectLabelText(objectSprite.x, objectSprite.y, tuioObject.classID, tuioObject.sessionID, debugMode);
-				
+					
 					label.defaultTextFormat = debugTextFormat();
 					label.setTextFormat(debugTextFormat());
 					label.embedFonts = true;
@@ -190,7 +194,7 @@ package org.tuio.debug
 		
 		/**
 		 * updates the display of the TUIO debug object
-		 * 
+		 *
 		 * @param	tuioObject The received /tuio/2Dobj.
 		 */
 		public function updateTuioObject(tuioObject:TuioObject):void{
@@ -199,21 +203,21 @@ package org.tuio.debug
 		
 		/**
 		 * updates the display of the TUIO debug object.
-		 *  
+		 *
 		 * @param tuioObject The received /tuio/2Dobj.
-		 * @param debugMode sets whether the TUIO id should be shown (debugMode == false) or 
-		 * whether only the hint 'Debug' should be shown (debugMode == true) as the debug TUIO session id 
-		 * starts  
+		 * @param debugMode sets whether the TUIO id should be shown (debugMode == false) or
+		 * whether only the hint 'Debug' should be shown (debugMode == true) as the debug TUIO session id
+		 * starts
 		 * with the highest possible unsigned integer value and decrements for each other TUIO debug
 		 * element in order to not interfere with regular TUIO session ids from a tracker or from
 		 * the TUIO debug application. Thus, the high session ids would be looking awkwardly and only
 		 * the 'Debug' string is being shown.
-		 * 
+		 *
 		 */
 		public function updateTuioObjectWithDebugOption(tuioObject:TuioObject, debugMode:Boolean):void{
 			for each(var object:Object in objects){
 				if(object.sessionID == tuioObject.sessionID){
-					var debugObject:DisplayObjectContainer = object.object as DisplayObjectContainer; 
+					var debugObject:DisplayObjectContainer = object.object as DisplayObjectContainer;
 					debugObject.x = tuioObject.x*stage.stageWidth;
 					debugObject.y = tuioObject.y*stage.stageHeight;
 					debugObject.rotation = tuioObject.a/Math.PI*180;
@@ -228,7 +232,7 @@ package org.tuio.debug
 		
 		/**
 		 * Called if a tracked object was removed.
-		 * 
+		 *
 		 * @param	tuioObject The values of the received /tuio/2Dobj.
 		 */
 		public function removeTuioObject(tuioObject:TuioObject):void{
@@ -242,10 +246,22 @@ package org.tuio.debug
 				i=i+1;
 			}
 		}
-
+		
+		/**
+		 * takes care that tangible object representations are on top after adding them.
+		 *   
+		 * @param event
+		 * 
+		 */
+		protected function onAdded(event:Event):void{
+			for each(var object:Object in this.objects){
+				stage.setChildIndex(object.object, stage.numChildren - 1);
+			}
+		}
+		
 		/**
 		 * width of debug object rectangle.
-		 * 
+		 *
 		 */
 		public function get objectWidth():Number{
 			return _objectWidth;
@@ -256,8 +272,8 @@ package org.tuio.debug
 		
 		
 		/**
-		 * height of debug object rectangle. 
-		 * 
+		 * height of debug object rectangle.
+		 *
 		 */
 		public function get objectHeight():Number{
 			return _objectHeight;
@@ -269,7 +285,7 @@ package org.tuio.debug
 		
 		/**
 		 * color of the filling of debug object rectangle.
-		 *  
+		 *
 		 */
 		public function get objectColor():Number{
 			return _objectColor;
@@ -279,8 +295,8 @@ package org.tuio.debug
 		}
 		
 		/**
-		 * alpha of the filling of debug object rectangle. 
-		 * 
+		 * alpha of the filling of debug object rectangle.
+		 *
 		 */
 		public function get objectAlpha():Number{
 			return _objectAlpha;
@@ -291,8 +307,8 @@ package org.tuio.debug
 		
 		/**
 		 * thickness of the line around a debug object rectangle.
-		 *  
-		 */	
+		 *
+		 */
 		public function get objectLineThickness():Number{
 			return _objectLineThickness;
 		}
@@ -302,7 +318,7 @@ package org.tuio.debug
 		
 		/**
 		 * color of the line around a debug object rectangle.
-		 *  
+		 *
 		 */
 		public function get objectLineColor():Number{
 			return _objectLineColor;
@@ -313,7 +329,7 @@ package org.tuio.debug
 		
 		/**
 		 * alpha of the line around a debug object rectangle.
-		 *  
+		 *
 		 */
 		public function get objectLineAlpha():Number{
 			return _objectLineAlpha;
@@ -325,7 +341,7 @@ package org.tuio.debug
 		/**
 		 * sets base class for the Sprite that should be drawn on screen when a new
 		 * object is added via a Tuio message.
-		 *  
+		 *
 		 */
 		public function get customObjectClass():Class{
 			return _customObjectClass;
@@ -430,12 +446,12 @@ package org.tuio.debug
 		
 		private function debugTextFormat():TextFormat{
 			var format:TextFormat = new TextFormat();
-	            format.font = this.arialFont.fontName;
-	            format.color = this.debugTextColor;
-	            format.size = 11;
-	            format.underline = false;
-	            
-        	return format;
+			format.font = this.arialFont.fontName;
+			format.color = this.debugTextColor;
+			format.size = 11;
+			format.underline = false;
+			
+			return format;
 		}
 		
 		/**
@@ -448,7 +464,7 @@ package org.tuio.debug
 				addTuioCursor(new TuioCursor("2dcur", tuioBlob.sessionID, tuioBlob.x, tuioBlob.y, tuioBlob.z,tuioBlob.X, tuioBlob.Y, tuioBlob.Z, tuioBlob.m, tuioBlob.frameID, "TuioDebug"));
 			}
 		}
-
+		
 		/**
 		 * Called if a tracked blob was updated.
 		 * @param	tuioBlob The values of the received /tuio/**Dblb.
@@ -458,7 +474,7 @@ package org.tuio.debug
 				_showCursors = true;
 				updateTuioCursor(new TuioCursor("2dcur", tuioBlob.sessionID, tuioBlob.x, tuioBlob.y, tuioBlob.z,tuioBlob.X, tuioBlob.Y, tuioBlob.Z, tuioBlob.m, tuioBlob.frameID, "TuioDebug"));
 			}
-				
+			
 		}
 		
 		/**
@@ -474,7 +490,7 @@ package org.tuio.debug
 		
 		public function newFrame(id:uint):void {
 			this.fseq = id;
-        }
+		}
 		
 		private function generateObjectLabelText(xVal:Number, yVal:Number, objectId:Number, sessionId:Number, debugMode:Boolean=false):String{
 			var objectLabel:String;
@@ -488,7 +504,7 @@ package org.tuio.debug
 		
 		/**
 		 * radius of the debug cursor circle.
-		 *  
+		 *
 		 */
 		public function get cursorRadius():Number{
 			return _cursorRadius;
@@ -499,7 +515,7 @@ package org.tuio.debug
 		
 		/**
 		 * color of the filling of the debug cursor circle.
-		 *  
+		 *
 		 */
 		public function get cursorColor():Number{
 			return _cursorColor;
@@ -510,7 +526,7 @@ package org.tuio.debug
 		
 		/**
 		 * alpha of the filling of the debug cursor circle.
-		 *  
+		 *
 		 */
 		public function get cursorAlpha():Number{
 			return _cursorAlpha;
@@ -521,7 +537,7 @@ package org.tuio.debug
 		
 		/**
 		 * thickness of the line around a debug cursor circle.
-		 * 
+		 *
 		 */
 		public function get cursorLineThickness():Number{
 			return _cursorLineThickness;
@@ -532,7 +548,7 @@ package org.tuio.debug
 		
 		/**
 		 * color of the line around a debug cursor circle.
-		 *  
+		 *
 		 */
 		public function get cursorLineColor():Number{
 			return _cursorLineColor;
@@ -543,7 +559,7 @@ package org.tuio.debug
 		
 		/**
 		 * alpha of the line around a debug cursor circle.
-		 *  
+		 *
 		 */
 		public function get cursorLineAlpha():Number{
 			return _cursorLineAlpha;
@@ -555,9 +571,9 @@ package org.tuio.debug
 		/**
 		 * controls whether debug text (session id, x position, y position and fiducial id) should be shown next to
 		 * a debug cursor or debug object.
-		 *   
-		 * @param showDebugText 
-		 * 
+		 *
+		 * @param showDebugText
+		 *
 		 */
 		public function set showDebugText(showDebugText:Boolean):void{
 			_showDebugText = showDebugText;
@@ -570,9 +586,9 @@ package org.tuio.debug
 		/**
 		 * sets base class for the Sprite that should be drawn on screen when a new
 		 * cursor is added via a Tuio message.
-		 *  
+		 *
 		 * @param customCursorSprite class name of class that should be used as debug cursor information.
-		 * 
+		 *
 		 */
 		public function set customCursorSprite (customCursorSprite:Class):void{
 			_customCursorSprite = customCursorSprite;
@@ -581,19 +597,19 @@ package org.tuio.debug
 		/**
 		 * returns base class of the Sprite that is being drawn on screen when a new
 		 * cursor is added via a Tuio message.
-		 *  
-		 * @return class of debug cursor sprite. 
-		 * 
+		 *
+		 * @return class of debug cursor sprite.
+		 *
 		 */
 		public function get customCursorSprite():Class{
 			return _customCursorSprite;
 		}
 		
 		/**
-		 * controls whether debug information for objects is shown. 
-		 *   
-		 * @param showCursors 
-		 * 
+		 * controls whether debug information for objects is shown.
+		 *
+		 * @param showCursors
+		 *
 		 */
 		public function set showCursors(showCursors:Boolean):void{
 			_showCursors = showCursors;
@@ -603,10 +619,10 @@ package org.tuio.debug
 		}
 		
 		/**
-		 * controls whether debug information for objects is shown. 
-		 *   
-		 * @param showCursors 
-		 * 
+		 * controls whether debug information for objects is shown.
+		 *
+		 * @param showCursors
+		 *
 		 */
 		public function set showObjects(showObjects:Boolean):void{
 			_showObjects = showObjects;
@@ -614,27 +630,37 @@ package org.tuio.debug
 		public function get showObjects():Boolean{
 			return _showObjects;
 		}
-
+		
 		public function get debugTextColor():Number
 		{
 			return _debugTextColor;
 		}
-
+		
 		public function set debugTextColor(value:Number):void
 		{
 			_debugTextColor = value;
 		}
-
+		
 		public function get showBlobs():Boolean
 		{
 			return _showBlobs;
 		}
-
+		
 		public function set showBlobs(value:Boolean):void
 		{
 			_showBlobs = value;
 		}
 
+		public function get showDebugObjectGlow():Boolean
+		{
+			return _showDebugObjectGlow;
+		}
+
+		public function set showDebugObjectGlow(value:Boolean):void
+		{
+			_showDebugObjectGlow = value;
+		}
+		
 		
 	}
 }
