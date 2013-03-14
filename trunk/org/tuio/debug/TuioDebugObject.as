@@ -2,6 +2,8 @@ package org.tuio.debug
 {
 	import flash.display.BitmapData;
 	import flash.display.Sprite;
+	import flash.filters.BitmapFilterQuality;
+	import flash.filters.GlowFilter;
 	import flash.geom.Matrix;
 	import flash.text.TextField;
 	import flash.text.TextFieldAutoSize;
@@ -26,6 +28,7 @@ package org.tuio.debug
 		private var _fiducialId:uint;
 		private var _objectRotation:Number;
 		private var _source:String;
+		private var _showGlow:Boolean;
 		
 		/**
 		 * 
@@ -45,6 +48,7 @@ package org.tuio.debug
 			this.fiducialId = fiducialId;
 			this.objectRotation = objectRotation;
 			this.source = source;
+			
 			adjustGraphics(fiducialId, width, height, color, alpha, lineThickness, lineColor, lineAlpha);
 		}
 		
@@ -145,5 +149,26 @@ package org.tuio.debug
 		public function set source(source:String):void{
 			this._source = source;
 		}
+
+		public function get showGlow():Boolean{
+			return _showGlow;
+		}
+
+		public function set showGlow(value:Boolean):void{
+			_showGlow = value;
+			if(_showGlow){
+				this.filters = [new GlowFilter(0xf8f5bb,
+					0.8,
+					8,
+					8,
+					2,
+					1,
+					true,
+					false)];
+			}else{
+				this.filters = [];
+			}
+		}
+
 	}
 }
