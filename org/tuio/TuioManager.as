@@ -13,7 +13,7 @@ package org.tuio {
 	import flash.utils.clearTimeout;
 	import flash.utils.getTimer;
 	import flash.utils.setTimeout;
-
+	
 	import org.tuio.adapters.AbstractTuioAdapter;
 	import org.tuio.debug.ITuioDebugBlob;
 	import org.tuio.debug.ITuioDebugCursor;
@@ -139,6 +139,7 @@ package org.tuio {
 		//fiducial related properties
 		private var fiducialReceivers:Array;
 		private var fiducialRemovalTimes:Array;
+		private var _fiducialObjects:Dictionary;
 
 		private const ROTATION_MINIMUM:Number = 0.05;
 		private const MOVEMENT_MINIMUM:Number = 3;
@@ -183,6 +184,7 @@ package org.tuio {
 				this.fiducialRemovalTimes = [];
 				this.lastFiducialTarget = [];
 				this.firstFiducialTarget = [];
+				this._fiducialObjects = new Dictionary(true);
 			}
 		}
 
@@ -753,7 +755,8 @@ package org.tuio {
 			var stagePos:Point = new Point(stage.stageWidth * tuioObject.x, stage.stageHeight * tuioObject.y);
 			var target:DisplayObject = DisplayListHelper.getTopDisplayObjectUnderPoint(stagePos, stage);
 			var local:Point = target.globalToLocal(new Point(stagePos.x, stagePos.y));
-
+			
+			this.fiducialObjects[tuioObject.sessionID] = tuioObject;
 			firstFiducialTarget[tuioObject.sessionID] = target;
 			lastFiducialTarget[tuioObject.sessionID] = target;
 
@@ -775,11 +778,13 @@ package org.tuio {
 			this.dispatchEvent(new TuioEvent(TuioEvent.UPDATE_OBJECT, tuioObject));
 			this.dispatchEvent(new TuioEvent(TuioEvent.UPDATE, tuioObject));
 			if(triggerTouchOnObject) this.handleUpdate(tuioObject);
+			this.fiducialObjects[tuioObject.sessionID] = tuioObject;
 
 			var stagePos:Point = new Point(stage.stageWidth * tuioObject.x, stage.stageHeight * tuioObject.y);
 			var target:DisplayObject = DisplayListHelper.getTopDisplayObjectUnderPoint(stagePos, stage);
 			var local:Point = target.globalToLocal(new Point(stagePos.x, stagePos.y));
 
+			
 			for each(var receiverObject:Object in fiducialReceivers){
 				if(receiverObject.source != null){
 					//TUIO 1.1
@@ -816,6 +821,8 @@ package org.tuio {
 			this.dispatchEvent(new TuioEvent(TuioEvent.REMOVE_OBJECT, tuioObject));
 			this.dispatchEvent(new TuioEvent(TuioEvent.REMOVE, tuioObject));
 			if(triggerTouchOnObject) this.handleRemove(tuioObject);
+			
+			delete this.fiducialObjects[tuioObject.sessionID];
 
 			var stagePos:Point = new Point(stage.stageWidth * tuioObject.x, stage.stageHeight * tuioObject.y);
 			var target:DisplayObject = DisplayListHelper.getTopDisplayObjectUnderPoint(stagePos, stage);
@@ -1040,8 +1047,31 @@ package org.tuio {
 				}
 				i = i+1;
 			}
-
 		}
+		
+		/**
+		 * looks if there is a callback registered for the given fiducialId.
+		 * 
+		 * @param fiducialId number of fiducial marker.
+		 * @return true if there is a callback for fiducialId, false if not. 
+		 * 
+		 */
+		public function hasFiducialReceiver(fiducialId:Number, source:String):Boolean{
+			var hasReceiver:Boolean = false;
+			for each(var receiverObject:Object in fiducialReceivers){
+				if(receiverObject.source != null && source != null){
+					if(receiverObject.classID == fiducialId && receiverObject.source == source){
+						hasReceiver = true;	
+					}
+				}else{
+					if(receiverObject.classID == fiducialId){
+						hasReceiver = true;	
+					}	
+				}
+			}
+			return hasReceiver;
+		}
+		
 		private function createFiducialEvent(type:String, tuioObject:TuioObject):TuioFiducialEvent{
 			var stagePos:Point = new Point(stage.stageWidth * tuioObject.x, stage.stageHeight * tuioObject.y);
 			var target:DisplayObject = getTopDisplayObjectUnderPoint(stagePos);
@@ -1111,6 +1141,12 @@ package org.tuio {
 		public function set invertRotation(invertRotation:Boolean):void{
 			_invertRotation = invertRotation;
 		}
+
+		public function get fiducialObjects():Dictionary
+		{
+			return _fiducialObjects;
+		}
+
 	}
 
 }

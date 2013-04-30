@@ -81,8 +81,6 @@ package org.tuio.adapters
 		 * that listen on keyboard events to control certain actions like rotation of a touches group by holding 'r'.
 		 *
 		 * @param stage
-		 * @param useTuioManager call the add, move and remove functions of the TuioManager instead of simply dispatching TuioTouchEvents. You have to initialize TuioManager before.
-		 * @param useTuioDebug show the touches as debug cursors. You have to initialize TuioDebug before.
 		 *
 		 */
 		public function MouseTuioAdapter(stage:Stage){
