@@ -17,7 +17,7 @@ package org.tuio.gestures {
 			this.addStep(new GestureStep(TuioTouchEvent.TOUCH_MOVE, { tuioContainerAlias:"B", frameIDAlias:"A"} ));
 			this.addStep(new GestureStep(TuioTouchEvent.TOUCH_MOVE, { tuioContainerAlias:"C", frameIDAlias:"A"} ));
 			this.addStep(new GestureStep(TuioTouchEvent.TOUCH_MOVE, { die:true, targetAlias:"A" } ));
-			this.addStep(new GestureStep(TuioEvent.NEW_FRAME, {goto:1} ));
+			this.addStep(new GestureStep(TuioEvent.NEW_FRAME, {gotoStep:1} ));
 		}
 		
 		public override function dispatchGestureEvent(target:DisplayObject, gsg:GestureStepSequence):void {

@@ -36,27 +36,27 @@ package org.tuio.gestures {
 				this.addStep(new GestureStep(TuioTouchEvent.TOUCH_UP, { die:true, tuioContainerAlias:"A" } ));
 				this.addStep(new GestureStep(TuioTouchEvent.TOUCH_UP, { die:true, tuioContainerAlias:"B" } ));
 				this.addStep(new GestureStep(TuioTouchEvent.TOUCH_MOVE, { die:true, tuioContainerAlias:"!C", targetAlias:"A" } ));
-				this.addStep(new GestureStep(TuioTouchEvent.TOUCH_MOVE, { optional:true, tuioContainerAlias:"B", goto:4 } ));
+				this.addStep(new GestureStep(TuioTouchEvent.TOUCH_MOVE, { optional:true, tuioContainerAlias:"B", gotoStep:4 } ));
 				this.addStep(new GestureStep(TuioTouchEvent.TOUCH_MOVE, { tuioContainerAlias:"A"} ));
-				this.addStep(new GestureStep(TuioEvent.NEW_FRAME, { optional:true, goto:5 } ));
+				this.addStep(new GestureStep(TuioEvent.NEW_FRAME, { optional:true, gotoStep:5 } ));
 				this.addStep(new GestureStep(TuioTouchEvent.TOUCH_UP, { die:true, tuioContainerAlias:"B" } ));
 				this.addStep(new GestureStep(TuioTouchEvent.TOUCH_MOVE, { die:true, tuioContainerAlias:"!C", targetAlias:"A" } ));	
 				this.addStep(new GestureStep(TuioTouchEvent.TOUCH_MOVE, { tuioContainerAlias:"B" } ));
 				this.addStep(new GestureStep(TuioTouchEvent.TOUCH_MOVE, { die:true, tuioContainerAlias:"!C", targetAlias:"A" } ));
-				this.addStep(new GestureStep(TuioEvent.NEW_FRAME, { goto:5 } ));
+				this.addStep(new GestureStep(TuioEvent.NEW_FRAME, { gotoStep:5 } ));
 			} else {
 				this.addStep(new GestureStep(TuioTouchEvent.TOUCH_DOWN, { tuioContainerAlias:"A", targetAlias:"A" } ));
 				this.addStep(new GestureStep(TuioTouchEvent.TOUCH_UP, { die:true, tuioContainerAlias:"A" } ));
 				this.addStep(new GestureStep(TuioTouchEvent.TOUCH_DOWN, { tuioContainerAlias:"B", targetAlias:"A" } ));
 				this.addStep(new GestureStep(TuioTouchEvent.TOUCH_DOWN, { die:true, tuioContainerAlias:"!C", targetAlias:"A"} ));
 
-				this.addStep(new GestureStep(TuioTouchEvent.TOUCH_MOVE, { tuioContainerAlias:"A", optional:true, goto:9 } ));
-				this.addStep(new GestureStep(TuioTouchEvent.TOUCH_MOVE, { tuioContainerAlias:"B", optional:true, goto:9 } ));
+				this.addStep(new GestureStep(TuioTouchEvent.TOUCH_MOVE, { tuioContainerAlias:"A", optional:true, gotoStep:9 } ));
+				this.addStep(new GestureStep(TuioTouchEvent.TOUCH_MOVE, { tuioContainerAlias:"B", optional:true, gotoStep:9 } ));
 				
 				this.addStep(new GestureStep(TuioTouchEvent.TOUCH_UP, { die:true, tuioContainerAlias:"A" } ));
 				this.addStep(new GestureStep(TuioTouchEvent.TOUCH_UP, { die:true, tuioContainerAlias:"B" } ));
 				
-				this.addStep(new GestureStep(TuioEvent.NEW_FRAME, { goto:4 } ));
+				this.addStep(new GestureStep(TuioEvent.NEW_FRAME, { gotoStep:4 } ));
 			}
 			
 

@@ -252,21 +252,21 @@ package org.tuio.gestures {
 			var step:GestureStep = this.steps[stepPosition] as GestureStep;
 			var result:uint = step.step(event, target, tuioContainer);
 			var dieOffset:int = 0;
-			var goto:int;
+			var gotoStep:int;
 
 			while (true) {
 				if (result == Gesture.SATURATED && !step.dies) {
 					stepPosition++;
 					this.gesture.dispatchEvent(new GestureStepEvent(GestureStepEvent.SATURATED, stepPosition, this));
 					if (stepPosition < steps.length) {
-						goto = step.goto;
-						if (goto > 0 && goto <= steps.length) stepPosition = goto - 1;
+						gotoStep = step.gotoStep;
+						if (gotoStep > 0 && gotoStep <= steps.length) stepPosition = gotoStep - 1;
 						prepareNext();
 						return Gesture.PROGRESS;
 					} else {
-						goto = step.goto;
-						if (goto > 0 && goto <= steps.length) {
-							stepPosition = goto - 1;
+						gotoStep = step.gotoStep;
+						if (gotoStep > 0 && gotoStep <= steps.length) {
+							stepPosition = gotoStep - 1;
 							prepareNext();
 						} else {
 							this._active = false;

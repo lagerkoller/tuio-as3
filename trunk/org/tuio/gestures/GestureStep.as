@@ -35,7 +35,7 @@ package org.tuio.gestures {
 		 *	<li><b>maxDelay</b> Sets the maximum allowed delay in ms for the specified event. After this the gesture fails.</li>
 		 *	<li><b>die</b> If set true the gesture fails if the <code>GestureStep</code> is saturated. <code>GestureStep</code>s that have die set true are optional and if the next <code>GestureStep</code> with die set false is saturated will be skipped.</li>
 		 *	<li><b>optional</b> If set true the <code>GestureStep</code> will be skipped if it doesn't saturate or dies and the next <code>GestureStep</code> is saturated. If an optional <code>GestureStep</code> dies this won't cause the whole gesture to die.</li>
-		 *	<li><b>goto</b> If set to a value between [1-n° of steps] the next check will occur on the specified <code>GestureStep</code>. This is basically for creating loops e.g. jump to an earlier step after reaching the final step.</li>
+		 *	<li><b>gotoStep</b> If set to a value between [1-n° of steps] the next check will occur on the specified <code>GestureStep</code>. This is basically for creating loops e.g. jump to an earlier step after reaching the final step.</li>
 		 * </ul>
 		 * 
 		 * @param	event The events name that saturates this step.
@@ -58,7 +58,8 @@ package org.tuio.gestures {
 			this._maxDelay = (properties.maxDelay)?(properties.maxDelay as uint):0;
 			this._die = (properties.die)?(properties.die as Boolean):false;
 			this._optional = (properties.optional)?(properties.optional as Boolean):false;
-			this._goto = (properties.goto)?(properties.goto as int):0;
+			this._goto = (properties['goto'])?(properties['goto'] as int):0;
+			this._goto = (properties.gotoStep)?(properties.gotoStep as int):this._goto;
 		}
 		
 		/**
@@ -153,7 +154,7 @@ package org.tuio.gestures {
 				frameIDAlias:this._frameIDAlias,
 				minDelay:this._minDelay,
 				maxDelay:this._maxDelay,
-				goto:this._goto,
+				gotoStep:this._goto,
 				die:this._die,
 				optional:this._optional
 			});
@@ -183,7 +184,7 @@ package org.tuio.gestures {
 		/**
 		 * The step to go to after this step saturated. <code>0</code> if there is no step specified.
 		 */
-		public function get goto():int {
+		public function get gotoStep():int {
 			return this._goto;
 		}
 	}
