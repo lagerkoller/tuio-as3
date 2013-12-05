@@ -15,7 +15,7 @@ package org.tuio.gestures {
 			this.addStep(new GestureStep(TuioTouchEvent.TOUCH_DOWN, { tuioContainerAlias:"A" } ));
 			this.addStep(new GestureStep(TuioTouchEvent.TOUCH_MOVE, { tuioContainerAlias:"A", die:true } ));
 			this.addStep(new GestureStep(TuioTouchEvent.TOUCH_UP, { tuioContainerAlias:"A", die:true } ));
-			this.addStep(new GestureStep(TuioTouchEvent.TAP, {minDelay:500, goto:2} ));
+			this.addStep(new GestureStep(TuioTouchEvent.TAP, {minDelay:500, gotoStep:2} ));
 		}
 		
 		public override function dispatchGestureEvent(target:DisplayObject, gsg:GestureStepSequence):void {
