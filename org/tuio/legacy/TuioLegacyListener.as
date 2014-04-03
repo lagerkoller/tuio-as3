@@ -129,9 +129,7 @@ package org.tuio.legacy
 			firstPos[tuioCursor.sessionID] = stagePoint;
 			lastPos[tuioCursor.sessionID] = stagePoint;
 			lastTarget[tuioCursor.sessionID] = stage;
-//			dobj = null;
 			if(displayObjArray.length > 0){							
-//				dobj = displayObjArray[displayObjArray.length - 1];
 				dobj = getTopDisplayObjectUnderPoint(stagePoint);
 				lastTarget[tuioCursor.sessionID] = dobj;
 				var localPoint:Point = dobj.parent.globalToLocal(new Point(stagePoint.x, stagePoint.y));

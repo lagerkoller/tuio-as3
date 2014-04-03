@@ -67,14 +67,14 @@ package org.tuio.adapters
 		private function touchBegin(event:TouchEvent):void{
 			this.frameId = this.frameId + 1;
 			var tuioCursor:TuioCursor = createTuioCursor(event);
-			_tuioCursors[this.src][event.touchPointID] = tuioCursor;
+			_tuioCursors[this.src].push(tuioCursor);
 			dispatchAddCursor(tuioCursor);
 			lastPos[event.touchPointID] = new Point(event.stageX, event.stageY);
 		}
 		
 		private function dispatchTouchMove(event:TouchEvent):void{
 			this.frameId = this.frameId + 1;
-			var tuioCursor:TuioCursor = _tuioCursors[this.src][event.touchPointID]; 
+			var tuioCursor:TuioCursor = getTuioCursorToTouchPointId(event.touchPointID); 
 			updateTuioCursor(tuioCursor, event);
 			dispatchUpdateCursor(tuioCursor);
 			lastPos[event.touchPointID] = new Point(event.stageX, event.stageY);
@@ -82,17 +82,19 @@ package org.tuio.adapters
 		
 		private function dispatchTouchUp(event:TouchEvent):void{
 			this.frameId = this.frameId + 1;
-			dispatchRemoveCursor(_tuioCursors[this.src][event.touchPointID]);
+			dispatchRemoveCursor(getTuioCursorToTouchPointId(event.touchPointID));
+			
+			var i:Number = 0;
+			for each(var tuioCursor:TuioCursor in this._tuioCursors[this.src]) {
+				if(tuioCursor.sessionID == sessionIDMap[event.touchPointID]){
+					break;
+				}
+				i=i+1;
+			}
+			this._tuioCursors[this.src].splice(i,1);
+			
 			lastPos[event.touchPointID] = null;
 			delete lastPos[event.touchPointID];
-			
-			/*var i:Number = 0;
-			for each(var tuioCursor:TuioCursor in _tuioCursors[this.src]){
-				if(tuioCursor.sessionID == event.touchPointID){
-					_tuioCursors[this.src].splice(i, 1);
-				}
-				i = i+1;
-			}*/
 		}
 
 		private function createTuioCursor(event:TouchEvent):TuioCursor{
@@ -131,6 +133,17 @@ package org.tuio.adapters
 				}
 				this.lastSentFrameId = this.frameId;
 			}
+		}
+		
+		private function getTuioCursorToTouchPointId(touchPointID:Number):TuioCursor{
+			var target:TuioCursor = null;
+			for each(var tuioCursor:TuioCursor in this._tuioCursors[this.src]) {
+				if(tuioCursor.sessionID == sessionIDMap[touchPointID]){
+					target = tuioCursor;
+					break;
+				}
+			}
+			return target;
 		}
 	}
 }
