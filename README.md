@@ -13,6 +13,3 @@ Features
     Debug utilities
     Sending and receiving/parsing of OSC messages 
 
-How To Use
-
-You can find guides on how to use the library on the wiki (https://github.com/lagerkoller/tuio-as3/wiki).
